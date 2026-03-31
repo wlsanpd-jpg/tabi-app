@@ -250,7 +250,10 @@ img{display:block;}
   margin-bottom:4px;line-height:1.3;}
 .tri-title em{color:var(--ac);font-style:italic;}
 .tri-sub{font-size:12px;color:rgba(255,255,255,.5);}
-.tri-map{height:190px;position:relative;background:linear-gradient(135deg,#e8f5e9,#e3f2fd,#fce4ec);overflow:hidden;}
+.tri-map{height:240px;position:relative;background:#e8eaf0;overflow:hidden;}
+.tri-map iframe{width:100%;height:100%;border:none;display:block;}
+.tri-map-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#f0f2f5;font-size:13px;color:var(--tx3);}
+.tri-map-pins{position:absolute;inset:0;pointer-events:none;}
 .tri-map-grid{position:absolute;inset:0;opacity:.5;
   background-image:linear-gradient(rgba(0,0,0,.06) 1px,transparent 1px),
     linear-gradient(90deg,rgba(0,0,0,.06) 1px,transparent 1px);
@@ -531,6 +534,9 @@ img{display:block;}
 // ════════════════════════════════════════════
 
 const PROXY = 'https://tabi-app-wheat.vercel.app';
+// Google Maps Embed — Vercel 환경변수와 동일한 키 사용
+// Places API 키가 Maps Embed도 지원하면 자동 작동
+const MAPS_KEY = '';  // 비워두면 장소 검색 URL로 대체
 
 const CITIES = [
   {kr:'도쿄',    en:'Tokyo Japan',       em:'🗼'},
@@ -1139,25 +1145,59 @@ function openDetail(idx){
 function closeDetail(){document.getElementById('detailPanel').classList.remove('open');}
 
 // ── AI ────────────────────────────────────
+function rMap(di){
+  const d=window._tdays[di];
+  // Google Maps Embed — 여러 장소를 waypoints로 표시
+  const placeNames=d.places.map(p=>encodeURIComponent(p.name+' '+window._triCity)).join('|');
+  const firstPlace=encodeURIComponent(d.places[0].name+' '+window._triCity);
+  const waypoints=d.places.slice(1).map(p=>encodeURIComponent(p.name+' '+window._triCity)).join('|');
+  // Maps Embed API (키 있으면 사용, 없으면 정적 지도 이미지)
+  let mapHtml='';
+  if(MAPS_KEY){
+    const src='https://www.google.com/maps/embed/v1/directions?key='+MAPS_KEY
+      +'&origin='+encodeURIComponent(d.places[0].name+' '+window._triCity)
+      +'&destination='+encodeURIComponent(d.places[d.places.length-1].name+' '+window._triCity)
+      +(waypoints&&d.places.length>2?'&waypoints='+d.places.slice(1,-1).map(p=>encodeURIComponent(p.name+' '+window._triCity)).join('|'):'')
+      +'&mode=walking&language=ko';
+    mapHtml='<iframe src="'+src+'" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>';
+  } else {
+    // 키 없을 때: OpenStreetMap 기반 지도 (무료, 키 불필요)
+    const cityCoords={
+      '도쿄':'35.6762,139.6503','오사카':'34.6937,135.5023','교토':'35.0116,135.7681',
+      '후쿠오카':'33.5904,130.4017','삿포로':'43.0618,141.3545','나라':'34.6851,135.8049',
+      '가마쿠라':'35.3197,139.5507','나고야':'35.1815,136.9066','하코네':'35.2323,139.1069',
+      '히로시마':'34.3853,132.4553','요코하마':'35.4437,139.6380','고베':'34.6913,135.1830',
+      '벳푸':'33.2840,131.4910','나고야':'35.1815,136.9066',
+    };
+    const coords=cityCoords[window._triCity]||'35.6762,139.6503';
+    const [lat,lng]=coords.split(',');
+    const zoom=13;
+    const src='https://www.openstreetmap.org/export/embed.html?bbox='
+      +(parseFloat(lng)-.04)+'%2C'+(parseFloat(lat)-.03)+'%2C'
+      +(parseFloat(lng)+.04)+'%2C'+(parseFloat(lat)+.03)
+      +'&layer=mapnik&marker='+lat+'%2C'+lng;
+    mapHtml='<iframe src="'+src+'" loading="lazy"></iframe>';
+  }
+  // 장소 번호 오버레이 핀
+  const pts=[{x:72,y:60},{x:38,y:45},{x:60,y:28},{x:22,y:62},{x:58,y:76},{x:82,y:40}];
+  const pos=d.places.map((_,i)=>pts[i]||{x:28+i*13,y:38+i*12});
+  const pins=pos.map((p,i)=>'<div class="tri-pin" style="left:'+p.x+'%;top:'+p.y+'%;background:'+d.col+';pointer-events:all;cursor:pointer;" onclick="window.open('https://maps.google.com/?q='+encodeURIComponent(d.places[i].name+' '+window._triCity)+'','_blank')" title="'+d.places[i].name+'">'+(i+1)+'</div>').join('');
+  return mapHtml+'<div class="tri-map-pins">'+pins+'</div>';
+}
+
+function rPlaces(di){
+  const d=window._tdays[di];
+  let h='<div class="tri-day-hd"><div class="tri-day-dot" style="background:'+d.col+'">'+(di+1)+'</div><div class="tri-day-lbl">'+d.label+'</div></div>';
+  d.places.forEach((pl,pi)=>{const info=gpi(pl.name);const tipTxt=pl.tip||info.cm;h+='<div class="tri-place-row" id="tpi-'+di+'-'+pi+'"><div class="tri-place-ic">'+info.ic+'</div><div class="tri-place-body"><div class="tri-place-name">'+pl.name+'</div><div class="tri-place-tp">'+info.tp+'</div><div class="tri-place-cm">'+tipTxt+'</div>'+(pl.time?'<div class="tri-place-time">&#9200; '+pl.time+'</div>':'')+'</div></div>';});
+  return h;
+}
+
 function buildTriResult(days,aiCity,aiDays,aiStyle,aiPeople){
   const em=cityEmoji[aiCity]||'🗾';
   const total=parseInt(aiDays)+1;
   window._tdays=days.map((d,i)=>Object.assign({},d,{col:PIN_C[i%PIN_C.length]}));
-  function rMap(di){
-    const d=window._tdays[di];
-    const pts=[{x:70,y:60},{x:40,y:45},{x:58,y:30},{x:25,y:58},{x:55,y:74},{x:80,y:38}];
-    const pos=d.places.map((_,i)=>pts[i]||{x:30+i*12,y:40+i*10});
-    let path='';if(pos.length>1){path='M '+pos[0].x+' '+pos[0].y;for(let i=1;i<pos.length;i++)path+=' L '+pos[i].x+' '+pos[i].y;}
-    const svg=path?'<svg class="tri-svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="'+path+'" fill="none" stroke="'+d.col+'" stroke-width="2" stroke-dasharray="5,3.5" opacity=".8"/></svg>':'';
-    const pins=pos.map((p,i)=>'<div class="tri-pin" style="left:'+p.x+'%;top:'+p.y+'%;background:'+d.col+'" onclick="hlPin('+i+')">'+(i+1)+'</div>').join('');
-    return'<div class="tri-map-grid"></div>'+svg+pins+'<div class="road-h" style="top:44%;height:5px"></div><div class="road-v" style="left:32%;width:5px"></div>';
-  }
-  function rPlaces(di){
-    const d=window._tdays[di];
-    let h='<div class="tri-day-hd"><div class="tri-day-dot" style="background:'+d.col+'">'+(di+1)+'</div><div class="tri-day-lbl">'+d.label+'</div></div>';
-    d.places.forEach((pl,pi)=>{const info=gpi(pl.name);const tipTxt=pl.tip||info.cm;h+='<div class="tri-place-row" id="tpi-'+di+'-'+pi+'"><div class="tri-place-ic">'+info.ic+'</div><div class="tri-place-body"><div class="tri-place-name">'+pl.name+'</div><div class="tri-place-tp">'+info.tp+'</div><div class="tri-place-cm">'+tipTxt+'</div>'+(pl.time?'<div class="tri-place-time">&#9200; '+pl.time+'</div>':'')+'</div></div>';});
-    return h;
-  }
+  window._triCity=aiCity;
+
   const tabs=days.map((_,i)=>'<button class="tri-daytab'+(i===0?' on':'')+'" onclick="switchTD('+i+')">Day '+(i+1)+'</button>').join('');
   const bud=aiStyle==='가성비'?'8,000~12,000엔':aiStyle==='럭셔리'?'30,000~60,000엔':'15,000~25,000엔';
   return'<div class="tri-wrap"><div class="tri-card">'
@@ -1187,7 +1227,7 @@ function switchTD(di){
   const svg=path?'<svg class="tri-svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="'+path+'" fill="none" stroke="'+d.col+'" stroke-width="2" stroke-dasharray="5,3.5" opacity=".8"/></svg>':'';
   const pins=pos.map((p,i)=>'<div class="tri-pin" style="left:'+p.x+'%;top:'+p.y+'%;background:'+d.col+'" onclick="hlPin('+i+')">'+(i+1)+'</div>').join('');
   const m=document.getElementById('triMap');
-  if(m)m.innerHTML='<div class="tri-map-grid"></div>'+svg+pins+'<div class="road-h" style="top:44%;height:5px"></div><div class="road-v" style="left:32%;width:5px"></div>';
+  if(m)m.innerHTML=rMap(di);
   let h='<div class="tri-day-hd"><div class="tri-day-dot" style="background:'+d.col+'">'+(di+1)+'</div><div class="tri-day-lbl">'+d.label+'</div></div>';
   d.places.forEach((pl,pi)=>{const info=gpi(pl.name);const tipTxt=pl.tip||info.cm;h+='<div class="tri-place-row" id="tpi-'+di+'-'+pi+'"><div class="tri-place-ic">'+info.ic+'</div><div class="tri-place-body"><div class="tri-place-name">'+pl.name+'</div><div class="tri-place-tp">'+info.tp+'</div><div class="tri-place-cm">'+tipTxt+'</div>'+(pl.time?'<div class="tri-place-time">&#9200; '+pl.time+'</div>':'')+'</div></div>';});
   const pl=document.getElementById('triPlaces');if(pl)pl.innerHTML=h;
