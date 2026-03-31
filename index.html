@@ -701,24 +701,196 @@ function gpi(nm){
 
 const PIN_C=['#00c896','#ff4757','#3742fa','#f0a500','#a55eea'];
 const AI_DB={
-  '도쿄':   [{label:'여행의 시작',    places:[{name:'아사쿠사 센소지',time:'09:00'},{name:'시부야 스크램블 교차로',time:'15:00'},{name:'도쿄 스카이트리',time:'18:00'}]},
-             {label:'도쿄 핵심 탐방', places:[{name:'메이지 신궁',time:'09:00'},{name:'팀랩 플래닛 도쿄',time:'14:00'},{name:'오다이바 해변공원',time:'18:30'}]},
-             {label:'서브컬처 & 쇼핑',places:[{name:'아키하바라',time:'10:00'},{name:'시부야 109',time:'14:00'},{name:'돈키호테 신주쿠',time:'18:00'}]},
-             {label:'여운의 하루',    places:[{name:'신주쿠 교엔',time:'10:00'},{name:'우에노 공원',time:'14:00'}]}],
-  '오사카': [{label:'오사카 입성',    places:[{name:'구로몬 시장',time:'09:30'},{name:'도톤보리',time:'14:00'},{name:'오사카성',time:'17:00'}]},
-             {label:'테마파크의 날',  places:[{name:'유니버설 스튜디오 재팬(USJ)',time:'09:00'}]}],
-  '교토':   [{label:'교토의 새벽',    places:[{name:'후시미 이나리 대사',time:'07:00'},{name:'기온 거리',time:'13:00'},{name:'기요미즈데라',time:'16:00'}]},
-             {label:'황금빛 교토',    places:[{name:'킨카쿠지',time:'09:00'},{name:'아라시야마 대나무 숲',time:'13:30'},{name:'철학의 길',time:'16:30'}]}],
-  '히로시마':[{label:'평화와 역사',   places:[{name:'히로시마 평화 기념관',time:'09:00'},{name:'미야지마섬 이쓰쿠시마 신사',time:'13:00'},{name:'히로시마성',time:'16:30'}]}],
-  '요코하마':[{label:'항구 도시 산책',places:[{name:'요코하마 차이나타운',time:'10:00'},{name:'야마시타 공원',time:'13:30'},{name:'요코하마 랜드마크 타워',time:'16:00'}]}],
-  '고베':   [{label:'고베 낭만 여행', places:[{name:'고베 하버랜드',time:'10:00'},{name:'기타노 이진칸',time:'13:00'},{name:'산노미야 쇼핑',time:'16:00'}]}],
-  '후쿠오카':[{label:'후쿠오카 도착', places:[{name:'다자이후 텐만구',time:'10:00'},{name:'나카스 야타이 거리',time:'19:00'}]}],
-  '삿포로': [{label:'삿포로 탐방',    places:[{name:'오도리 공원',time:'09:00'},{name:'홋카이도 신궁',time:'11:00'},{name:'삿포로 맥주 박물관',time:'14:00'}]}],
-  '나라':   [{label:'사슴과 대불',    places:[{name:'나라 공원',time:'09:00'},{name:'도다이지',time:'10:30'},{name:'가스가 대사',time:'13:00'}]}],
-  '가마쿠라':[{label:'가마쿠라 산책', places:[{name:'가마쿠라 대불',time:'09:00'},{name:'에노시마 섬',time:'12:00'},{name:'쓰루가오카 하치만구',time:'16:00'}]}],
-  '하코네': [{label:'자연과 온천',    places:[{name:'하코네 오픈에어 뮤지엄',time:'09:00'},{name:'아시노호',time:'12:00'},{name:'오와쿠다니',time:'15:00'}]}],
-  '나고야': [{label:'나고야 핵심',    places:[{name:'나고야성',time:'09:00'},{name:'아쓰타 신궁',time:'13:00'}]}],
-  '벳푸':   [{label:'온천 천국',      places:[{name:'벳푸 지옥 온천',time:'09:00'},{name:'다케가와라 온천',time:'13:00'}]}],
+  '도쿄':[
+    {label:'도쿄 입문 — 전통과 현대',places:[
+      {name:'아사쿠사 센소지',     time:'08:30', tip:'개장 전 도착하면 인파 없이 조용한 경내 감상 가능'},
+      {name:'나카미세도리 쇼핑',   time:'09:30', tip:'150m 상점가에서 인형焼き·기념품 쇼핑'},
+      {name:'스카이트리 전망대',   time:'11:00', tip:'날씨 좋으면 후지산 조망, 350m·450m 두 전망덱'},
+      {name:'아키하바라',          time:'14:00', tip:'애니·게임·피규어·전자제품의 천국'},
+      {name:'시부야 스크램블 교차로',time:'18:00',tip:'스타벅스 2층에서 피크타임 교차로 조망'},
+      {name:'도쿄 스카이트리 야경',time:'20:00', tip:'야간 라이트업이 특히 아름다워요'},
+    ]},
+    {label:'도쿄 자연·문화 탐방',places:[
+      {name:'메이지 신궁',         time:'08:00', tip:'70만 그루 숲, 이른 아침 산책이 최고'},
+      {name:'하라주쿠 다케시타도리',time:'10:00', tip:'크레이프와 독특한 패션의 거리'},
+      {name:'신주쿠 교엔',         time:'12:00', tip:'도시락 들고 피크닉, 3대 벚꽃 명소'},
+      {name:'팀랩 플래닛 도쿄',   time:'15:00', tip:'몰입형 디지털 아트, 사전 예약 필수!'},
+      {name:'오다이바 해변공원',   time:'19:00', tip:'레인보우 브리지 야경, 자유의 여신상 복제품'},
+    ]},
+    {label:'도쿄 로컬 맛집·쇼핑',places:[
+      {name:'츠키지 장외시장',     time:'07:00', tip:'참치덮밥(마구로동)으로 아침 식사'},
+      {name:'긴자 쇼핑',           time:'10:00', tip:'명품·백화점·애플스토어 집결지'},
+      {name:'우에노 공원·박물관',  time:'13:00', tip:'국립박물관 국보 89점, 동물원 포함'},
+      {name:'아메요코 시장',       time:'15:30', tip:'전후 암시장에서 시작된 활기찬 재래시장'},
+      {name:'이케부쿠로 선샤인시티',time:'18:00',tip:'수족관·전망대·쇼핑몰이 한 건물에'},
+    ]},
+    {label:'당일치기 근교 — 닛코·카마쿠라',places:[
+      {name:'가마쿠라 대불',       time:'09:00', tip:'높이 11m 국보 청동 대불, 내부 입장 가능'},
+      {name:'하세데라 수국',       time:'10:30', tip:'6월엔 수천 그루 수국이 만발'},
+      {name:'에노시마 섬',         time:'13:00', tip:'후지산 뷰와 시라스 덮밥이 명물'},
+      {name:'쓰루가오카 하치만구', time:'16:00', tip:'가마쿠라의 상징 신사, 가을 단풍 절경'},
+    ]},
+  ],
+  '오사카':[
+    {label:'오사카 입성 — 먹고 즐기기',places:[
+      {name:'구로몬 시장',         time:'09:00', tip:'오사카의 부엌, 신선한 해산물 시식·쇼핑'},
+      {name:'도톤보리',            time:'11:00', tip:'글리코 간판 인증샷 필수, 다코야키·오코노미야키'},
+      {name:'신사이바시 쇼핑',     time:'13:30', tip:'600m 아케이드, 유니클로·자라·H&M 집결'},
+      {name:'오사카성',            time:'16:00', tip:'벚꽃 명소, 8층 전망대에서 오사카 전경'},
+      {name:'나카자키초 카페거리', time:'19:00', tip:'낡은 마을이 힙스터 카페촌으로 변신'},
+    ]},
+    {label:'USJ + 오사카 야경',places:[
+      {name:'유니버설 스튜디오 재팬(USJ)',time:'08:30',tip:'닌텐도 월드 입장권 사전 예약 필수, 개장 전 도착'},
+      {name:'해리포터 구역',       time:'11:00', tip:'버터비어와 올리밴더 지팡이 선택 체험'},
+      {name:'슈퍼 닌텐도 월드',   time:'14:00', tip:'마리오 에너지 밴드로 코인 모으기 게임'},
+      {name:'아메리칸 빌리지',     time:'19:00', tip:'USJ 인근 야경과 함께하는 마무리 식사'},
+    ]},
+    {label:'오사카 역사·문화',places:[
+      {name:'스미요시 대사',       time:'09:00', tip:'일본 전국 2,300개 스미요시 신사의 총본사'},
+      {name:'덴포잔 수족관',       time:'11:00', tip:'세계 최대급 수족관, 고래상어 전시'},
+      {name:'오사카 역사박물관',   time:'14:00', tip:'10층 전망 로비에서 오사카성이 보임'},
+      {name:'아베노하루카스 전망대',time:'17:00',tip:'일본 최고층 빌딩 300m 전망대, 야경 최고'},
+      {name:'난바 야타이 거리',    time:'20:00', tip:'도톤보리 강변 포장마차 분위기'},
+    ]},
+  ],
+  '교토':[
+    {label:'교토 새벽 — 신사와 자연',places:[
+      {name:'후시미 이나리 대사',  time:'06:30', tip:'수천 개 붉은 도리이, 새벽 안개와 조합이 신비'},
+      {name:'伏見稲荷 근처 카페',  time:'09:00', tip:'도보 5분 거리 현지 카페에서 아침 식사'},
+      {name:'기요미즈데라',        time:'10:30', tip:'나무 무대에서 교토 시가지 전망, 야경 시즌 추천'},
+      {name:'산넨자카·니넨자카',   time:'12:30', tip:'돌길과 기념품 거리, 두부 아이스크림 필수'},
+      {name:'기온 거리',           time:'17:00', tip:'저녁 6~8시 마이코·게이샤 마주칠 확률 최고'},
+      {name:'기온 야간 산책',      time:'20:00', tip:'석등불 아래 골목이 가장 아름다운 시간'},
+    ]},
+    {label:'황금빛 교토 — 사원 순례',places:[
+      {name:'킨카쿠지 (금각사)',   time:'09:00', tip:'오픈 직후 방문하면 연못 반영 사진 찍기 좋아'},
+      {name:'료안지 석정원',       time:'10:30', tip:'세계 3대 정원, 15개 돌의 비밀을 생각하며 명상'},
+      {name:'닌나지',              time:'12:00', tip:'유네스코 세계유산, 봄 벚꽃(御室桜)이 유명'},
+      {name:'아라시야마 대나무 숲',time:'14:00', tip:'아침이 최고지만 오후도 충분히 아름다워'},
+      {name:'텐류지 庭園',         time:'15:30', tip:'아라시야마 배경 지천회유식 정원, 세계유산'},
+      {name:'도게츠교에서 석양',   time:'17:30', tip:'단풍 시즌엔 붉게 물드는 산이 배경으로'},
+    ]},
+    {label:'교토 로컬 — 철학의 길과 카페',places:[
+      {name:'난젠지',              time:'09:00', tip:'웅장한 삼문과 수로각, 두부요리가 유명'},
+      {name:'철학의 길',           time:'10:30', tip:'2km 벚꽃 산책로, 카페와 갤러리가 점재'},
+      {name:'긴카쿠지 (은각사)',   time:'12:30', tip:'실제로 은박이 없는 게 매력, 모래 정원이 독특'},
+      {name:'헤이안 신궁',        time:'14:30', tip:'대형 도리이와 넓은 경내, 사계절 정원이 아름다워'},
+      {name:'니시키 시장',         time:'17:00', tip:'400년 역사 교토의 부엌, 두부·절임·달콤한 간식'},
+      {name:'폰토초 카와도코',     time:'19:30', tip:'카모강 위 테라스 식당, 여름 카와도코 체험'},
+    ]},
+  ],
+  '후쿠오카':[
+    {label:'후쿠오카 핵심 1박 2일',places:[
+      {name:'다자이후 텐만구',     time:'09:00', tip:'학문의 신 수험생 성지, 우메가에 모치 명물'},
+      {name:'후쿠오카성 터',       time:'12:00', tip:'봄 1,300그루 벚꽃, 성터 위 하카타만 조망'},
+      {name:'캐널시티 하카타',     time:'14:00', tip:'대형 쇼핑몰, 분수쇼와 내부 운하가 인상적'},
+      {name:'야타이 거리 (나카스)',time:'19:00', tip:'강변 포장마차에서 돼지뼈 라멘·모츠나베'},
+    ]},
+    {label:'후쿠오카 심화 탐방',places:[
+      {name:'모모치 해변·후쿠오카 타워',time:'10:00',tip:'해변과 타워 야경, 여름엔 수영도 가능'},
+      {name:'후쿠오카시 박물관',   time:'13:00', tip:'한국·중국 교류 역사, 금인(金印) 국보 전시'},
+      {name:'스미요시 신사',       time:'15:30', tip:'후쿠오카에서 가장 오래된 신사'},
+      {name:'텐진 지하상가',       time:'17:00', tip:'600m 지하 쇼핑 거리, 특산품·패션 집결'},
+      {name:'하카타 이자카야',     time:'20:00', tip:'고마사바(고등어회)·미즈타키(닭 전골) 필수 체험'},
+    ]},
+  ],
+  '삿포로':[
+    {label:'삿포로 시내 핵심',places:[
+      {name:'오도리 공원',         time:'09:00', tip:'봄 라일락·여름 맥주 축제·겨울 눈 축제 모두 이곳'},
+      {name:'홋카이도 신궁',       time:'10:30', tip:'봄 벚꽃·가을 단풍, 경내 산책이 힐링'},
+      {name:'삿포로 맥주 박물관',  time:'13:00', tip:'일본 최초 맥주 공장, 무료 견학 후 시음'},
+      {name:'스스키노 라멘 골목',  time:'18:00', tip:'삿포로 미소 라멘의 원조, 여러 가게 비교 필수'},
+      {name:'오도리 야경',         time:'20:00', tip:'TV탑 전망대에서 내려다보는 오도리 야경'},
+    ]},
+    {label:'삿포로 근교 — 오타루·노보리베쓰',places:[
+      {name:'오타루 운하',         time:'09:30', tip:'석조 창고와 운하의 낭만, 유리 공예품 쇼핑'},
+      {name:'오타루 스시 거리',    time:'12:00', tip:'홋카이도 해산물로 만든 회전초밥 최고 품질'},
+      {name:'시로이 코이비토 파크',time:'15:00', tip:'홋카이도 대표 과자 테마파크, 체험 공방'},
+      {name:'스すきの 야간',      time:'19:00', tip:'홋카이도 최대 환락가, 게 요리·징기스칸 추천'},
+    ]},
+  ],
+  '나라':[
+    {label:'나라 당일치기 완전 정복',places:[
+      {name:'나라 공원 (사슴)',     time:'09:00', tip:'1,200마리 자유 사슴, 사슴 전병 사서 먹이기'},
+      {name:'도다이지',            time:'10:00', tip:'세계 최대 목조 건물, 높이 15m 청동 대불'},
+      {name:'기둥 구멍 통과 체험', time:'11:00', tip:'대불 콧구멍 크기의 기둥 구멍 통과하면 소원 성취'},
+      {name:'가스가 대사',         time:'13:00', tip:'3,000개 등불로 유명, 2월·8월 만등회 절경'},
+      {name:'나라마치 골목 산책',  time:'15:00', tip:'에도 시대 상인 마을, 갤러리·카페 밀집'},
+      {name:'요시키엔 정원',       time:'16:30', tip:'이끼 정원·연못 정원·하나쇼부 정원 3구역'},
+    ]},
+    {label:'나라 심화 — 호류지와 카시하라',places:[
+      {name:'호류지 (법륭사)',     time:'09:00', tip:'세계 최고(最古) 목조 건물, 600년대 건립 국보'},
+      {name:'나라 공원 점심 피크닉',time:'12:30',tip:'편의점 도시락 들고 사슴과 함께하는 피크닉'},
+      {name:'도다이지 대불',       time:'14:00', tip:'야간 라이팅 시즌엔 밤에도 방문 추천'},
+      {name:'와카쿠사야마',        time:'16:30', tip:'나라 시가지 전망 언덕, 1월 불태우기 축제'},
+    ]},
+  ],
+  '가마쿠라':[
+    {label:'가마쿠라 1일 완전 코스',places:[
+      {name:'가마쿠라 대불 (고토쿠인)',time:'09:00',tip:'높이 11m 국보 청동 대불, 내부 입장 가능(20엔)'},
+      {name:'하세데라',             time:'10:30', tip:'6월 수국 절경, 경내에서 가마쿠라 바다 전망'},
+      {name:'에노덴 승차',          time:'12:00', tip:'해안선 달리는 레트로 전차, 창밖 바다 절경'},
+      {name:'에노시마 섬',          time:'13:00', tip:'시라스 덮밥이 명물, 등대 전망에서 후지산 뷰'},
+      {name:'쓰루가오카 하치만구',  time:'16:30', tip:'가마쿠라의 상징 신사, 단풍 시즌 절경'},
+      {name:'고마치도리 쇼핑',      time:'18:00', tip:'쇼핑 거리에서 기념품과 카페 마무리'},
+    ]},
+  ],
+  '하코네':[
+    {label:'하코네 온천·자연 1박 2일',places:[
+      {name:'하코네 오픈에어 뮤지엄',time:'09:30',tip:'자연 속 조각·피카소관·족욕탕, 3~4시간 필요'},
+      {name:'아시노호 해적선',      time:'13:30', tip:'맑은 날 후지산 수면 반영이 절경'},
+      {name:'모토하코네 항',        time:'15:00', tip:'도리이가 호수에 잠긴 하코네 신사 경치'},
+      {name:'오와쿠다니',           time:'16:30', tip:'활화산 지대, 검은 계란(구로다마고) 꼭 먹어보기'},
+      {name:'하코네 료칸 온천',     time:'19:00', tip:'노천탕(로텐부로)에서 별 보며 온천, 가이세키 저녁'},
+    ]},
+  ],
+  '히로시마':[
+    {label:'히로시마·미야지마 완전 코스',places:[
+      {name:'히로시마 평화 기념관', time:'09:00', tip:'원폭 돔과 함께 2시간 충분히 관람, 숙연해지는 공간'},
+      {name:'원폭 돔 (세계유산)',   time:'11:30', tip:'1945년 그대로 보존된 역사의 현장'},
+      {name:'히로시마 야키토리·오코노미야키',time:'13:00',tip:'히로시마식 오코노미야키는 면이 들어간 특별한 스타일'},
+      {name:'미야지마 섬',          time:'15:00', tip:'페리 15분, 사슴이 자유롭게 돌아다니는 신성한 섬'},
+      {name:'이쓰쿠시마 신사',      time:'16:00', tip:'만조 때 바다 위에 뜨는 도리이, 간조 때 걸어가기'},
+      {name:'미야지마 굴·모미지 만주',time:'17:30',tip:'세계 최대 굴 산지, 단풍 모양 화과자도 명물'},
+    ]},
+  ],
+  '요코하마':[
+    {label:'요코하마 항구 도시 탐방',places:[
+      {name:'요코하마 차이나타운',  time:'10:00', tip:'일본 최대 차이나타운, 고마 당면·딤섬 필수'},
+      {name:'야마시타 공원',        time:'12:30', tip:'항구 산책로, 히카와마루 선박 박물관'},
+      {name:'요코하마 마린타워',    time:'14:00', tip:'360도 전망대에서 미나토미라이 조망'},
+      {name:'미나토미라이 21',      time:'15:30', tip:'랜드마크 타워·퀸즈스퀘어 쇼핑 집결지'},
+      {name:'오산바시 국제 여객터미널',time:'17:30',tip:'목제 데크에서 항구 석양 감상 최고 포인트'},
+      {name:'요코하마 야경 크루즈', time:'19:00', tip:'미나토미라이 야경을 배 위에서 감상'},
+    ]},
+  ],
+  '고베':[
+    {label:'고베 낭만 항구 도시',places:[
+      {name:'기타노 이진칸',        time:'09:30', tip:'이국적인 서양관저 거리, 우로코노이에 최고'},
+      {name:'난킨마치 (차이나타운)',time:'12:00', tip:'고베식 중화요리·돼지고기 만두(豚まん) 필수'},
+      {name:'고베 비프 점심',       time:'13:00', tip:'세계 3대 브랜드 고베 쇠고기, 스테이크 런치 추천'},
+      {name:'고베 하버랜드',        time:'15:30', tip:'메리켄파크·고베 포트타워·야경의 핵심'},
+      {name:'롯코산 야경',          time:'18:30', tip:'100만 달러 야경이라 불리는 고베 최고 야경 포인트'},
+    ]},
+  ],
+  '나고야':[
+    {label:'나고야 핵심 탐방',places:[
+      {name:'나고야성',             time:'09:00', tip:'금 샤치호코로 유명, 혼마루 어전 복원 화려해'},
+      {name:'아쓰타 신궁',         time:'11:30', tip:'일본 3대 신궁, 草薙剣(초치의 검) 신기 봉안'},
+      {name:'오스 상점가',         time:'14:00', tip:'고풍스러운 아케이드에 힙한 카페·중고 가게 혼재'},
+      {name:'나고야 메시 투어',     time:'17:00', tip:'미소카쓰·히쓰마부시(장어덮밥)·데바사키 치킨 3종 세트'},
+      {name:'사카에 야경',         time:'20:00', tip:'나고야 최대 번화가, 오아시스 21 공중 수족관'},
+    ]},
+  ],
+  '벳푸':[
+    {label:'온천 천국 벳푸 완전 정복',places:[
+      {name:'지옥 온천 순례',       time:'09:00', tip:'바다 지옥·피 연못 지옥 등 8개 지옥, 약 2시간'},
+      {name:'다케가와라 온천',      time:'11:30', tip:'1879년 개업 레트로 온천, 증기 모래찜질 체험'},
+      {name:'벳푸 온천 타운',       time:'13:30', tip:'온천 증기 피어오르는 거리 산책, 온천 만주'},
+      {name:'칸나와 무시유',        time:'15:00', tip:'지열로 찌는 독특한 온천 찜 요리 체험'},
+      {name:'벳푸 로프웨이',        time:'17:00', tip:'쓰루미다케에서 온천 도시 전경과 석양 감상'},
+    ]},
+  ],
 };
 
 // ── STATE ─────────────────────────────────
@@ -1038,23 +1210,76 @@ async function genItinerary(){
   const aiStyle=document.getElementById('ai-style').value;
   const aiPeople=document.getElementById('ai-people').value;
   const interests=Array.from(document.querySelectorAll('.ai-chip.on')).map(c=>c.textContent.trim()).join(', ');
-  btn.disabled=true;btn.textContent='&#10006; 생성 중...';
-  resultEl.innerHTML='<div class="tri-wrap"><div class="tri-card"><div class="tri-loading"><div class="tri-dots"><span></span><span></span><span></span></div><div class="tri-loading-txt">Claude AI가 '+aiCity+' 맞춤 일정을 설계하고 있어요...</div></div></div></div>';
-  const prompt='일본 여행 전문가입니다. JSON만 응답. 다른 텍스트 없이 순수 JSON만.\n조건: 도시:'+aiCity+' / 기간:'+aiDays+'박'+(parseInt(aiDays)+1)+'일 / 스타일:'+aiStyle+' / 동행:'+aiPeople+' / 관심사:'+(interests||'전반적 관광')+'\n{"days":[{"label":"테마","places":[{"name":"장소명(한국어)","time":"09:00"}]}]}\ndays 배열 '+(parseInt(aiDays)+1)+'개, 각 day 4~5장소';
+  const totalDays=parseInt(aiDays)+1;
+
+  btn.disabled=true;btn.textContent='생성 중...';
+  resultEl.innerHTML='<div class="tri-wrap"><div class="tri-card"><div class="tri-loading"><div class="tri-dots"><span></span><span></span><span></span></div><div class="tri-loading-txt">Claude AI가 '+aiCity+' '+aiDays+'박'+totalDays+'일 맞춤 일정을<br>꼼꼼하게 설계하고 있어요...</div></div></div></div>';
+
+  const prompt=`당신은 일본 여행 전문 컨설턴트입니다. 아래 조건에 맞는 완성도 높은 여행 일정을 JSON으로 작성해주세요.
+
+[여행 조건]
+- 도시: ${aiCity}
+- 기간: ${aiDays}박 ${totalDays}일
+- 여행 스타일: ${aiStyle}
+- 동행: ${aiPeople}
+- 관심사: ${interests||'전반적 관광, 현지 문화 체험'}
+
+[작성 규칙]
+1. days 배열에 정확히 ${totalDays}개의 day 객체를 만드세요
+2. 각 day마다 5~6개의 장소를 포함하세요
+3. 장소명은 반드시 한국어로 작성하세요
+4. label은 그날의 테마를 한국어로 간결하게 (예: "전통과 현대의 만남", "미식 탐방의 날")
+5. time은 "HH:MM" 형식, 하루 일정이 08:00~21:00 안에 들어오게 배치
+6. tip은 실용적인 여행 꿀팁 1~2문장 (교통편, 예약 여부, 베스트 방문 시간 등)
+7. ${aiStyle} 스타일과 ${aiPeople} 동행에 맞게 장소를 선택하세요
+
+[반드시 지킬 사항]
+- 순수 JSON만 응답, 설명 텍스트나 마크다운 없이
+- 아래 형식 그대로
+
+{"days":[{"label":"테마명","places":[{"name":"장소명","time":"09:00","tip":"꿀팁 내용"}]}]}`;
+
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,messages:[{role:'user',content:prompt}]})});
-    if(!res.ok)throw new Error('fail');
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:2500,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    if(!res.ok)throw new Error('api_fail_'+res.status);
     const data=await res.json();
+    if(data.error)throw new Error(data.error.message);
     const text=(data.content||[]).map(b=>b.text||'').join('');
     let days=null;
-    try{days=JSON.parse(text.replace(/```json|```/g,'').trim()).days;}catch(e){}
-    if(days&&days.length){resultEl.innerHTML=buildTriResult(days,aiCity,aiDays,aiStyle,aiPeople);}
-    else throw new Error('parse failed');
+    try{
+      const clean=text.replace(/```json|```/g,'').trim();
+      const parsed=JSON.parse(clean);
+      days=parsed.days;
+    }catch(e){
+      // JSON 파싱 실패 시 텍스트에서 추출 시도
+      const match=text.match(/\{[\s\S]*"days"[\s\S]*\}/);
+      if(match)try{days=JSON.parse(match[0]).days;}catch(e2){}
+    }
+    if(days&&days.length){
+      resultEl.innerHTML=buildTriResult(days,aiCity,aiDays,aiStyle,aiPeople);
+    } else {
+      throw new Error('parse_failed');
+    }
   }catch(e){
+    console.warn('AI API 실패, 데모 데이터 사용:', e.message);
     const fb=AI_DB[aiCity]||AI_DB['도쿄'];
-    resultEl.innerHTML=buildTriResult(fb.slice(0,parseInt(aiDays)+1),aiCity,aiDays,aiStyle,aiPeople);
+    const sliced=fb.slice(0,totalDays);
+    // 데모 데이터도 totalDays에 맞게 패딩
+    while(sliced.length<totalDays){
+      const idx=sliced.length%fb.length;
+      sliced.push(Object.assign({},fb[idx],{label:fb[idx].label+' ('+(sliced.length+1)+'일차)'}));
+    }
+    resultEl.innerHTML=buildTriResult(sliced,aiCity,aiDays,aiStyle,aiPeople);
   }
-  btn.disabled=false;btn.textContent='&#10022; AI 맞춤 일정 생성하기';
+  btn.disabled=false;btn.textContent='✦ AI 맞춤 일정 생성하기';
 }
 
 window.onload=()=>{initUI();load();updateBadge();};
