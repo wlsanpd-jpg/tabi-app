@@ -4,442 +4,1060 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>TABI — 일본 여행</title>
-<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
 <style>
+/* ═══ TABI — Triple-style White Theme ═══════════════════════ */
 :root {
-  --bg: #0e0e0f;
-  --surface: #181819;
-  --surface2: #212123;
-  --border: rgba(255,255,255,0.07);
-  --border2: rgba(255,255,255,0.12);
-  --text: #f0ede8;
-  --text2: #9e9b96;
-  --text3: #5a5855;
-  --accent: #e85d3a;
-  --accent2: #ff8060;
-  --gold: #d4a843;
-  --gold2: #f5c96a;
-  --green: #5aad7a;
-  --blue: #4a8fcb;
-  --r-sm: 12px; --r-md: 18px; --r-lg: 24px;
+  --bg:#f8f8f6; --white:#ffffff; --sf:#f2f1ef; --sf2:#e8e7e4;
+  --bd:#e4e3e0; --bd2:#d0cfc9;
+  --tx:#1a1a18; --tx2:#6b6a66; --tx3:#a8a7a2;
+  --ac:#00c896; --ac2:#00b085; --ac-bg:#e6faf5;
+  --red:#ff4757; --gold:#f0a500;
+  --klook:#f4452a; --mrt:#ff6b35;
+  --nav:58px; --safe:env(safe-area-inset-bottom);
+  --f:'Noto Sans KR',sans-serif;
+  --fdis:'Playfair Display',serif;
 }
-* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; }
-body::after { content:''; position:fixed; inset:0; z-index:9999; pointer-events:none; opacity:.02; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
-.app { max-width:480px; margin:0 auto; min-height:100vh; display:flex; flex-direction:column; }
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;-webkit-font-smoothing:antialiased;}
+body{font-family:var(--f);background:var(--bg);color:var(--tx);overflow-x:hidden;}
+.app{max-width:480px;margin:0 auto;min-height:100%;background:var(--white);position:relative;}
+.page{display:none;flex-direction:column;min-height:100vh;}
+.page.active{display:flex;}
+.pb{padding-bottom:calc(var(--nav) + var(--safe) + 16px);}
+a,button{font-family:var(--f);}
+::-webkit-scrollbar{display:none;}
+img{display:block;}
 
-/* HEADER */
-header { position:sticky; top:0; z-index:100; background:rgba(14,14,15,0.94); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:16px 20px 12px; }
-.hrow1 { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
-.logo { display:flex; align-items:baseline; gap:10px; }
-.logo-main { font-family:'Shippori Mincho',serif; font-size:26px; font-weight:700; letter-spacing:5px; color:var(--text); position:relative; }
-.logo-main::after { content:''; position:absolute; bottom:-2px; left:0; right:0; height:1px; background:linear-gradient(90deg,var(--accent),transparent); }
-.logo-sub { font-size:11px; color:var(--text3); letter-spacing:2px; font-weight:300; }
-.status-pill { display:flex; align-items:center; gap:5px; background:var(--surface2); border:1px solid rgba(90,173,122,.35); border-radius:20px; padding:6px 12px; font-size:11px; color:var(--green); }
-.status-dot { width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 5px var(--green); flex-shrink:0; animation: pulse 2s infinite; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-.search-row { display:flex; gap:8px; }
-.sfield { flex:1; display:flex; align-items:center; gap:8px; background:var(--surface); border:1px solid var(--border); border-radius:var(--r-sm); padding:0 14px; transition:border-color .2s; }
-.sfield:focus-within { border-color:var(--border2); }
-.sfield svg { opacity:.3; flex-shrink:0; }
-.sfield input { background:none; border:none; outline:none; color:var(--text); font-size:13px; font-family:'Noto Sans KR',sans-serif; width:100%; padding:10px 0; }
-.sfield input::placeholder { color:var(--text3); }
-.sbtn { background:var(--accent); border:none; color:#fff; border-radius:var(--r-sm); padding:0 18px; font-size:13px; font-weight:500; cursor:pointer; font-family:'Noto Sans KR',sans-serif; transition:background .2s; white-space:nowrap; }
-.sbtn:hover { background:var(--accent2); }
+/* ── HEADER ─────────────────────────────────── */
+.hd{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.95);
+  backdrop-filter:blur(16px);border-bottom:1px solid var(--bd);}
+.hd-inner{display:flex;align-items:center;gap:10px;padding:12px 16px 10px;}
+.logo-wrap{flex:1;}
+.logo{font-family:var(--fdis);font-size:24px;font-weight:900;
+  color:var(--tx);letter-spacing:-.5px;line-height:1;}
+.logo span{color:var(--ac);}
+.logo-sub{font-size:10px;color:var(--tx3);font-weight:400;letter-spacing:.5px;margin-top:1px;}
+.hd-search{width:36px;height:36px;border-radius:50%;background:var(--sf);
+  border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:var(--tx2);transition:all .2s;}
+.hd-search:hover{background:var(--sf2);}
+.hd-status{display:flex;align-items:center;gap:4px;background:var(--ac-bg);
+  border-radius:20px;padding:4px 10px;font-size:10px;font-weight:700;color:var(--ac2);}
+.hd-status-dot{width:5px;height:5px;border-radius:50%;background:var(--ac);
+  animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* CITY TABS */
-.city-row { display:flex; overflow-x:auto; background:var(--surface); border-bottom:1px solid var(--border); padding:0 20px; }
-.city-row::-webkit-scrollbar { display:none; }
-.city-btn { flex-shrink:0; background:none; border:none; color:var(--text3); font-size:12px; font-weight:500; letter-spacing:.5px; padding:12px 14px; cursor:pointer; font-family:'Noto Sans KR',sans-serif; position:relative; transition:color .2s; white-space:nowrap; }
-.city-btn.active { color:var(--text); }
-.city-btn.active::after { content:''; position:absolute; bottom:0; left:14px; right:14px; height:2px; background:var(--accent); border-radius:1px; }
+/* search bar slide-in */
+.search-bar{background:var(--white);border-bottom:1px solid var(--bd);padding:8px 16px 10px;
+  display:flex;gap:8px;transition:all .2s;}
+.search-bar.hidden{display:none;}
+.sfield{flex:1;display:flex;align-items:center;gap:8px;background:var(--sf);
+  border:1.5px solid var(--bd);border-radius:24px;padding:0 14px;transition:all .2s;}
+.sfield:focus-within{border-color:var(--ac);background:var(--white);}
+.sfield svg{color:var(--tx3);flex-shrink:0;}
+.sfield input{background:none;border:none;outline:none;color:var(--tx);
+  font-size:14px;font-family:var(--f);width:100%;padding:9px 0;}
+.sfield input::placeholder{color:var(--tx3);}
+.s-go{background:var(--ac);border:none;color:#fff;border-radius:24px;padding:0 18px;
+  height:40px;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;}
+.s-cancel{background:none;border:none;color:var(--tx2);font-size:13px;
+  font-weight:700;cursor:pointer;padding:0 4px;white-space:nowrap;}
 
-/* CATEGORIES */
-.cat-row { display:flex; gap:6px; padding:14px 20px; overflow-x:auto; }
-.cat-row::-webkit-scrollbar { display:none; }
-.cat-btn { flex-shrink:0; display:flex; align-items:center; gap:5px; background:var(--surface); border:1px solid var(--border); border-radius:var(--r-sm); padding:8px 14px; font-size:12px; color:var(--text2); cursor:pointer; font-family:'Noto Sans KR',sans-serif; transition:all .2s; white-space:nowrap; }
-.cat-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; }
-.cat-btn:hover:not(.active) { border-color:var(--border2); color:var(--text); }
+/* ── CITY TABS ──────────────────────────────── */
+.city-row{display:flex;overflow-x:auto;background:var(--white);
+  border-bottom:1px solid var(--bd);padding:0 12px;}
+.city-btn{flex-shrink:0;background:none;border:none;color:var(--tx3);
+  font-size:13px;font-weight:700;padding:10px 8px 8px;cursor:pointer;
+  font-family:var(--f);position:relative;transition:color .15s;white-space:nowrap;}
+.city-btn.on{color:var(--ac);}
+.city-btn.on::after{content:'';position:absolute;bottom:0;left:4px;right:4px;
+  height:2.5px;background:var(--ac);border-radius:2px;}
 
-/* HERO */
-.hero-section { padding:0 20px 20px; }
-.hero-card { border-radius:var(--r-lg); overflow:hidden; position:relative; height:190px; cursor:pointer; box-shadow:0 8px 32px rgba(0,0,0,.5); transition:transform .25s; }
-.hero-card:hover { transform:scale(1.01); }
-.hero-bg { position:absolute; inset:0; background:linear-gradient(135deg,#1a0a0a 0%,#2d1a0e 40%,#1a1a2e 100%); }
-.hero-pat { position:absolute; inset:0; opacity:.05; background-image:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20.5V18H0v5h5v5H0v5h20v-2.5h-5v-5h5v-5h-5zm8.5 8V18H18v5h5v5h-5v5h20v-2.5h-5v-5h5v-5h-5z' fill='%23fff'/%3E%3C/svg%3E"); }
-.hero-glow { position:absolute; inset:0; background:radial-gradient(ellipse at 70% 30%,rgba(232,93,58,.2) 0%,transparent 65%); }
-.hero-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.4; }
-.hero-emoji { position:absolute; top:18px; right:20px; font-size:54px; opacity:.65; }
-.hero-content { position:absolute; bottom:0; left:0; right:0; padding:20px; background:linear-gradient(transparent,rgba(0,0,0,.78)); }
-.hero-eye { display:inline-flex; align-items:center; gap:4px; background:var(--accent); border-radius:4px; font-size:9px; color:#fff; padding:3px 8px; letter-spacing:1.5px; font-weight:600; margin-bottom:8px; }
-.hero-title { font-family:'Shippori Mincho',serif; font-size:22px; font-weight:700; color:#fff; line-height:1.2; }
-.hero-sub { font-size:11px; color:rgba(255,255,255,.55); margin-top:3px; }
-.hero-rating { display:flex; align-items:center; gap:6px; margin-top:8px; }
-.hero-stars { display:flex; gap:1px; }
-.hero-star { font-size:12px; color:var(--gold); }
-.hero-rnum { font-size:13px; font-weight:700; color:#fff; }
-.hero-rcnt { font-size:11px; color:rgba(255,255,255,.5); }
+/* ── CATEGORY BAR ───────────────────────────── */
+.cat-row{display:flex;gap:7px;overflow-x:auto;padding:10px 16px 8px;
+  background:var(--white);border-bottom:1px solid var(--bd);}
+.cat-btn{flex-shrink:0;display:flex;align-items:center;gap:4px;background:var(--sf);
+  border:1.5px solid var(--bd);border-radius:20px;padding:6px 13px;
+  font-size:12px;font-weight:700;color:var(--tx2);cursor:pointer;
+  white-space:nowrap;transition:all .15s;font-family:var(--f);}
+.cat-btn.on{background:var(--tx);border-color:var(--tx);color:var(--white);}
+.cat-btn:hover:not(.on){border-color:var(--ac);color:var(--ac);}
 
-/* SECTION LABEL */
-.sec-label { display:flex; align-items:center; justify-content:space-between; padding:0 20px 12px; }
-.sec-title { font-family:'Shippori Mincho',serif; font-size:17px; font-weight:600; }
-.sec-count { font-size:11px; color:var(--text3); }
+/* ── BOOKING STRIP ──────────────────────────── */
+.bk-strip{background:var(--white);border-bottom:1px solid var(--bd);}
+.bk-strip-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 8px;}
+.bk-strip-lbl{font-size:13px;font-weight:800;color:var(--tx);}
+.bk-strip-badge{font-size:10px;font-weight:700;color:var(--ac);
+  background:var(--ac-bg);border-radius:4px;padding:2px 7px;}
+.bk-list{display:flex;gap:10px;padding:0 16px 14px;overflow-x:auto;}
+.bk-card{flex-shrink:0;width:148px;background:var(--sf);border-radius:14px;
+  overflow:hidden;cursor:pointer;transition:all .2s;border:1.5px solid var(--bd);}
+.bk-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.1);}
+.bk-card-img{height:74px;background:linear-gradient(135deg,#e8f5e9,#e3f2fd);
+  display:flex;align-items:center;justify-content:center;font-size:28px;position:relative;}
+.bk-plat{position:absolute;top:5px;right:5px;font-size:9px;font-weight:800;
+  color:#fff;padding:2px 5px;border-radius:3px;}
+.bk-plat.kl{background:var(--klook);}.bk-plat.mr{background:var(--mrt);}
+.bk-card-body{padding:8px 10px 10px;}
+.bk-nm{font-size:11px;font-weight:700;color:var(--tx);line-height:1.35;margin-bottom:3px;}
+.bk-price{font-size:12px;font-weight:900;color:var(--ac);}
+.bk-price span{font-size:10px;font-weight:400;color:var(--tx3);}
+.bk-comm{font-size:9px;font-weight:700;color:var(--gold);margin-top:2px;}
 
-/* PLACE CARD */
-.places-list { padding:0 20px; display:flex; flex-direction:column; gap:10px; }
-.pcard { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-md); padding:16px; display:flex; gap:14px; cursor:pointer; transition:all .2s; animation:fadeUp .4s ease both; }
-@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-.pcard:hover { border-color:var(--border2); background:var(--surface2); transform:translateY(-1px); box-shadow:0 8px 24px rgba(0,0,0,.3); }
-.pthumb { width:76px; height:76px; border-radius:var(--r-sm); background:var(--surface2); flex-shrink:0; overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:30px; border:1px solid var(--border); }
-.pthumb img { width:100%; height:100%; object-fit:cover; }
-.pbody { flex:1; min-width:0; }
-.pname { font-size:14px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:2px; }
-.ptype { font-size:10px; color:var(--text3); letter-spacing:.5px; margin-bottom:7px; }
-.rrow { display:flex; align-items:center; gap:6px; margin-bottom:7px; }
-.smini { display:flex; gap:1px; }
-.s { font-size:11px; color:var(--text3); }
-.s.on { color:var(--gold); }
-.rnum { font-size:13px; font-weight:700; color:var(--text); }
-.rcnt { font-size:10px; color:var(--text3); }
-.tags { display:flex; gap:4px; flex-wrap:wrap; }
-.tag { font-size:10px; padding:3px 8px; border-radius:6px; background:var(--surface2); color:var(--text2); border:1px solid var(--border); }
-.tag.open { color:var(--green); border-color:rgba(90,173,122,.25); background:rgba(90,173,122,.08); }
-.tag.closed { color:var(--accent); border-color:rgba(232,93,58,.2); background:rgba(232,93,58,.07); }
-.tag.gold { color:var(--gold); border-color:rgba(212,168,67,.25); background:rgba(212,168,67,.08); }
-.pright { display:flex; flex-direction:column; align-items:flex-end; gap:8px; flex-shrink:0; }
-.sbtn2 { background:none; border:none; cursor:pointer; font-size:18px; color:var(--text3); transition:color .2s; padding:2px; line-height:1; }
-.sbtn2.on { color:var(--accent); }
-.tipbadge { font-size:9px; color:var(--text3); background:var(--surface2); border:1px solid var(--border); border-radius:4px; padding:2px 6px; text-align:center; line-height:1.4; max-width:58px; }
+/* ── SECTION HEAD ───────────────────────────── */
+.sec-head{display:flex;align-items:center;justify-content:space-between;
+  padding:18px 16px 12px;}
+.sec-title{font-size:18px;font-weight:900;color:var(--tx);letter-spacing:-.3px;}
+.sec-count{font-size:12px;color:var(--tx3);}
 
-/* LOADING / EMPTY */
-.loading-wrap { padding:60px 20px; text-align:center; }
-.spinner { width:32px; height:32px; border:2px solid var(--surface2); border-top-color:var(--accent); border-radius:50%; animation:spin .7s linear infinite; margin:0 auto 12px; }
-@keyframes spin { to{transform:rotate(360deg)} }
-.ltxt { font-size:12px; color:var(--text3); }
-.empty { padding:60px 20px; text-align:center; }
-.eicon { font-size:44px; margin-bottom:12px; }
-.etxt { font-size:13px; color:var(--text3); }
+/* ── PLACE CARD — Triple style ──────────────── */
+.place-list{display:flex;flex-direction:column;gap:0;}
+.pc{background:var(--white);border-bottom:1px solid var(--bd);
+  cursor:pointer;transition:background .12s;animation:fadeUp .3s cubic-bezier(.16,1,.3,1) both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.pc:active{background:var(--sf);}
 
-/* DETAIL */
-.detail { position:fixed; inset:0; z-index:150; background:var(--bg); overflow-y:auto; transform:translateX(100%); transition:transform .35s cubic-bezier(.4,0,.2,1); }
-.detail.open { transform:translateX(0); }
-.dnav { position:sticky; top:0; z-index:10; background:rgba(14,14,15,.9); backdrop-filter:blur(16px); border-bottom:1px solid var(--border); padding:14px 20px; display:flex; align-items:center; gap:12px; }
-.backbtn { background:none; border:1px solid var(--border); border-radius:8px; color:var(--text2); cursor:pointer; width:34px; height:34px; display:flex; align-items:center; justify-content:center; font-size:16px; transition:all .2s; }
-.backbtn:hover { border-color:var(--border2); color:var(--text); }
-.dnavtitle { font-size:14px; font-weight:500; color:var(--text); }
-.dhero { width:100%; height:210px; background:var(--surface2); display:flex; align-items:center; justify-content:center; font-size:80px; overflow:hidden; position:relative; }
-.dhero img { width:100%; height:100%; object-fit:cover; }
-.dhero-fade { position:absolute; bottom:0; left:0; right:0; height:80px; background:linear-gradient(transparent,var(--bg)); pointer-events:none; }
-.dbody { padding:20px; }
-.dname { font-family:'Shippori Mincho',serif; font-size:24px; font-weight:700; margin-bottom:4px; }
-.dtype { font-size:11px; color:var(--text3); letter-spacing:.5px; margin-bottom:18px; }
-.drating { display:flex; align-items:center; gap:16px; background:var(--surface); border:1px solid var(--border); border-radius:var(--r-md); padding:16px 20px; margin-bottom:16px; }
-.dbignum { font-family:'Shippori Mincho',serif; font-size:42px; font-weight:700; line-height:1; }
-.dright { flex:1; }
-.dstars { display:flex; gap:3px; margin-bottom:3px; }
-.dstar { font-size:15px; color:var(--gold); }
-.dstar.off { color:var(--text3); }
-.drev { font-size:11px; color:var(--text3); }
-.dgrid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
-.dcell { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-sm); padding:13px 14px; }
-.dclabel { font-size:9px; color:var(--text3); letter-spacing:1px; text-transform:uppercase; margin-bottom:5px; }
-.dcval { font-size:13px; color:var(--text); font-weight:500; line-height:1.4; }
-.dtips-title { font-size:11px; color:var(--text3); letter-spacing:.5px; text-transform:uppercase; margin-bottom:10px; }
-.dtip { display:flex; gap:10px; align-items:flex-start; background:var(--surface); border:1px solid var(--border); border-radius:var(--r-sm); padding:12px; margin-bottom:8px; }
-.dtip-icon { font-size:16px; flex-shrink:0; }
-.dtip-txt { font-size:12px; color:var(--text2); line-height:1.6; }
-.dactions { display:flex; flex-direction:column; gap:8px; margin-top:18px; }
-.dbtn { width:100%; padding:14px; border-radius:var(--r-sm); border:none; font-size:14px; font-weight:600; cursor:pointer; font-family:'Noto Sans KR',sans-serif; transition:all .2s; display:flex; align-items:center; justify-content:center; gap:7px; }
-.dbtn.p { background:var(--accent); color:#fff; }
-.dbtn.p:hover { background:var(--accent2); }
-.dbtn.s { background:var(--surface); color:var(--text); border:1px solid var(--border2); }
-.dbtn.s:hover { background:var(--surface2); }
+/* image area */
+.pc-img{width:100%;height:200px;background:var(--sf2);position:relative;overflow:hidden;}
+.pc-img img{width:100%;height:100%;object-fit:cover;transition:transform .4s ease;}
+.pc:hover .pc-img img{transform:scale(1.03);}
+.pc-img-grad{position:absolute;inset:0;
+  background:linear-gradient(to bottom,rgba(0,0,0,.0) 50%,rgba(0,0,0,.35) 100%);}
+.pc-rank{position:absolute;top:12px;left:12px;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(6px);
+  color:#fff;font-size:11px;font-weight:800;padding:4px 9px;border-radius:6px;}
+.pc-cat-badge{position:absolute;bottom:12px;left:12px;
+  background:rgba(255,255,255,.92);color:var(--tx);
+  font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;}
+.pc-save-btn{position:absolute;top:10px;right:10px;
+  width:34px;height:34px;border-radius:50%;
+  background:rgba(255,255,255,.9);border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;color:var(--tx3);transition:all .2s;
+  box-shadow:0 2px 8px rgba(0,0,0,.12);}
+.pc-save-btn.on{color:var(--red);}
+
+/* info area */
+.pc-info{padding:13px 16px 8px;}
+.pc-name{font-size:17px;font-weight:800;color:var(--tx);
+  margin-bottom:4px;letter-spacing:-.3px;line-height:1.25;}
+.pc-addr{font-size:12px;color:var(--tx3);margin-bottom:9px;}
+.pc-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.pc-rating{display:flex;align-items:center;gap:3px;}
+.pc-stars{display:flex;gap:1px;}
+.pc-star{font-size:11px;color:var(--bd2);}.pc-star.on{color:var(--gold);}
+.pc-rnum{font-size:13px;font-weight:800;color:var(--tx);}
+.pc-rcnt{font-size:11px;color:var(--tx3);}
+.pc-sep{width:1px;height:11px;background:var(--bd2);}
+.pc-open{font-size:11px;font-weight:700;color:var(--ac);}
+.pc-closed{font-size:11px;font-weight:700;color:var(--red);}
+
+/* CTA row */
+.pc-cta{display:flex;border-top:1.5px solid var(--bd);margin-top:10px;}
+.pc-cta a{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;
+  padding:11px 6px;text-decoration:none;font-size:12px;font-weight:800;
+  font-family:var(--f);transition:background .15s;color:var(--tx2);}
+.pc-cta a+a{border-left:1.5px solid var(--bd);}
+.pc-cta a.kl{color:var(--klook);}.pc-cta a.kl:hover{background:rgba(244,69,42,.06);}
+.pc-cta a.mr{color:var(--mrt);}.pc-cta a.mr:hover{background:rgba(255,107,53,.06);}
+.pc-cta a.gm:hover{background:var(--sf);}
+
+/* ── LOADING / EMPTY ────────────────────────── */
+.loading{padding:80px 20px;text-align:center;}
+.spinner{width:32px;height:32px;border:3px solid var(--bd2);
+  border-top-color:var(--ac);border-radius:50%;animation:spin .7s linear infinite;
+  margin:0 auto 14px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-txt{font-size:13px;color:var(--tx3);}
+.empty{padding:80px 20px;text-align:center;}
+.empty-ic{font-size:48px;margin-bottom:12px;}
+.empty-tx{font-size:13px;color:var(--tx3);line-height:1.7;}
+
+/* ═══ BOTTOM NAV ════════════════════════════ */
+.bot-nav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:480px;z-index:300;
+  background:rgba(255,255,255,.97);backdrop-filter:blur(20px);
+  border-top:1px solid var(--bd);
+  display:flex;align-items:stretch;
+  height:calc(var(--nav) + var(--safe));
+  padding-bottom:var(--safe);
+}
+.nav-it{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:3px;background:none;border:none;
+  cursor:pointer;font-family:var(--f);font-size:10px;font-weight:700;
+  color:var(--tx3);transition:color .15s;position:relative;padding-top:6px;
+}
+.nav-it.on{color:var(--ac);}
+.nav-it.on .nav-ic-wrap::after{
+  content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:20px;height:2.5px;background:var(--ac);border-radius:0 0 3px 3px;
+  top:-6px;
+}
+.nav-ic-wrap{position:relative;display:flex;align-items:center;justify-content:center;}
+.nav-ic{font-size:22px;line-height:1;}
+.nav-badge{position:absolute;top:-4px;right:-6px;background:var(--red);color:#fff;
+  font-size:9px;font-weight:800;border-radius:10px;padding:1px 5px;
+  min-width:16px;text-align:center;display:none;line-height:1.4;}
+.nav-badge.show{display:block;}
+
+/* ═══ AI PAGE ═══════════════════════════════ */
+.ai-pg{overflow-y:auto;flex:1;background:var(--bg);}
+.ai-hero{padding:28px 20px 24px;
+  background:linear-gradient(160deg,#0a1628 0%,#1a2d1a 40%,#0a2018 100%);
+  position:relative;overflow:hidden;}
+.ai-hero::before{content:'';position:absolute;right:-30px;top:-30px;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,200,150,.15),transparent 70%);}
+.ai-hero-sub{font-size:11px;font-weight:700;color:var(--ac);
+  letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;}
+.ai-hero-title{font-family:var(--fdis);font-size:28px;font-weight:900;
+  color:#fff;line-height:1.2;letter-spacing:-.5px;margin-bottom:6px;}
+.ai-hero-title em{color:var(--ac);font-style:italic;}
+.ai-hero-desc{font-size:13px;color:rgba(255,255,255,.6);line-height:1.65;}
+.ai-form{margin:16px;background:var(--white);border-radius:16px;
+  overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.07);border:1px solid var(--bd);}
+.ai-form-sec{padding:16px 16px 0;}
+.ai-lbl{font-size:10px;font-weight:800;color:var(--tx3);letter-spacing:.8px;
+  text-transform:uppercase;margin-bottom:7px;display:block;}
+.ai-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.ai-sel{width:100%;background:var(--sf);border:1.5px solid var(--bd);
+  border-radius:10px;padding:10px 12px;font-size:13px;color:var(--tx);
+  font-family:var(--f);font-weight:600;outline:none;transition:border-color .2s;appearance:none;}
+.ai-sel:focus{border-color:var(--ac);}
+.ai-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.ai-chip{background:var(--sf);border:1.5px solid var(--bd);border-radius:20px;
+  padding:6px 12px;font-size:12px;font-weight:700;color:var(--tx2);
+  cursor:pointer;transition:all .15s;font-family:var(--f);}
+.ai-chip.on{background:var(--tx);border-color:var(--tx);color:#fff;}
+.ai-gen-btn{display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;background:var(--ac);color:#fff;border:none;padding:16px;
+  font-size:15px;font-weight:900;cursor:pointer;font-family:var(--f);
+  transition:background .2s;}
+.ai-gen-btn:hover{background:var(--ac2);}
+.ai-gen-btn:disabled{opacity:.5;cursor:not-allowed;}
+
+/* AI result */
+.tri-wrap{margin:16px;}
+.tri-card{background:var(--white);border-radius:16px;overflow:hidden;
+  border:1px solid var(--bd);box-shadow:0 2px 16px rgba(0,0,0,.07);}
+.tri-top{padding:20px 18px 16px;background:linear-gradient(135deg,#0a1628,#1a2d1a);
+  text-align:center;border-bottom:1px solid var(--bd);}
+.tri-em{font-size:40px;margin-bottom:10px;}
+.tri-title{font-family:var(--fdis);font-size:20px;color:#fff;font-weight:700;
+  margin-bottom:4px;line-height:1.3;}
+.tri-title em{color:var(--ac);font-style:italic;}
+.tri-sub{font-size:12px;color:rgba(255,255,255,.5);}
+.tri-map{height:190px;position:relative;background:linear-gradient(135deg,#e8f5e9,#e3f2fd,#fce4ec);overflow:hidden;}
+.tri-map-grid{position:absolute;inset:0;opacity:.5;
+  background-image:linear-gradient(rgba(0,0,0,.06) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,0,0,.06) 1px,transparent 1px);
+  background-size:26px 26px;}
+.road-h{position:absolute;left:0;right:0;background:rgba(255,255,255,.7);border-radius:2px;}
+.road-v{position:absolute;top:0;bottom:0;background:rgba(255,255,255,.7);border-radius:2px;}
+.tri-svg{position:absolute;inset:0;width:100%;height:100%;}
+.tri-pin{position:absolute;transform:translate(-50%,-50%);width:28px;height:28px;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:900;color:#fff;cursor:pointer;z-index:2;
+  box-shadow:0 2px 8px rgba(0,0,0,.2);transition:transform .2s;
+  font-family:var(--f);border:2px solid rgba(255,255,255,.8);}
+.tri-pin:hover,.tri-pin.hl{transform:translate(-50%,-50%) scale(1.2);}
+.tri-daytabs{display:flex;gap:6px;padding:12px 14px;border-bottom:1px solid var(--bd);overflow-x:auto;}
+.tri-daytab{flex-shrink:0;padding:7px 18px;border-radius:20px;font-size:12px;
+  font-weight:800;cursor:pointer;border:1.5px solid var(--bd2);
+  background:var(--white);color:var(--tx3);transition:all .2s;font-family:var(--f);}
+.tri-daytab.on{background:var(--tx);border-color:var(--tx);color:#fff;}
+.tri-places{padding:4px 0;}
+.tri-day-hd{display:flex;align-items:center;gap:8px;padding:12px 16px 8px;}
+.tri-day-dot{width:22px;height:22px;border-radius:50%;display:flex;
+  align-items:center;justify-content:center;font-size:10px;font-weight:900;color:#fff;}
+.tri-day-lbl{font-size:14px;font-weight:800;color:var(--tx);}
+.tri-place-row{display:flex;gap:12px;padding:10px 16px 10px 46px;
+  position:relative;cursor:pointer;transition:background .12s;}
+.tri-place-row:hover{background:var(--sf);}
+.tri-place-row::before{content:'';position:absolute;left:26px;top:0;bottom:0;
+  width:1.5px;background:var(--bd2);}
+.tri-place-row:last-child::before{height:50%;}
+.tri-place-ic{width:50px;height:50px;border-radius:12px;flex-shrink:0;
+  background:var(--sf2);display:flex;align-items:center;justify-content:center;
+  font-size:22px;border:1px solid var(--bd);}
+.tri-place-body{flex:1;min-width:0;}
+.tri-place-name{font-size:14px;font-weight:800;color:var(--tx);margin-bottom:2px;}
+.tri-place-tp{font-size:11px;color:var(--tx3);margin-bottom:4px;}
+.tri-place-cm{font-size:11px;color:var(--ac2);font-weight:700;line-height:1.5;}
+.tri-place-cm::before{content:'Tip. ';}
+.tri-place-time{font-size:10px;color:var(--tx3);margin-top:3px;}
+.tri-footer{border-top:1px solid var(--bd);}
+.tri-tip{margin:0;padding:14px 16px;background:var(--ac-bg);}
+.tri-tip-title{font-size:11px;font-weight:900;color:var(--ac2);margin-bottom:6px;}
+.tri-tip-item{font-size:12px;color:var(--tx2);line-height:1.65;margin-bottom:2px;}
+.tri-budget{display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;border-top:1px solid var(--bd);}
+.tri-budget-lbl{font-size:11px;color:var(--tx3);font-weight:600;}
+.tri-budget-val{font-size:14px;font-weight:900;color:var(--tx);}
+.tri-actions{display:flex;gap:8px;padding:12px 16px 14px;border-top:1px solid var(--bd);}
+.tri-act{flex:1;padding:12px;border-radius:10px;border:none;
+  font-size:13px;font-weight:800;cursor:pointer;font-family:var(--f);transition:all .2s;}
+.tri-act.p{background:var(--ac);color:#fff;}
+.tri-act.s{background:var(--sf);color:var(--tx);border:1.5px solid var(--bd2);}
+.tri-loading{padding:40px 20px;text-align:center;}
+.tri-dots{display:flex;justify-content:center;gap:7px;margin-bottom:14px;}
+.tri-dots span{width:9px;height:9px;border-radius:50%;background:var(--ac);
+  animation:bounce .8s ease-in-out infinite;}
+.tri-dots span:nth-child(2){animation-delay:.14s;}
+.tri-dots span:nth-child(3){animation-delay:.28s;background:var(--bd2);}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-8px)}}
+.tri-loading-txt{font-size:13px;color:var(--tx3);font-weight:600;}
+
+/* ═══ SAVED PAGE ════════════════════════════ */
+.saved-hd{padding:24px 20px 16px;border-bottom:1px solid var(--bd);
+  background:var(--white);}
+.saved-hd-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
+.saved-title{font-family:var(--fdis);font-size:24px;font-weight:900;color:var(--tx);}
+.saved-clear{background:none;border:none;font-size:12px;font-weight:700;
+  color:var(--tx3);cursor:pointer;font-family:var(--f);}
+.saved-clear:hover{color:var(--red);}
+.saved-desc{font-size:13px;color:var(--tx3);}
+.saved-city-lbl{font-size:10px;font-weight:800;letter-spacing:.8px;color:var(--tx3);
+  text-transform:uppercase;padding:16px 16px 8px;display:block;background:var(--bg);}
+.saved-empty{padding:80px 20px;text-align:center;background:var(--white);}
+.saved-empty-ic{font-size:52px;margin-bottom:14px;opacity:.4;}
+.saved-empty-tx{font-size:14px;color:var(--tx3);line-height:1.7;}
+
+/* ═══ DETAIL ════════════════════════════════ */
+.detail{position:fixed;inset:0;z-index:400;background:var(--white);
+  overflow-y:auto;transform:translateX(100%);
+  transition:transform .32s cubic-bezier(.16,1,.3,1);}
+.detail.open{transform:translateX(0);}
+.d-nav{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.95);
+  backdrop-filter:blur(16px);border-bottom:1px solid var(--bd);
+  padding:12px 16px;display:flex;align-items:center;gap:12px;}
+.d-back{background:var(--sf);border:1.5px solid var(--bd2);border-radius:10px;
+  width:36px;height:36px;display:flex;align-items:center;justify-content:center;
+  font-size:16px;cursor:pointer;color:var(--tx2);border:none;background:var(--sf);}
+.d-back:hover{background:var(--sf2);}
+.d-nav-title{font-size:15px;font-weight:800;flex:1;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.d-hero{width:100%;height:260px;background:var(--sf2);position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;font-size:80px;}
+.d-hero img{width:100%;height:100%;object-fit:cover;}
+.d-hero-fade{position:absolute;bottom:0;left:0;right:0;height:80px;
+  background:linear-gradient(transparent,var(--white));}
+.d-body{padding:0 0 120px;background:var(--white);}
+.d-title-sec{padding:16px 16px 14px;border-bottom:1px solid var(--bd);}
+.d-name{font-family:var(--fdis);font-size:24px;font-weight:900;color:var(--tx);
+  letter-spacing:-.4px;margin-bottom:4px;line-height:1.2;}
+.d-type{font-size:12px;color:var(--tx3);}
+.d-rating-sec{padding:16px;border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;gap:16px;background:var(--white);}
+.d-big{font-family:var(--fdis);font-size:48px;font-weight:900;color:var(--tx);line-height:1;}
+.d-stars{display:flex;gap:2px;margin-bottom:3px;}
+.d-star{font-size:16px;color:var(--gold);}.d-star.off{color:var(--bd2);}
+.d-rcnt{font-size:12px;color:var(--tx3);}
+.d-info-sec{padding:14px 16px;border-bottom:1px solid var(--bd);background:var(--bg);}
+.d-info-lbl{font-size:10px;font-weight:800;color:var(--tx3);letter-spacing:.8px;
+  text-transform:uppercase;margin-bottom:10px;}
+.d-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.d-cell{background:var(--white);border-radius:12px;padding:11px 12px;border:1px solid var(--bd);}
+.d-cell-lbl{font-size:9px;color:var(--tx3);letter-spacing:1px;
+  text-transform:uppercase;margin-bottom:4px;font-weight:800;}
+.d-cell-val{font-size:13px;color:var(--tx);font-weight:700;line-height:1.4;}
+.d-bk-sec{background:var(--white);border-bottom:1px solid var(--bd);}
+.d-bk-hd{padding:12px 16px;border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:space-between;}
+.d-bk-title{font-size:11px;font-weight:800;color:var(--tx2);letter-spacing:.5px;text-transform:uppercase;}
+.d-bk-sub{font-size:10px;font-weight:800;color:var(--ac);}
+.d-bk-row{display:flex;align-items:center;justify-content:space-between;
+  padding:13px 16px;cursor:pointer;transition:background .12s;border:none;
+  background:none;width:100%;font-family:var(--f);}
+.d-bk-row:hover{background:var(--sf);}
+.d-bk-row:not(:last-child){border-bottom:1px solid var(--bd);}
+.dbr-l{display:flex;align-items:center;gap:10px;}
+.dbr-logo{width:48px;height:19px;border-radius:4px;display:flex;align-items:center;
+  justify-content:center;font-size:9px;font-weight:900;color:#fff;}
+.dbr-logo.kl{background:var(--klook);}.dbr-logo.mr{background:var(--mrt);}
+.dbr-nm{font-size:12px;font-weight:800;color:var(--tx);text-align:left;}
+.dbr-dc{font-size:10px;color:var(--tx3);margin-top:1px;text-align:left;}
+.dbr-price{font-size:13px;font-weight:900;color:var(--ac);}
+.dbr-comm{font-size:9px;font-weight:800;color:var(--gold);margin-top:1px;}
+.d-actions{padding:14px 16px;background:var(--white);display:flex;flex-direction:column;gap:9px;}
+.d-btn{width:100%;padding:14px;border-radius:12px;border:none;font-size:14px;
+  font-weight:800;cursor:pointer;font-family:var(--f);transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:7px;}
+.d-btn.p{background:var(--ac);color:#fff;}
+.d-btn.p:hover{background:var(--ac2);}
+.d-btn.s{background:var(--sf);color:var(--tx);border:1.5px solid var(--bd2);}
+.d-btn.h{background:var(--sf);color:var(--tx3);border:1.5px solid var(--bd);}
+.d-btn.h.on{color:var(--red);border-color:rgba(255,71,87,.3);background:rgba(255,71,87,.06);}
 </style>
 </head>
 <body>
 <div class="app">
 
-<header>
-  <div class="hrow1">
-    <div class="logo">
-      <span class="logo-main">TABI</span>
-      <span class="logo-sub">旅 · 일본 여행 가이드</span>
+<!-- ═══ EXPLORE ═══ -->
+<div class="page active" id="page-explore">
+  <div class="hd">
+    <div class="hd-inner">
+      <div class="logo-wrap">
+        <div class="logo">TABI<span>.</span></div>
+        <div class="logo-sub">일본 여행 가이드</div>
+      </div>
+      <button class="hd-search" onclick="toggleSearch()" id="searchToggle">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+      </button>
+      <div class="hd-status"><span class="hd-status-dot"></span><span>실시간</span></div>
     </div>
-    <div class="status-pill">
-      <span class="status-dot"></span>
-      <span>Google API 연결됨</span>
+    <div class="search-bar hidden" id="searchBar">
+      <div class="sfield">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input id="searchInput" placeholder="장소, 음식, 지역 검색..." onkeydown="if(event.key==='Enter')doSearch()">
+      </div>
+      <button class="s-go" onclick="doSearch()">검색</button>
+      <button class="s-cancel" onclick="toggleSearch()">취소</button>
     </div>
   </div>
-  <div class="search-row">
-    <div class="sfield">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input type="text" id="searchInput" placeholder="장소, 지역, 키워드 검색..." onkeydown="if(event.key==='Enter')doSearch()">
-    </div>
-    <button class="sbtn" onclick="doSearch()">검색</button>
-  </div>
-</header>
-
-<div class="city-row" id="cityRow"></div>
-<div class="cat-row" id="catRow"></div>
-<div id="mainContent" style="flex:1;padding-bottom:32px"></div>
+  <div class="city-row" id="cityRow"></div>
+  <div class="cat-row"  id="catRow"></div>
+  <div class="pb" id="mainContent" style="overflow-y:auto;flex:1;"></div>
 </div>
 
-<!-- DETAIL -->
-<div class="detail" id="detailPanel">
-  <div class="dnav">
-    <button class="backbtn" onclick="closeDetail()">←</button>
-    <span class="dnavtitle" id="dNavTitle">장소 상세</span>
+<!-- ═══ AI ═══ -->
+<div class="page" id="page-ai">
+  <div class="ai-pg pb">
+    <div class="ai-hero">
+      <div class="ai-hero-sub">Claude AI 탑재</div>
+      <div class="ai-hero-title">혼자 일정 짜기<br>어려울 <em>땐?</em></div>
+      <div class="ai-hero-desc">도시·기간·스타일을 선택하면<br>AI가 맞춤 일정을 바로 짜드려요</div>
+    </div>
+    <div class="ai-form">
+      <div class="ai-form-sec">
+        <label class="ai-lbl">여행 도시 & 기간</label>
+        <div class="ai-grid">
+          <select class="ai-sel" id="ai-city"></select>
+          <select class="ai-sel" id="ai-days">
+            <option value="1">1박 2일</option>
+            <option value="2" selected>2박 3일</option>
+            <option value="3">3박 4일</option>
+            <option value="4">4박 5일</option>
+          </select>
+        </div>
+        <label class="ai-lbl">스타일 & 동행</label>
+        <div class="ai-grid">
+          <select class="ai-sel" id="ai-style">
+            <option value="가성비">💰 가성비</option>
+            <option value="럭셔리">💎 럭셔리</option>
+            <option value="힐링">🧘 힐링</option>
+            <option value="미식">🍱 미식</option>
+            <option value="역사문화">🏛 역사·문화</option>
+          </select>
+          <select class="ai-sel" id="ai-people">
+            <option value="혼자">👤 혼자</option>
+            <option value="커플">👫 커플</option>
+            <option value="가족">👨‍👩‍👧 가족</option>
+            <option value="친구들">👯 친구들</option>
+          </select>
+        </div>
+        <label class="ai-lbl">관심사</label>
+        <div class="ai-chips">
+          <div class="ai-chip" onclick="this.classList.toggle('on')">🌸 벚꽃·단풍</div>
+          <div class="ai-chip" onclick="this.classList.toggle('on')">🍜 라멘·초밥</div>
+          <div class="ai-chip" onclick="this.classList.toggle('on')">🛍 쇼핑</div>
+          <div class="ai-chip" onclick="this.classList.toggle('on')">⛩ 신사·절</div>
+          <div class="ai-chip" onclick="this.classList.toggle('on')">♨️ 온천</div>
+          <div class="ai-chip" onclick="this.classList.toggle('on')">🎮 애니·게임</div>
+          <div class="ai-chip" onclick="this.classList.toggle('on')">🌊 해변·자연</div>
+          <div class="ai-chip" onclick="this.classList.toggle('on')">☕ 카페</div>
+        </div>
+      </div>
+      <button class="ai-gen-btn" id="genBtn" onclick="genItinerary()">✦ AI 맞춤 일정 생성하기</button>
+    </div>
+    <div id="aiResult" style="margin-top:0;"></div>
   </div>
-  <div class="dhero" id="dHero"><div class="dhero-fade"></div></div>
-  <div class="dbody" id="dBody"></div>
+</div>
+
+<!-- ═══ SAVED ═══ -->
+<div class="page" id="page-saved">
+  <div style="overflow-y:auto;flex:1;" class="pb">
+    <div class="saved-hd">
+      <div class="saved-hd-row">
+        <div class="saved-title">저장 목록</div>
+        <button class="saved-clear" onclick="clearAll()">전체 삭제</button>
+      </div>
+      <div class="saved-desc">♥ 눌러 저장한 장소들이에요</div>
+    </div>
+    <div id="savedContent"></div>
+  </div>
+</div>
+
+<!-- ═══ BOTTOM NAV ═══ -->
+<nav class="bot-nav">
+  <button class="nav-it on" id="nav-explore" onclick="switchPage('explore')">
+    <div class="nav-ic-wrap"><span class="nav-ic">🗾</span></div>
+    <span>탐색</span>
+  </button>
+  <button class="nav-it" id="nav-ai" onclick="switchPage('ai')">
+    <div class="nav-ic-wrap"><span class="nav-ic">✦</span></div>
+    <span>AI 일정</span>
+  </button>
+  <button class="nav-it" id="nav-saved" onclick="switchPage('saved')">
+    <div class="nav-ic-wrap">
+      <span class="nav-ic">♥</span>
+      <span class="nav-badge" id="savedBadge">0</span>
+    </div>
+    <span>저장</span>
+  </button>
+</nav>
+
+<!-- ═══ DETAIL ═══ -->
+<div class="detail" id="detailPanel">
+  <div class="d-nav">
+    <button class="d-back" onclick="closeDetail()">←</button>
+    <span class="d-nav-title" id="dNavTitle">장소 상세</span>
+  </div>
+  <div class="d-hero" id="dHero"><div class="d-hero-fade"></div></div>
+  <div class="d-body" id="dBody"></div>
 </div>
 
 <script>
-// ================================================================
-// ✏️  설정 구역 — 여기만 수정하면 됩니다!
-// ================================================================
+'use strict';
+// ════════════════════════════════════════════
+// ⚙️  설정 구역 — 여기만 수정하세요
+// ════════════════════════════════════════════
 
-// 🌐 Vercel 프록시 주소
 const PROXY = 'https://tabi-app-wheat.vercel.app';
 
-// 🏙️ 도시 목록 — 추가/삭제/순서변경 자유롭게
 const CITIES = [
-  { kr: '도쿄',    en: 'Tokyo Japan' },
-  { kr: '오사카',  en: 'Osaka Japan' },
-  { kr: '교토',    en: 'Kyoto Japan' },
-  { kr: '후쿠오카',en: 'Fukuoka Japan' },
-  { kr: '삿포로',  en: 'Sapporo Japan' },
-  { kr: '나라',    en: 'Nara Japan' },
-  { kr: '가마쿠라',en: 'Kamakura Japan' },
+  {kr:'도쿄',    en:'Tokyo Japan',       em:'🗼'},
+  {kr:'오사카',  en:'Osaka Japan',       em:'🦞'},
+  {kr:'교토',    en:'Kyoto Japan',       em:'⛩'},
+  {kr:'후쿠오카',en:'Fukuoka Japan',     em:'🍜'},
+  {kr:'삿포로',  en:'Sapporo Japan',     em:'❄️'},
+  {kr:'나라',    en:'Nara Japan',        em:'🦌'},
+  {kr:'가마쿠라',en:'Kamakura Japan',    em:'🙏'},
+  {kr:'나고야',  en:'Nagoya Japan',      em:'🏯'},
+  {kr:'하코네',  en:'Hakone Japan',      em:'🌋'},
+  {kr:'히로시마',en:'Hiroshima Japan',   em:'🕊️'},
+  {kr:'요코하마',en:'Yokohama Japan',    em:'🌉'},
+  {kr:'고베',    en:'Kobe Japan',        em:'🥩'},
+  {kr:'벳푸',    en:'Beppu Japan',       em:'♨️'},
+  {kr:'가고시마',en:'Kagoshima Japan',   em:'🌋'},
+  {kr:'마쓰야마',en:'Matsuyama Japan',   em:'🏯'},
+  {kr:'니코',    en:'Nikko Japan',       em:'🌿'},
 ];
 
-// 🗂️ 카테고리 목록 — 추가/삭제/순서변경 자유롭게
 const CATEGORIES = [
-  { key: 'tourist_attraction', label: '관광명소', emoji: '🏛' },
-  { key: 'restaurant',         label: '맛집',     emoji: '🍣' },
-  { key: 'cafe',               label: '카페',     emoji: '☕' },
-  { key: 'lodging',            label: '숙박',     emoji: '🏨' },
-  { key: 'shopping_mall',      label: '쇼핑',     emoji: '🛍' },
-  { key: 'park',               label: '공원·자연',emoji: '🌸' },
-  { key: 'museum',             label: '박물관',   emoji: '🎌' },
-  { key: 'amusement_park',     label: '테마파크', emoji: '🎢' },
-  { key: 'spa',                label: '온천',     emoji: '♨️' },
+  {key:'tourist_attraction', label:'관광명소', emoji:'🏛'},
+  {key:'restaurant',         label:'맛집',     emoji:'🍣'},
+  {key:'cafe',               label:'카페',     emoji:'☕'},
+  {key:'lodging',            label:'숙박',     emoji:'🏨'},
+  {key:'shopping_mall',      label:'쇼핑',     emoji:'🛍'},
+  {key:'park',               label:'공원·자연',emoji:'🌸'},
+  {key:'museum',             label:'박물관',   emoji:'🎌'},
+  {key:'amusement_park',     label:'테마파크', emoji:'🎢'},
+  {key:'spa',                label:'온천',     emoji:'♨️'},
 ];
 
-// 🏷️ 앱 이름 & 서브타이틀
 const APP_NAME = 'TABI';
-const APP_SUB  = '旅 · 일본 여행 가이드';
+const APP_SUB  = '일본 여행 가이드';
 
-// ================================================================
-// 이하 코드는 수정하지 않아도 됩니다
-// ================================================================
+// 💰 제휴 ID
+const KLOOK_AFF_ID = 'YOUR_KLOOK_ID';
+const MRT_AFF_ID   = 'YOUR_MRT_ID';
 
-// 설정에서 자동 생성되는 lookup 맵
-const catLabel = Object.fromEntries(CATEGORIES.map(c=>[c.key, c.label]));
-const catEmoji = Object.fromEntries(CATEGORIES.map(c=>[c.key, c.emoji]));
+// ════════════════════════════════════════════
+// 이하 수정 불필요
+// ════════════════════════════════════════════
+const catLabel  = Object.fromEntries(CATEGORIES.map(c=>[c.key,c.label]));
+const catEmoji  = Object.fromEntries(CATEGORIES.map(c=>[c.key,c.emoji]));
+const cityEmoji = Object.fromEntries(CITIES.map(c=>[c.kr,c.em]));
 
-// 도시/카테고리 탭 동적 생성
-function initUI() {
-  // 앱 이름
-  document.querySelector('.logo-main').textContent = APP_NAME;
-  document.querySelector('.logo-sub').textContent  = APP_SUB;
+function toAff(url,p){
+  if(p==='klook'&&KLOOK_AFF_ID!=='YOUR_KLOOK_ID')
+    return 'https://affiliate.klook.com/redirect?aid='+KLOOK_AFF_ID+'&url='+encodeURIComponent(url);
+  if(p==='mrt'&&MRT_AFF_ID!=='YOUR_MRT_ID')
+    return url+(url.includes('?')?'&':'?')+'referral_code='+MRT_AFF_ID+'&utm_source=tabi';
+  return url;
+}
+const KU={
+  skytree:   'https://www.klook.com/ko/activity/41352-tokyo-skytree/',
+  teamlab:   'https://www.klook.com/ko/activity/25300-teamlab-planets-toyosu-tokyo-ticket/',
+  usj:       'https://www.klook.com/ko/activity/3794-universal-studios-japan-ticket-osaka/',
+  usj_exp:   'https://www.klook.com/ko/activity/3407-universal-studios-japan-express-pass-osaka/',
+  kimono:    'https://www.klook.com/ko/activity/117278-kimono-rental-arashiyama-togetukyo-kyoto-aiwafuki/',
+  kyoto_bus: 'https://www.klook.com/ko/activity/83627-kyoto-bus-tour/',
+  arashiyama:'https://www.klook.com/ko/activity/140184-kyoto-arashiyama-kiyomizu-dera-bus-tour-from-osaka/',
+  hakone:    'https://www.klook.com/ko/activity/9943-narita-airport-limousine-bus-hakone-free-pass-tokyo/',
+};
+const KC={
+  '도쿄':    'https://www.klook.com/ko/experiences/list/tokyo-japan/',
+  '오사카':  'https://www.klook.com/ko/experiences/list/osaka-japan/',
+  '교토':    'https://www.klook.com/ko/experiences/list/kyoto-japan/',
+  '후쿠오카':'https://www.klook.com/ko/experiences/list/fukuoka-japan/',
+  '삿포로':  'https://www.klook.com/ko/experiences/list/sapporo-japan/',
+  '나라':    'https://www.klook.com/ko/experiences/list/nara-japan/',
+  '가마쿠라':'https://www.klook.com/ko/experiences/list/kamakura-japan/',
+  '나고야':  'https://www.klook.com/ko/experiences/list/nagoya-japan/',
+  '하코네':  'https://www.klook.com/ko/experiences/list/hakone-japan/',
+  '히로시마':'https://www.klook.com/ko/experiences/list/hiroshima-japan/',
+  '요코하마':'https://www.klook.com/ko/experiences/list/yokohama-japan/',
+  '고베':    'https://www.klook.com/ko/experiences/list/kobe-japan/',
+};
+const MC={
+  '도쿄':    'https://www.myrealtrip.com/offers?query=%EB%8F%84%EC%BF%84+%EC%9D%BC%EB%B3%B8',
+  '오사카':  'https://www.myrealtrip.com/offers?query=%EC%98%A4%EC%82%AC%EC%B9%B4+%EC%9D%BC%EB%B3%B8',
+  '교토':    'https://www.myrealtrip.com/offers?query=%EA%B5%90%ED%86%A0+%EC%9D%BC%EB%B3%B8',
+  '후쿠오카':'https://www.myrealtrip.com/offers?query=%ED%9B%84%EC%BF%A0%EC%98%A4%EC%B9%B4+%EC%9D%BC%EB%B3%B8',
+  '삿포로':  'https://www.myrealtrip.com/offers?query=%EC%82%BF%ED%8F%AC%EB%A1%9C+%EC%9D%BC%EB%B3%B8',
+  '나라':    'https://www.myrealtrip.com/offers?query=%EB%82%98%EB%9D%BC+%EC%9D%BC%EB%B3%B8',
+  '가마쿠라':'https://www.myrealtrip.com/offers?query=%EA%B0%80%EB%A7%88%EC%BF%A0%EB%9D%BC+%EC%9D%BC%EB%B3%B8',
+  '나고야':  'https://www.myrealtrip.com/offers?query=%EB%82%98%EA%B3%A0%EC%95%BC+%EC%9D%BC%EB%B3%B8',
+  '하코네':  'https://www.myrealtrip.com/offers?query=%ED%95%98%EC%BD%94%EB%84%A4+%EC%9D%BC%EB%B3%B8',
+  '히로시마':'https://www.myrealtrip.com/offers?query=%ED%9E%88%EB%A1%9C%EC%8B%9C%EB%A7%88+%EC%9D%BC%EB%B3%B8',
+  '요코하마':'https://www.myrealtrip.com/offers?query=%EC%9A%94%EC%BD%94%ED%95%98%EB%A7%88+%EC%9D%BC%EB%B3%B8',
+  '고베':    'https://www.myrealtrip.com/offers?query=%EA%B3%A0%EB%B2%A0+%EC%9D%BC%EB%B3%B8',
+};
+function kl(k){return toAff(KU[k]||KC['도쿄'],'klook');}
+function klc(c){return toAff(KC[c]||KC['도쿄'],'klook');}
+function mrt(c){return toAff(MC[c]||MC['도쿄'],'mrt');}
 
-  // 도시 탭
-  const cityRow = document.getElementById('cityRow');
-  cityRow.innerHTML = CITIES.map((c,i)=>
-    `<button class="city-btn ${i===0?'active':''}"
-      onclick="setCity(this,'${c.kr}','${c.en}')">${c.kr}</button>`
+const BKP={
+  '도쿄 스카이트리':[
+    {cls:'kl',logo:'KLOOK',nm:'도쿄 스카이트리 입장권',dc:'모바일 티켓 · 현장 바로 입장',pr:'₩38,000~',cm:'최대 8% 커미션',url:kl('skytree')},
+    {cls:'mr',logo:'MRT',  nm:'도쿄 스카이트리 투어',  dc:'마이리얼트립 도쿄 추천',      pr:'₩35,000~',cm:'최대 5% 커미션',url:mrt('도쿄')},
+  ],
+  '팀랩 플래닛 도쿄':[
+    {cls:'kl',logo:'KLOOK',nm:'팀랩 플래닛 입장권',dc:'날짜 지정 · 사전예약 필수',pr:'₩36,000~',cm:'최대 8% 커미션',url:kl('teamlab')},
+  ],
+  '유니버설 스튜디오 재팬(USJ)':[
+    {cls:'kl',logo:'KLOOK',nm:'USJ 1일 입장권',    dc:'당일 QR코드 · 즉시 입장',      pr:'₩98,000~',cm:'최대 8% 커미션',url:kl('usj')},
+    {cls:'kl',logo:'KLOOK',nm:'USJ 익스프레스 패스',dc:'인기 어트랙션 줄 없이',        pr:'₩80,000~',cm:'최대 8% 커미션',url:kl('usj_exp')},
+  ],
+  '기요미즈데라':[
+    {cls:'kl',logo:'KLOOK',nm:'교토 일일 버스 투어',dc:'기요미즈·이나리 포함',        pr:'₩45,000~',cm:'최대 8% 커미션',url:kl('kyoto_bus')},
+    {cls:'mr',logo:'MRT',  nm:'교토 투어 전체 보기',dc:'마이리얼트립 교토 추천',      pr:'₩40,000~',cm:'최대 5% 커미션',url:mrt('교토')},
+  ],
+  '아라시야마 대나무 숲':[
+    {cls:'kl',logo:'KLOOK',nm:'아라시야마 버스 투어',dc:'오사카 출발 당일 교토',      pr:'₩38,000~',cm:'최대 8% 커미션',url:kl('arashiyama')},
+  ],
+  '킨카쿠지':[
+    {cls:'kl',logo:'KLOOK',nm:'교토 일일 버스 투어',dc:'금각사 포함 교토 핵심',      pr:'₩45,000~',cm:'최대 8% 커미션',url:kl('kyoto_bus')},
+  ],
+  '후시미 이나리 대사':[
+    {cls:'kl',logo:'KLOOK',nm:'교토 일일 버스 투어',dc:'이나리·기요미즈 포함 코스',  pr:'₩45,000~',cm:'최대 8% 커미션',url:kl('kyoto_bus')},
+  ],
+  '하코네 오픈에어 뮤지엄':[
+    {cls:'kl',logo:'KLOOK',nm:'하코네 프리패스 + 리무진',dc:'나리타 출발 2일 패스', pr:'₩65,000~',cm:'최대 8% 커미션',url:kl('hakone')},
+    {cls:'mr',logo:'MRT',  nm:'하코네 투어 전체 보기',   dc:'마이리얼트립 하코네', pr:'₩80,000~',cm:'최대 5% 커미션',url:mrt('하코네')},
+  ],
+};
+const CBK={
+  '도쿄':    [{cls:'kl',em:'🗼',logo:'KLOOK',nm:'도쿄 스카이트리 입장권',  pr:'₩38,000~',cm:'8% 커미션',url:kl('skytree')},
+              {cls:'kl',em:'🌊',logo:'KLOOK',nm:'팀랩 플래닛 입장권',     pr:'₩36,000~',cm:'8% 커미션',url:kl('teamlab')},
+              {cls:'mr',em:'🏙',logo:'MRT',  nm:'도쿄 인기 투어 전체 보기',pr:'₩20,000~',cm:'5% 커미션',url:mrt('도쿄')}],
+  '오사카':  [{cls:'kl',em:'🎢',logo:'KLOOK',nm:'USJ 1일 입장권',         pr:'₩98,000~',cm:'8% 커미션',url:kl('usj')},
+              {cls:'kl',em:'⚡',logo:'KLOOK',nm:'USJ 익스프레스 패스',     pr:'₩80,000~',cm:'8% 커미션',url:kl('usj_exp')},
+              {cls:'mr',em:'🍣',logo:'MRT',  nm:'오사카 인기 투어',        pr:'₩20,000~',cm:'5% 커미션',url:mrt('오사카')}],
+  '교토':    [{cls:'kl',em:'🚌',logo:'KLOOK',nm:'교토 일일 버스 투어',     pr:'₩45,000~',cm:'8% 커미션',url:kl('kyoto_bus')},
+              {cls:'kl',em:'👘',logo:'KLOOK',nm:'아라시야마 기모노 렌탈',  pr:'₩22,000~',cm:'8% 커미션',url:kl('kimono')},
+              {cls:'mr',em:'🌙',logo:'MRT',  nm:'교토 인기 투어',          pr:'₩25,000~',cm:'5% 커미션',url:mrt('교토')}],
+  '하코네':  [{cls:'kl',em:'🌋',logo:'KLOOK',nm:'하코네 프리패스+리무진',  pr:'₩65,000~',cm:'8% 커미션',url:kl('hakone')},
+              {cls:'mr',em:'♨️',logo:'MRT',  nm:'하코네 인기 투어',        pr:'₩50,000~',cm:'5% 커미션',url:mrt('하코네')}],
+};
+
+const PINFO={
+  '도쿄 스카이트리':{ic:'🗼',tp:'전망대',cm:'맑은 날엔 후지산까지 보여요! 야경도 환상적'},
+  '아사쿠사 센소지':{ic:'⛩',tp:'신사·사원',cm:'아침 일찍 오면 인파 없이 신비로운 분위기를 만끽'},
+  '메이지 신궁':{ic:'🌲',tp:'신사·공원',cm:'70만 그루 나무로 둘러싸인 도심 속 힐링 공간'},
+  '시부야 스크램블 교차로':{ic:'🚦',tp:'랜드마크',cm:'스타벅스 2층 창가에서 내려다보는 뷰가 최고'},
+  '팀랩 플래닛 도쿄':{ic:'🌊',tp:'미디어아트',cm:'물 위를 걷는 몰입형 디지털 아트, 사전 예약 필수!'},
+  '오사카성':{ic:'🏯',tp:'성·역사',cm:'8층 전망대에서 오사카 전경을 한눈에 담을 수 있어요'},
+  '도톤보리':{ic:'🦞',tp:'먹거리·야경',cm:'글리코 간판 앞 인증샷은 필수! 다코야키·오코노미야키'},
+  '유니버설 스튜디오 재팬(USJ)':{ic:'🎢',tp:'테마파크',cm:'닌텐도 월드·해리포터 구역이 인기, 평일 오전 추천'},
+  '후시미 이나리 대사':{ic:'⛩',tp:'신사·하이킹',cm:'새벽에 오면 안개 속 붉은 도리이를 혼자 독점!'},
+  '아라시야마 대나무 숲':{ic:'🎋',tp:'자연·산책',cm:'아침 7시 이전 방문하면 거의 혼자 즐길 수 있어요'},
+  '킨카쿠지':{ic:'🏛',tp:'절·세계유산',cm:'연못에 황금빛으로 반영되는 풍경, 오전 햇살이 최고'},
+  '기온 거리':{ic:'🌙',tp:'역사지구·전통',cm:'저녁 6~8시에 마이코·게이샤를 실제로 만날 수 있어요'},
+  '기요미즈데라':{ic:'🛕',tp:'절·세계유산',cm:'나무 무대에서 바라보는 교토 시가지 전망이 절경'},
+  '나라 공원':{ic:'🦌',tp:'공원·야생 사슴',cm:'1,200마리 사슴이 자유롭게 다녀요! 사슴 전병 필수'},
+  '도다이지':{ic:'🏛',tp:'절·국보 대불',cm:'세계 최대 목조 건물, 높이 15m 청동 대불이 압도적'},
+  '가마쿠라 대불':{ic:'🙏',tp:'대불·국보',cm:'높이 11m 청동 대불, 내부 입장도 가능(20엔 추가)'},
+  '하코네 오픈에어 뮤지엄':{ic:'🗿',tp:'야외 미술관',cm:'자연 속 세계적 조각 작품들, 족욕탕도 있어요'},
+  '히로시마 평화 기념관':{ic:'🕊️',tp:'역사·기념관',cm:'전쟁의 비극을 기억하는 세계문화유산, 꼭 방문하세요'},
+  '미야지마섬 이쓰쿠시마 신사':{ic:'⛩',tp:'신사·세계유산',cm:'바다 위에 떠있는 붉은 도리이가 절경, 썰물 때 걸어가볼 수 있어요'},
+  '요코하마 차이나타운':{ic:'🏮',tp:'관광지·맛집',cm:'일본 최대 차이나타운, 중화요리와 이국적 분위기'},
+  '고베 하버랜드':{ic:'🌉',tp:'항구·야경',cm:'고베 야경의 상징, 메리켄파크와 함께 황혼 산책'},
+  '벳푸 지옥 온천':{ic:'♨️',tp:'온천·관광',cm:'8개의 독특한 지옥 온천 순례, 세계 유일의 온천 테마파크'},
+};
+function gpi(nm){
+  for(const k of Object.keys(PINFO)){if(nm===k||nm.includes(k)||k.includes(nm))return PINFO[k];}
+  return{ic:'📍',tp:'관광명소',cm:'꼭 방문해볼 만한 추천 장소예요'};
+}
+
+const PIN_C=['#00c896','#ff4757','#3742fa','#f0a500','#a55eea'];
+const AI_DB={
+  '도쿄':   [{label:'여행의 시작',    places:[{name:'아사쿠사 센소지',time:'09:00'},{name:'시부야 스크램블 교차로',time:'15:00'},{name:'도쿄 스카이트리',time:'18:00'}]},
+             {label:'도쿄 핵심 탐방', places:[{name:'메이지 신궁',time:'09:00'},{name:'팀랩 플래닛 도쿄',time:'14:00'},{name:'오다이바 해변공원',time:'18:30'}]},
+             {label:'서브컬처 & 쇼핑',places:[{name:'아키하바라',time:'10:00'},{name:'시부야 109',time:'14:00'},{name:'돈키호테 신주쿠',time:'18:00'}]},
+             {label:'여운의 하루',    places:[{name:'신주쿠 교엔',time:'10:00'},{name:'우에노 공원',time:'14:00'}]}],
+  '오사카': [{label:'오사카 입성',    places:[{name:'구로몬 시장',time:'09:30'},{name:'도톤보리',time:'14:00'},{name:'오사카성',time:'17:00'}]},
+             {label:'테마파크의 날',  places:[{name:'유니버설 스튜디오 재팬(USJ)',time:'09:00'}]}],
+  '교토':   [{label:'교토의 새벽',    places:[{name:'후시미 이나리 대사',time:'07:00'},{name:'기온 거리',time:'13:00'},{name:'기요미즈데라',time:'16:00'}]},
+             {label:'황금빛 교토',    places:[{name:'킨카쿠지',time:'09:00'},{name:'아라시야마 대나무 숲',time:'13:30'},{name:'철학의 길',time:'16:30'}]}],
+  '히로시마':[{label:'평화와 역사',   places:[{name:'히로시마 평화 기념관',time:'09:00'},{name:'미야지마섬 이쓰쿠시마 신사',time:'13:00'},{name:'히로시마성',time:'16:30'}]}],
+  '요코하마':[{label:'항구 도시 산책',places:[{name:'요코하마 차이나타운',time:'10:00'},{name:'야마시타 공원',time:'13:30'},{name:'요코하마 랜드마크 타워',time:'16:00'}]}],
+  '고베':   [{label:'고베 낭만 여행', places:[{name:'고베 하버랜드',time:'10:00'},{name:'기타노 이진칸',time:'13:00'},{name:'산노미야 쇼핑',time:'16:00'}]}],
+  '후쿠오카':[{label:'후쿠오카 도착', places:[{name:'다자이후 텐만구',time:'10:00'},{name:'나카스 야타이 거리',time:'19:00'}]}],
+  '삿포로': [{label:'삿포로 탐방',    places:[{name:'오도리 공원',time:'09:00'},{name:'홋카이도 신궁',time:'11:00'},{name:'삿포로 맥주 박물관',time:'14:00'}]}],
+  '나라':   [{label:'사슴과 대불',    places:[{name:'나라 공원',time:'09:00'},{name:'도다이지',time:'10:30'},{name:'가스가 대사',time:'13:00'}]}],
+  '가마쿠라':[{label:'가마쿠라 산책', places:[{name:'가마쿠라 대불',time:'09:00'},{name:'에노시마 섬',time:'12:00'},{name:'쓰루가오카 하치만구',time:'16:00'}]}],
+  '하코네': [{label:'자연과 온천',    places:[{name:'하코네 오픈에어 뮤지엄',time:'09:00'},{name:'아시노호',time:'12:00'},{name:'오와쿠다니',time:'15:00'}]}],
+  '나고야': [{label:'나고야 핵심',    places:[{name:'나고야성',time:'09:00'},{name:'아쓰타 신궁',time:'13:00'}]}],
+  '벳푸':   [{label:'온천 천국',      places:[{name:'벳푸 지옥 온천',time:'09:00'},{name:'다케가와라 온천',time:'13:00'}]}],
+};
+
+// ── STATE ─────────────────────────────────
+let city=CITIES[0].kr, cityEn=CITIES[0].en, cat=CATEGORIES[0].key;
+let saved=JSON.parse(localStorage.getItem('tabi_saved')||'[]');
+let _places=[];
+let searchOpen=false;
+
+// ── INIT ──────────────────────────────────
+function initUI(){
+  document.getElementById('cityRow').innerHTML=CITIES.map((c,i)=>
+    '<button class="city-btn'+(i===0?' on':'')+'" onclick="setCity(this,\''+c.kr+'\',\''+c.en+'\')">'+c.kr+'</button>'
   ).join('');
-
-  // 카테고리 탭
-  const catRow = document.getElementById('catRow');
-  catRow.innerHTML = CATEGORIES.map((c,i)=>
-    `<button class="cat-btn ${i===0?'active':''}"
-      onclick="setCat(this,'${c.key}')">${c.emoji} ${c.label}</button>`
+  document.getElementById('catRow').innerHTML=CATEGORIES.map((c,i)=>
+    '<button class="cat-btn'+(i===0?' on':'')+'" onclick="setCat(this,\''+c.key+'\')">'+c.emoji+' '+c.label+'</button>'
+  ).join('');
+  document.getElementById('ai-city').innerHTML=CITIES.map(c=>
+    '<option value="'+c.kr+'">'+c.kr+'</option>'
   ).join('');
 }
 
-let city   = CITIES[0].kr;
-let cityEn = CITIES[0].en;
-let cat    = CATEGORIES[0].key;
-let saved  = JSON.parse(localStorage.getItem('tabi_saved')||'[]');
-let _places = [];
+function toggleSearch(){
+  searchOpen=!searchOpen;
+  document.getElementById('searchBar').classList.toggle('hidden',!searchOpen);
+  if(searchOpen)setTimeout(()=>document.getElementById('searchInput').focus(),50);
+}
 
+// ── PAGE ──────────────────────────────────
+function switchPage(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-it').forEach(x=>x.classList.remove('on'));
+  document.getElementById('page-'+p).classList.add('active');
+  document.getElementById('nav-'+p).classList.add('on');
+  if(p==='saved')renderSaved();
+}
+
+// ── NAV ───────────────────────────────────
 function setCity(btn,c,en){
-  document.querySelectorAll('.city-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active'); city=c; cityEn=en; load();
+  document.querySelectorAll('.city-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');city=c;cityEn=en;load();
 }
 function setCat(btn,c){
-  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active'); cat=c; load();
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');cat=c;load();
 }
 function doSearch(){
   const q=document.getElementById('searchInput').value.trim();
   if(!q)return;
   fetchPlaces(q+' Japan',null);
+  if(searchOpen)toggleSearch();
 }
 
-function load(){ fetchPlaces(`${cityEn} ${catLabel[cat]}`, cat); }
-
-async function fetchPlaces(query, type){
+// ── FETCH ─────────────────────────────────
+function load(){fetchPlaces(cityEn+' '+catLabel[cat],cat);}
+async function fetchPlaces(query,type){
   showLoading();
-  try {
-    const params = new URLSearchParams({ query, language:'ko' });
-    if(type) params.append('type', type);
-    const res = await fetch(`${PROXY}/api/places?${params}`);
-    const data = await res.json();
-    if(!data.results?.length){ showEmpty(); return; }
-    _places = data.results.map(r=>({
-      name: r.name,
-      addr: r.formatted_address,
-      rating: r.rating,
-      cnt: r.user_ratings_total,
-      open: r.opening_hours?.open_now,
-      icon: catEmoji[cat]||'📍',
-      types: r.types?.slice(0,3)||[],
-      photo_ref: r.photos?.[0]?.photo_reference,
-      place_id: r.place_id,
-      url: `https://maps.google.com/?cid=${r.place_id}`,
+  try{
+    const params=new URLSearchParams({query,language:'ko'});
+    if(type)params.append('type',type);
+    const res=await fetch(PROXY+'/api/places?'+params);
+    const data=await res.json();
+    if(!data.results||!data.results.length){showEmpty();return;}
+    _places=data.results.map(r=>({
+      name:r.name,addr:r.formatted_address,rating:r.rating,
+      cnt:r.user_ratings_total,open:r.opening_hours&&r.opening_hours.open_now,
+      icon:catEmoji[cat]||'📍',types:(r.types||[]).slice(0,3),
+      photo_ref:r.photos&&r.photos[0]&&r.photos[0].photo_reference,
+      place_id:r.place_id,url:'https://maps.google.com/?cid='+r.place_id,
     }));
     renderList(_places);
-  } catch(e) {
-    console.error(e);
-    showError();
-  }
+  }catch(e){console.error(e);showError();}
 }
-
+function photoUrl(ref,size){
+  if(!ref)return null;
+  return PROXY+'/api/photo?photo_reference='+ref+'&maxwidth='+(size||400);
+}
 function showLoading(){
-  document.getElementById('mainContent').innerHTML=`<div class="loading-wrap"><div class="spinner"></div><div class="ltxt">${city} 정보를 불러오는 중...</div></div>`;
+  document.getElementById('mainContent').innerHTML=
+    '<div class="loading"><div class="spinner"></div><div class="loading-txt">'+city+' 정보를 불러오는 중...</div></div>';
 }
 function showEmpty(){
-  document.getElementById('mainContent').innerHTML=`<div class="empty"><div class="eicon">🔍</div><div class="etxt">검색 결과가 없습니다.</div></div>`;
+  document.getElementById('mainContent').innerHTML=
+    '<div class="empty"><div class="empty-ic">🔍</div><div class="empty-tx">검색 결과가 없습니다.</div></div>';
 }
 function showError(){
-  document.getElementById('mainContent').innerHTML=`<div class="empty"><div class="eicon">⚠️</div><div class="etxt">데이터를 불러오지 못했어요.<br>잠시 후 다시 시도해 주세요.</div></div>`;
+  document.getElementById('mainContent').innerHTML=
+    '<div class="empty"><div class="empty-ic">⚠️</div><div class="empty-tx">데이터를 불러오지 못했어요.<br>잠시 후 다시 시도해 주세요.</div></div>';
 }
 
-function photoUrl(ref, size=400){
-  if(!ref) return null;
-  return `${PROXY}/api/photo?photo_reference=${ref}&maxwidth=${size}`;
+// ── RENDER ────────────────────────────────
+function mkStars(r){
+  if(!r)return'<span style="font-size:10px;color:var(--tx3)">평점없음</span>';
+  return Array.from({length:5},(_,i)=>'<span class="pc-star'+(r>=i+1?' on':'')+'">&#9733;</span>').join('');
 }
-
+function buildBkStrip(data){
+  if(!data||!data.length)return'';
+  const cards=data.map(b=>
+    '<div class="bk-card" onclick="window.open(\''+b.url+'\',\'_blank\')">'
+    +'<div class="bk-card-img"><span>'+(b.em||'🎟')+'</span><span class="bk-plat '+b.cls+'">'+b.logo+'</span></div>'
+    +'<div class="bk-card-body"><div class="bk-nm">'+b.nm+'</div>'
+    +'<div class="bk-price">'+b.pr+' <span>부터</span></div>'
+    +'<div class="bk-comm">'+b.cm+'</div></div></div>'
+  ).join('');
+  return'<div class="bk-strip"><div class="bk-strip-hd"><span class="bk-strip-lbl">예약 추천</span>'
+    +'<span class="bk-strip-badge">제휴 할인</span></div><div class="bk-list">'+cards+'</div></div>';
+}
+function buildCTA(p){
+  const gurl=p.url||'https://maps.google.com/?q='+encodeURIComponent(p.name);
+  const nurl='https://map.naver.com/v5/search/'+encodeURIComponent(p.name+' '+city);
+  const bk=BKP[p.name];
+  if(!bk){
+    return'<div class="pc-cta">'
+      +'<a class="gm" href="'+gurl+'" target="_blank" onclick="event.stopPropagation()">🗺 Google 지도</a>'
+      +'<a class="gm" href="'+nurl+'" target="_blank" onclick="event.stopPropagation()">🟢 네이버 지도</a>'
+      +'</div>';
+  }
+  return'<div class="pc-cta">'+bk.slice(0,2).map(b=>
+    '<a class="'+b.cls+'" href="'+b.url+'" target="_blank" onclick="event.stopPropagation()">🔖 '+b.logo+' 예약</a>'
+  ).join('')+'</div>';
+}
 function renderList(places){
   if(!places.length){showEmpty();return;}
-  const first=places[0];
-  const pUrl = first.photo_ref ? photoUrl(first.photo_ref, 480) : null;
-
-  const heroSection=`
-    <div class="hero-section">
-      <div class="hero-card" onclick="openDetail(0)">
-        <div class="hero-bg"></div>
-        <div class="hero-pat"></div>
-        <div class="hero-glow"></div>
-        ${pUrl?`<img class="hero-img" src="${pUrl}" alt="${first.name}">`:''}
-        ${!pUrl?`<div class="hero-emoji">${first.icon||catEmoji[cat]||'🗾'}</div>`:''}
-        <div class="hero-content">
-          <div class="hero-eye">✦ ${catLabel[cat]||'추천'}</div>
-          <div class="hero-title">${first.name}</div>
-          <div class="hero-sub">${first.addr||''}</div>
-          ${first.rating?`
-          <div class="hero-rating">
-            <div class="hero-stars">${mkStars(first.rating)}</div>
-            <span class="hero-rnum">${first.rating}</span>
-            <span class="hero-rcnt">(${(first.cnt||0).toLocaleString()}건)</span>
-          </div>`:''}
-        </div>
-      </div>
-    </div>`;
-
-  const listHTML = places.slice(1).map((p,i)=>cardHTML(p,i+1)).join('');
-
-  document.getElementById('mainContent').innerHTML=`
-    ${heroSection}
-    <div class="sec-label">
-      <span class="sec-title">${city} · ${catLabel[cat]}</span>
-      <span class="sec-count">${places.length}곳</span>
-    </div>
-    <div class="places-list">${listHTML}</div>`;
+  const strip=buildBkStrip(CBK[city]);
+  const secHead='<div class="sec-head"><span class="sec-title">'+city+' '+catLabel[cat]+'</span>'
+    +'<span class="sec-count">'+places.length+'곳</span></div>';
+  const cards=places.map(function(p,i){
+    const isSaved=saved.some(s=>s.name===p.name);
+    const pUrl=photoUrl(p.photo_ref,i===0?600:400);
+    const stars=mkStars(p.rating);
+    const statusHtml=p.open===true?'<span class="pc-open">● 영업중</span>'
+      :p.open===false?'<span class="pc-closed">● 영업종료</span>':'';
+    const sn=p.name.replace(/'/g,"\\'");
+    return'<div class="pc" style="animation-delay:'+((i%8)*.05)+'s" onclick="openDetail('+i+')">'
+      +'<div class="pc-img">'
+      +(pUrl?'<img src="'+pUrl+'" alt="'+p.name+'" loading="lazy" onerror="this.style.display=\'none\'">'
+        :'<span style="font-size:56px">'+(p.icon||catEmoji[cat]||'📍')+'</span>')
+      +'<div class="pc-img-grad"></div>'
+      +'<div class="pc-rank"># '+(i+1)+'</div>'
+      +'<div class="pc-cat-badge">'+((p.types||[catLabel[cat]])[0])+'</div>'
+      +'<button class="pc-save-btn'+(isSaved?' on':'')+'" onclick="event.stopPropagation();toggleSC(\''+sn+'\',this,'+i+')">'+(isSaved?'♥':'♡')+'</button>'
+      +'</div>'
+      +'<div class="pc-info"><div class="pc-name">'+p.name+'</div>'
+      +'<div class="pc-addr">'+(p.addr||'')+'</div>'
+      +'<div class="pc-meta"><div class="pc-rating"><div class="pc-stars">'+stars+'</div>'
+      +'<span class="pc-rnum">'+(p.rating||'—')+'</span>'
+      +'<span class="pc-rcnt">'+(p.cnt?'('+p.cnt.toLocaleString()+'건)':'')+'</span></div>'
+      +(statusHtml?'<span class="pc-sep"></span>'+statusHtml:'')
+      +'</div></div>'+buildCTA(p)+'</div>';
+  }).join('');
+  document.getElementById('mainContent').innerHTML=strip+secHead+'<div class="place-list">'+cards+'</div>';
 }
 
-function cardHTML(p,i){
-  const isSaved=saved.includes(p.name);
-  const openTag=p.open===true?'<span class="tag open">영업중</span>':p.open===false?'<span class="tag closed">영업종료</span>':'';
-  const pUrl = p.photo_ref ? photoUrl(p.photo_ref, 120) : null;
-  let thumb = pUrl
-    ? `<div class="pthumb"><img src="${pUrl}" alt="${p.name}" onerror="this.parentElement.innerHTML='${p.icon||'📍'}'"></div>`
-    : `<div class="pthumb">${p.icon||catEmoji[cat]||'📍'}</div>`;
-  return `
-  <div class="pcard" style="animation-delay:${(i%8)*.05}s" onclick="openDetail(${i})">
-    ${thumb}
-    <div class="pbody">
-      <div class="pname">${p.name}</div>
-      <div class="ptype">${(p.types||[]).join(' · ')}</div>
-      <div class="rrow">
-        <div class="smini">${mkStars(p.rating)}</div>
-        <span class="rnum">${p.rating||'—'}</span>
-        <span class="rcnt">${p.cnt?'('+p.cnt.toLocaleString()+'건)':''}</span>
-      </div>
-      <div class="tags">${openTag}</div>
-    </div>
-    <div class="pright">
-      <button class="sbtn2 ${isSaved?'on':''}" onclick="event.stopPropagation();toggleSave('${p.name.replace(/'/g,"\\'")}',this)">${isSaved?'♥':'♡'}</button>
-    </div>
-  </div>`;
+// ── SAVE ──────────────────────────────────
+function toggleSC(name,btn,idx){
+  const place=_places[idx]||{name};
+  const i=saved.findIndex(s=>s.name===name);
+  if(i===-1){saved.push({name,city,cat,data:place});btn.textContent='♥';btn.classList.add('on');}
+  else{saved.splice(i,1);btn.textContent='♡';btn.classList.remove('on');}
+  localStorage.setItem('tabi_saved',JSON.stringify(saved));updateBadge();
+}
+function toggleSD(name){
+  const i=saved.findIndex(s=>s.name===name);
+  const btn=document.getElementById('dHeartBtn');
+  if(i===-1){const place=_places.find(p=>p.name===name)||{name};saved.push({name,city,cat,data:place});if(btn){btn.textContent='♥ 저장됨';btn.classList.add('on');}}
+  else{saved.splice(i,1);if(btn){btn.textContent='♡ 저장하기';btn.classList.remove('on');}}
+  localStorage.setItem('tabi_saved',JSON.stringify(saved));updateBadge();
+}
+function clearAll(){
+  if(!saved.length)return;
+  if(confirm('저장한 모든 장소를 삭제할까요?')){saved=[];localStorage.setItem('tabi_saved',JSON.stringify(saved));updateBadge();renderSaved();}
+}
+function updateBadge(){
+  const b=document.getElementById('savedBadge');
+  if(saved.length>0){b.textContent=saved.length;b.classList.add('show');}
+  else b.classList.remove('show');
 }
 
-function mkStars(r){
-  if(!r)return`<span style="font-size:10px;color:var(--text3)">평점없음</span>`;
-  return Array.from({length:5},(_,i)=>`<span class="s ${r>=i+1?'on':''}">★</span>`).join('');
+// ── SAVED PAGE ────────────────────────────
+function renderSaved(){
+  const el=document.getElementById('savedContent');
+  if(!saved.length){el.innerHTML='<div class="saved-empty"><div class="saved-empty-ic">🗺</div><div class="saved-empty-tx">아직 저장한 장소가 없어요.<br>탐색 탭에서 ♡ 버튼을 눌러 저장해보세요!</div></div>';return;}
+  const groups={};saved.forEach(s=>{const k=s.city||'기타';if(!groups[k])groups[k]=[];groups[k].push(s);});
+  let html='';
+  Object.keys(groups).forEach(c=>{
+    html+='<span class="saved-city-lbl">'+c+'</span><div class="place-list">';
+    groups[c].forEach(s=>{
+      const p=s.data||{name:s.name};
+      const pUrl=photoUrl(p.photo_ref,400);
+      const sn=s.name.replace(/'/g,"\\'");
+      html+='<div class="pc" onclick="openSavedDetail(\''+sn+'\')">'
+        +'<div class="pc-img">'+(pUrl?'<img src="'+pUrl+'" alt="'+p.name+'" loading="lazy" onerror="this.style.display=\'none\'">':'<span style="font-size:56px">📍</span>')
+        +'<div class="pc-img-grad"></div>'
+        +'<button class="pc-save-btn on" onclick="event.stopPropagation();removeSaved(\''+sn+'\')">♥</button>'
+        +'</div><div class="pc-info"><div class="pc-name">'+p.name+'</div>'
+        +'<div class="pc-addr">'+(p.addr||'')+'</div>'
+        +'<div class="pc-meta"><div class="pc-rating"><div class="pc-stars">'+mkStars(p.rating)+'</div>'
+        +'<span class="pc-rnum">'+(p.rating||'—')+'</span></div></div></div>'+buildCTA(p)+'</div>';
+    });
+    html+='</div>';
+  });
+  el.innerHTML=html;
 }
+function removeSaved(name){const i=saved.findIndex(s=>s.name===name);if(i!==-1){saved.splice(i,1);localStorage.setItem('tabi_saved',JSON.stringify(saved));}updateBadge();renderSaved();}
+function openSavedDetail(name){const s=saved.find(x=>x.name===name);if(!s)return;_places=[s.data||{name}];openDetail(0);}
 
+// ── DETAIL ────────────────────────────────
 function openDetail(idx){
-  const p=_places[idx]; if(!p)return;
+  const p=_places[idx];if(!p)return;
   document.getElementById('dNavTitle').textContent=p.name;
   const hero=document.getElementById('dHero');
-  const pUrl = p.photo_ref ? photoUrl(p.photo_ref, 480) : null;
-  if(pUrl){
-    hero.innerHTML=`<img src="${pUrl}" alt="${p.name}"><div class="dhero-fade"></div>`;
-    hero.style.fontSize='';
-  } else {
-    hero.innerHTML=`${p.icon||catEmoji[cat]||'🗾'}<div class="dhero-fade"></div>`;
-    hero.style.fontSize='80px';
+  const pUrl=photoUrl(p.photo_ref,600);
+  if(pUrl){hero.innerHTML='<img src="'+pUrl+'" alt="'+p.name+'" style="width:100%;height:100%;object-fit:cover"><div class="d-hero-fade"></div>';hero.style.fontSize='';}
+  else{hero.innerHTML='<span>'+( p.icon||catEmoji[cat]||'📍')+'</span><div class="d-hero-fade"></div>';hero.style.fontSize='80px';}
+  const starsH=p.rating?Array.from({length:5},(_,i)=>'<span class="d-star'+(p.rating>=i+1?'':' off')+'">&#9733;</span>').join(''):'';
+  const isSaved=saved.some(s=>s.name===p.name);
+  const bkProds=BKP[p.name];
+  let bkSec='';
+  if(bkProds&&bkProds.length){
+    const rows=bkProds.map(b=>'<button class="d-bk-row" onclick="window.open(\''+b.url+'\',\'_blank\')">'
+      +'<div class="dbr-l"><div class="dbr-logo '+b.cls+'">'+b.logo+'</div>'
+      +'<div><div class="dbr-nm">'+b.nm+'</div><div class="dbr-dc">'+b.dc+'</div></div></div>'
+      +'<div style="display:flex;align-items:center;gap:6px"><div>'
+      +'<div class="dbr-price">'+b.pr+'</div><div class="dbr-comm">&#10003; '+b.cm+'</div></div>'
+      +'<span style="color:var(--bd2);font-size:18px">&#8250;</span></div></button>'
+    ).join('');
+    bkSec='<div class="d-bk-sec"><div class="d-bk-hd"><span class="d-bk-title">예약 상품</span>'
+      +'<span class="d-bk-sub">커미션 제휴</span></div>'+rows+'</div>';
   }
-  const starsH=p.rating?Array.from({length:5},(_,i)=>`<span class="dstar ${p.rating>=i+1?'':'off'}">★</span>`).join(''):'';
-  const gurl=p.url||`https://maps.google.com/?q=${encodeURIComponent(p.name)}`;
-  const nurl=`https://map.naver.com/v5/search/${encodeURIComponent(p.name+' '+city)}`;
-  document.getElementById('dBody').innerHTML=`
-    <div class="dname">${p.name}</div>
-    <div class="dtype">${(p.types||[]).join(' · ')}</div>
-    ${p.rating?`
-    <div class="drating">
-      <div class="dbignum">${p.rating}</div>
-      <div class="dright">
-        <div class="dstars">${starsH}</div>
-        <div class="drev">리뷰 ${(p.cnt||0).toLocaleString()}건 · Google 기준</div>
-      </div>
-    </div>`:''}
-    <div class="dgrid">
-      <div class="dcell"><div class="dclabel">📍 주소</div><div class="dcval">${p.addr||'정보없음'}</div></div>
-      <div class="dcell"><div class="dclabel">🕐 영업</div><div class="dcval" style="color:${p.open===true?'var(--green)':p.open===false?'var(--accent)':'var(--text2)'}">
-        ${p.open===true?'🟢 영업중':p.open===false?'🔴 영업종료':'정보없음'}
-      </div></div>
-    </div>
-    <div class="dactions">
-      <button class="dbtn p" onclick="window.open('${gurl}','_blank')">🗺 Google 지도에서 보기</button>
-      <button class="dbtn s" onclick="window.open('${nurl}','_blank')">🟢 네이버 지도 검색</button>
-    </div>`;
+  const gurl=p.url||'https://maps.google.com/?q='+encodeURIComponent(p.name);
+  const nurl='https://map.naver.com/v5/search/'+encodeURIComponent(p.name+' '+city);
+  const sn=p.name.replace(/'/g,"\\'");
+  document.getElementById('dBody').innerHTML=
+    '<div class="d-title-sec"><div class="d-name">'+p.name+'</div><div class="d-type">'+(p.types||[]).join(' · ')+'</div></div>'
+    +(p.rating?'<div class="d-rating-sec"><div class="d-big">'+p.rating+'</div><div><div class="d-stars">'+starsH+'</div><div class="d-rcnt">리뷰 '+(p.cnt||0).toLocaleString()+'건 · Google 기준</div></div></div>':'')
+    +'<div class="d-info-sec"><div class="d-info-lbl">기본 정보</div><div class="d-grid">'
+    +'<div class="d-cell"><div class="d-cell-lbl">📍 주소</div><div class="d-cell-val">'+(p.addr||'정보없음')+'</div></div>'
+    +'<div class="d-cell"><div class="d-cell-lbl">🕐 영업</div><div class="d-cell-val" style="color:'+(p.open===true?'var(--ac)':p.open===false?'var(--red)':'var(--tx3)')+';">'+(p.open===true?'🟢 영업중':p.open===false?'🔴 영업종료':'정보없음')+'</div></div>'
+    +'</div></div>'+bkSec
+    +'<div class="d-actions">'
+    +'<button id="dHeartBtn" class="d-btn h'+(isSaved?' on':'')+'" onclick="toggleSD(\''+sn+'\')">'+(isSaved?'♥ 저장됨':'♡ 저장하기')+'</button>'
+    +'<button class="d-btn p" onclick="window.open(\''+gurl+'\',\'_blank\')">🗺 Google 지도에서 보기</button>'
+    +'<button class="d-btn s" onclick="window.open(\''+nurl+'\',\'_blank\')">🟢 네이버 지도 검색</button>'
+    +'</div>';
   document.getElementById('detailPanel').classList.add('open');
 }
-function closeDetail(){ document.getElementById('detailPanel').classList.remove('open'); }
+function closeDetail(){document.getElementById('detailPanel').classList.remove('open');}
 
-function toggleSave(name,btn){
-  const i=saved.indexOf(name);
-  if(i===-1){saved.push(name);btn.textContent='♥';btn.classList.add('on');}
-  else{saved.splice(i,1);btn.textContent='♡';btn.classList.remove('on');}
-  localStorage.setItem('tabi_saved',JSON.stringify(saved));
+// ── AI ────────────────────────────────────
+function buildTriResult(days,aiCity,aiDays,aiStyle,aiPeople){
+  const em=cityEmoji[aiCity]||'🗾';
+  const total=parseInt(aiDays)+1;
+  window._tdays=days.map((d,i)=>Object.assign({},d,{col:PIN_C[i%PIN_C.length]}));
+  function rMap(di){
+    const d=window._tdays[di];
+    const pts=[{x:70,y:60},{x:40,y:45},{x:58,y:30},{x:25,y:58},{x:55,y:74},{x:80,y:38}];
+    const pos=d.places.map((_,i)=>pts[i]||{x:30+i*12,y:40+i*10});
+    let path='';if(pos.length>1){path='M '+pos[0].x+' '+pos[0].y;for(let i=1;i<pos.length;i++)path+=' L '+pos[i].x+' '+pos[i].y;}
+    const svg=path?'<svg class="tri-svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="'+path+'" fill="none" stroke="'+d.col+'" stroke-width="2" stroke-dasharray="5,3.5" opacity=".8"/></svg>':'';
+    const pins=pos.map((p,i)=>'<div class="tri-pin" style="left:'+p.x+'%;top:'+p.y+'%;background:'+d.col+'" onclick="hlPin('+i+')">'+(i+1)+'</div>').join('');
+    return'<div class="tri-map-grid"></div>'+svg+pins+'<div class="road-h" style="top:44%;height:5px"></div><div class="road-v" style="left:32%;width:5px"></div>';
+  }
+  function rPlaces(di){
+    const d=window._tdays[di];
+    let h='<div class="tri-day-hd"><div class="tri-day-dot" style="background:'+d.col+'">'+(di+1)+'</div><div class="tri-day-lbl">'+d.label+'</div></div>';
+    d.places.forEach((pl,pi)=>{const info=gpi(pl.name);h+='<div class="tri-place-row" id="tpi-'+di+'-'+pi+'"><div class="tri-place-ic">'+info.ic+'</div><div class="tri-place-body"><div class="tri-place-name">'+pl.name+'</div><div class="tri-place-tp">'+info.tp+'</div><div class="tri-place-cm">'+info.cm+'</div>'+(pl.time?'<div class="tri-place-time">&#9200; '+pl.time+'</div>':'')+'</div></div>';});
+    return h;
+  }
+  const tabs=days.map((_,i)=>'<button class="tri-daytab'+(i===0?' on':'')+'" onclick="switchTD('+i+')">Day '+(i+1)+'</button>').join('');
+  const bud=aiStyle==='가성비'?'8,000~12,000엔':aiStyle==='럭셔리'?'30,000~60,000엔':'15,000~25,000엔';
+  return'<div class="tri-wrap"><div class="tri-card">'
+    +'<div class="tri-top"><div class="tri-em">'+em+'</div>'
+    +'<div class="tri-title">'+aiCity+' '+aiDays+'박'+total+'일 <em>맞춤일정</em></div>'
+    +'<div class="tri-sub">Claude AI가 설계한 '+aiPeople+' '+aiStyle+' 코스</div></div>'
+    +'<div class="tri-map" id="triMap">'+rMap(0)+'</div>'
+    +'<div class="tri-daytabs">'+tabs+'</div>'
+    +'<div class="tri-places" id="triPlaces">'+rPlaces(0)+'</div>'
+    +'<div class="tri-footer">'
+    +'<div class="tri-tip"><div class="tri-tip-title">&#128161; 여행 꿀팁</div>'
+    +'<div class="tri-tip-item">&#183; IC카드(Suica/ICOCA) 미리 충전 — 교통·편의점 결제 모두 가능</div>'
+    +'<div class="tri-tip-item">&#183; 인기 식당은 구글맵 사전 예약 or 개점 30분 전 줄서기</div>'
+    +'<div class="tri-tip-item">&#183; 100엔 숍(다이소·세리아) 기념품 — 가성비 최고!</div></div>'
+    +'<div class="tri-budget"><span class="tri-budget-lbl">&#128180; 예상 하루 예산 (숙박 별도)</span><span class="tri-budget-val">약 '+bud+'/인</span></div>'
+    +'<div class="tri-actions"><button class="tri-act s" onclick="copyTri()">&#128203; 일정 복사</button>'
+    +'<button class="tri-act p" onclick="switchPage(\'explore\')">&#128506; 장소 탐색</button></div>'
+    +'</div></div></div>';
+}
+function switchTD(di){
+  if(!window._tdays)return;
+  document.querySelectorAll('.tri-daytab').forEach((t,i)=>t.classList.toggle('on',i===di));
+  const d=window._tdays[di];
+  const pts=[{x:70,y:60},{x:40,y:45},{x:58,y:30},{x:25,y:58},{x:55,y:74},{x:80,y:38}];
+  const pos=d.places.map((_,i)=>pts[i]||{x:30+i*12,y:40+i*10});
+  let path='';if(pos.length>1){path='M '+pos[0].x+' '+pos[0].y;for(let i=1;i<pos.length;i++)path+=' L '+pos[i].x+' '+pos[i].y;}
+  const svg=path?'<svg class="tri-svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="'+path+'" fill="none" stroke="'+d.col+'" stroke-width="2" stroke-dasharray="5,3.5" opacity=".8"/></svg>':'';
+  const pins=pos.map((p,i)=>'<div class="tri-pin" style="left:'+p.x+'%;top:'+p.y+'%;background:'+d.col+'" onclick="hlPin('+i+')">'+(i+1)+'</div>').join('');
+  const m=document.getElementById('triMap');
+  if(m)m.innerHTML='<div class="tri-map-grid"></div>'+svg+pins+'<div class="road-h" style="top:44%;height:5px"></div><div class="road-v" style="left:32%;width:5px"></div>';
+  let h='<div class="tri-day-hd"><div class="tri-day-dot" style="background:'+d.col+'">'+(di+1)+'</div><div class="tri-day-lbl">'+d.label+'</div></div>';
+  d.places.forEach((pl,pi)=>{const info=gpi(pl.name);h+='<div class="tri-place-row" id="tpi-'+di+'-'+pi+'"><div class="tri-place-ic">'+info.ic+'</div><div class="tri-place-body"><div class="tri-place-name">'+pl.name+'</div><div class="tri-place-tp">'+info.tp+'</div><div class="tri-place-cm">'+info.cm+'</div>'+(pl.time?'<div class="tri-place-time">&#9200; '+pl.time+'</div>':'')+'</div></div>';});
+  const pl=document.getElementById('triPlaces');if(pl)pl.innerHTML=h;
+}
+function hlPin(pi){
+  document.querySelectorAll('.tri-pin').forEach((p,i)=>p.classList.toggle('hl',i===pi));
+  let di=0;document.querySelectorAll('.tri-daytab').forEach((t,i)=>{if(t.classList.contains('on'))di=i;});
+  const el=document.getElementById('tpi-'+di+'-'+pi);
+  if(el){el.scrollIntoView({behavior:'smooth',block:'nearest'});el.style.background='var(--ac-bg)';setTimeout(()=>el.style.background='',1500);}
+}
+function copyTri(){
+  const text=(window._tdays||[]).map((d,i)=>'[DAY '+(i+1)+' — '+d.label+']\n'+d.places.map(p=>'  '+(p.time||'')+' '+p.name).join('\n')).join('\n\n');
+  navigator.clipboard.writeText(text).then(()=>alert('일정이 복사됐어요!')).catch(()=>alert('복사에 실패했어요.'));
+}
+async function genItinerary(){
+  const btn=document.getElementById('genBtn');
+  const resultEl=document.getElementById('aiResult');
+  const aiCity=document.getElementById('ai-city').value;
+  const aiDays=document.getElementById('ai-days').value;
+  const aiStyle=document.getElementById('ai-style').value;
+  const aiPeople=document.getElementById('ai-people').value;
+  const interests=Array.from(document.querySelectorAll('.ai-chip.on')).map(c=>c.textContent.trim()).join(', ');
+  btn.disabled=true;btn.textContent='&#10006; 생성 중...';
+  resultEl.innerHTML='<div class="tri-wrap"><div class="tri-card"><div class="tri-loading"><div class="tri-dots"><span></span><span></span><span></span></div><div class="tri-loading-txt">Claude AI가 '+aiCity+' 맞춤 일정을 설계하고 있어요...</div></div></div></div>';
+  const prompt='일본 여행 전문가입니다. JSON만 응답. 다른 텍스트 없이 순수 JSON만.\n조건: 도시:'+aiCity+' / 기간:'+aiDays+'박'+(parseInt(aiDays)+1)+'일 / 스타일:'+aiStyle+' / 동행:'+aiPeople+' / 관심사:'+(interests||'전반적 관광')+'\n{"days":[{"label":"테마","places":[{"name":"장소명(한국어)","time":"09:00"}]}]}\ndays 배열 '+(parseInt(aiDays)+1)+'개, 각 day 4~5장소';
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,messages:[{role:'user',content:prompt}]})});
+    if(!res.ok)throw new Error('fail');
+    const data=await res.json();
+    const text=(data.content||[]).map(b=>b.text||'').join('');
+    let days=null;
+    try{days=JSON.parse(text.replace(/```json|```/g,'').trim()).days;}catch(e){}
+    if(days&&days.length){resultEl.innerHTML=buildTriResult(days,aiCity,aiDays,aiStyle,aiPeople);}
+    else throw new Error('parse failed');
+  }catch(e){
+    const fb=AI_DB[aiCity]||AI_DB['도쿄'];
+    resultEl.innerHTML=buildTriResult(fb.slice(0,parseInt(aiDays)+1),aiCity,aiDays,aiStyle,aiPeople);
+  }
+  btn.disabled=false;btn.textContent='&#10022; AI 맞춤 일정 생성하기';
 }
 
-window.onload=()=>{ initUI(); load(); };
+window.onload=()=>{initUI();load();updateBadge();};
 </script>
 </body>
 </html>
