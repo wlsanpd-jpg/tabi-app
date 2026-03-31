@@ -21,8 +21,8 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;-webkit-font-smoothing:antialiased;}
 body{font-family:var(--f);background:var(--bg);color:var(--tx);overflow-x:hidden;}
-.app{max-width:480px;margin:0 auto;min-height:100%;background:var(--white);position:relative;}
-.page{display:none;flex-direction:column;min-height:100vh;}
+.app{max-width:480px;margin:0 auto;height:100%;background:var(--white);position:relative;}
+.page{display:none;flex-direction:column;height:100vh;overflow:hidden;}
 .page.active{display:flex;}
 .pb{padding-bottom:calc(var(--nav) + var(--safe) + 16px);}
 a,button{font-family:var(--f);}
@@ -486,7 +486,7 @@ img{display:block;}
 
 <!-- ═══ SAVED ═══ -->
 <div class="page" id="page-saved">
-  <div style="overflow-y:auto;flex:1;" class="pb">
+  <div style="overflow-y:auto;flex:1;height:0;" class="pb">
     <div class="saved-hd">
       <div class="saved-hd-row">
         <div class="saved-title">저장 목록</div>
