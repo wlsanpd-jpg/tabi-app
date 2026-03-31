@@ -179,28 +179,8 @@ header { position:sticky; top:0; z-index:100; background:rgba(14,14,15,0.94); ba
   </div>
 </header>
 
-<div class="city-row">
-  <button class="city-btn active" onclick="setCity(this,'도쿄','Tokyo Japan')">도쿄</button>
-  <button class="city-btn" onclick="setCity(this,'오사카','Osaka Japan')">오사카</button>
-  <button class="city-btn" onclick="setCity(this,'교토','Kyoto Japan')">교토</button>
-  <button class="city-btn" onclick="setCity(this,'후쿠오카','Fukuoka Japan')">후쿠오카</button>
-  <button class="city-btn" onclick="setCity(this,'삿포로','Sapporo Japan')">삿포로</button>
-  <button class="city-btn" onclick="setCity(this,'나라','Nara Japan')">나라</button>
-  <button class="city-btn" onclick="setCity(this,'가마쿠라','Kamakura Japan')">가마쿠라</button>
-</div>
-
-<div class="cat-row">
-  <button class="cat-btn active" onclick="setCat(this,'tourist_attraction')">🏛 관광명소</button>
-  <button class="cat-btn" onclick="setCat(this,'restaurant')">🍣 맛집</button>
-  <button class="cat-btn" onclick="setCat(this,'cafe')">☕ 카페</button>
-  <button class="cat-btn" onclick="setCat(this,'lodging')">🏨 숙박</button>
-  <button class="cat-btn" onclick="setCat(this,'shopping_mall')">🛍 쇼핑</button>
-  <button class="cat-btn" onclick="setCat(this,'park')">🌸 공원·자연</button>
-  <button class="cat-btn" onclick="setCat(this,'museum')">🎌 박물관</button>
-  <button class="cat-btn" onclick="setCat(this,'amusement_park')">🎢 테마파크</button>
-  <button class="cat-btn" onclick="setCat(this,'spa')">♨️ 온천</button>
-</div>
-
+<div class="city-row" id="cityRow"></div>
+<div class="cat-row" id="catRow"></div>
 <div id="mainContent" style="flex:1;padding-bottom:32px"></div>
 </div>
 
@@ -215,15 +195,75 @@ header { position:sticky; top:0; z-index:100; background:rgba(14,14,15,0.94); ba
 </div>
 
 <script>
-// ── Vercel 프록시 주소 ──
+// ================================================================
+// ✏️  설정 구역 — 여기만 수정하면 됩니다!
+// ================================================================
+
+// 🌐 Vercel 프록시 주소
 const PROXY = 'https://tabi-app-wheat.vercel.app';
 
-let city='도쿄', cityEn='Tokyo Japan', cat='tourist_attraction';
-let saved = JSON.parse(localStorage.getItem('tabi_saved')||'[]');
-let _places = [];
+// 🏙️ 도시 목록 — 추가/삭제/순서변경 자유롭게
+const CITIES = [
+  { kr: '도쿄',    en: 'Tokyo Japan' },
+  { kr: '오사카',  en: 'Osaka Japan' },
+  { kr: '교토',    en: 'Kyoto Japan' },
+  { kr: '후쿠오카',en: 'Fukuoka Japan' },
+  { kr: '삿포로',  en: 'Sapporo Japan' },
+  { kr: '나라',    en: 'Nara Japan' },
+  { kr: '가마쿠라',en: 'Kamakura Japan' },
+];
 
-const catLabel = { tourist_attraction:'관광명소', restaurant:'맛집', cafe:'카페', lodging:'숙박', shopping_mall:'쇼핑', park:'공원·자연', museum:'박물관', amusement_park:'테마파크', spa:'온천·스파' };
-const catEmoji = { tourist_attraction:'🏛', restaurant:'🍣', cafe:'☕', lodging:'🏨', shopping_mall:'🛍', park:'🌸', museum:'🎌', amusement_park:'🎢', spa:'♨️' };
+// 🗂️ 카테고리 목록 — 추가/삭제/순서변경 자유롭게
+const CATEGORIES = [
+  { key: 'tourist_attraction', label: '관광명소', emoji: '🏛' },
+  { key: 'restaurant',         label: '맛집',     emoji: '🍣' },
+  { key: 'cafe',               label: '카페',     emoji: '☕' },
+  { key: 'lodging',            label: '숙박',     emoji: '🏨' },
+  { key: 'shopping_mall',      label: '쇼핑',     emoji: '🛍' },
+  { key: 'park',               label: '공원·자연',emoji: '🌸' },
+  { key: 'museum',             label: '박물관',   emoji: '🎌' },
+  { key: 'amusement_park',     label: '테마파크', emoji: '🎢' },
+  { key: 'spa',                label: '온천',     emoji: '♨️' },
+];
+
+// 🏷️ 앱 이름 & 서브타이틀
+const APP_NAME = 'TABI';
+const APP_SUB  = '旅 · 일본 여행 가이드';
+
+// ================================================================
+// 이하 코드는 수정하지 않아도 됩니다
+// ================================================================
+
+// 설정에서 자동 생성되는 lookup 맵
+const catLabel = Object.fromEntries(CATEGORIES.map(c=>[c.key, c.label]));
+const catEmoji = Object.fromEntries(CATEGORIES.map(c=>[c.key, c.emoji]));
+
+// 도시/카테고리 탭 동적 생성
+function initUI() {
+  // 앱 이름
+  document.querySelector('.logo-main').textContent = APP_NAME;
+  document.querySelector('.logo-sub').textContent  = APP_SUB;
+
+  // 도시 탭
+  const cityRow = document.getElementById('cityRow');
+  cityRow.innerHTML = CITIES.map((c,i)=>
+    `<button class="city-btn ${i===0?'active':''}"
+      onclick="setCity(this,'${c.kr}','${c.en}')">${c.kr}</button>`
+  ).join('');
+
+  // 카테고리 탭
+  const catRow = document.getElementById('catRow');
+  catRow.innerHTML = CATEGORIES.map((c,i)=>
+    `<button class="cat-btn ${i===0?'active':''}"
+      onclick="setCat(this,'${c.key}')">${c.emoji} ${c.label}</button>`
+  ).join('');
+}
+
+let city   = CITIES[0].kr;
+let cityEn = CITIES[0].en;
+let cat    = CATEGORIES[0].key;
+let saved  = JSON.parse(localStorage.getItem('tabi_saved')||'[]');
+let _places = [];
 
 function setCity(btn,c,en){
   document.querySelectorAll('.city-btn').forEach(b=>b.classList.remove('active'));
@@ -399,7 +439,7 @@ function toggleSave(name,btn){
   localStorage.setItem('tabi_saved',JSON.stringify(saved));
 }
 
-window.onload=()=>load();
+window.onload=()=>{ initUI(); load(); };
 </script>
 </body>
 </html>
