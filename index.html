@@ -905,7 +905,7 @@ function renderList(places) {
     cardsHtml +=
       '<div class="pc" data-idx="' + i + '" style="animation-delay:' + ((i%8)*.05) + 's">' +
         '<div class="pc-img">' +
-          (pUrl ? '<img src="' + pUrl + '" alt="' + p.name + '" loading="lazy" onerror="this.style.display='none'">' : '') +
+          (pUrl ? '<img src="' + pUrl + '" alt="' + p.name + '" loading="lazy" onerror="this.style.display=\'none\'">' : '') +
           '<div class="pc-grad"></div>' +
           '<div class="pc-rank">#' + (i+1) + '</div>' +
           '<div class="pc-badge">' + ((p.types || [catLabel[cat]])[0]) + '</div>' +
@@ -1012,7 +1012,7 @@ function renderSaved() {
       html +=
         '<div class="pc" data-sname="' + p.name.replace(/"/g,'&quot;') + '">' +
           '<div class="pc-img">' +
-            (pUrl ? '<img src="' + pUrl + '" alt="' + p.name + '" loading="lazy" onerror="this.style.display='none'">' : '') +
+            (pUrl ? '<img src="' + pUrl + '" alt="' + p.name + '" loading="lazy" onerror="this.style.display=\'none\'">' : '') +
             '<div class="pc-grad"></div>' +
             '<button class="pc-heart on" data-sname="' + p.name.replace(/"/g,'&quot;') + '">♥</button>' +
           '</div>' +
