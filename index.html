@@ -1155,7 +1155,7 @@ function buildTriResult(days,aiCity,aiDays,aiStyle,aiPeople){
   function rPlaces(di){
     const d=window._tdays[di];
     let h='<div class="tri-day-hd"><div class="tri-day-dot" style="background:'+d.col+'">'+(di+1)+'</div><div class="tri-day-lbl">'+d.label+'</div></div>';
-    d.places.forEach((pl,pi)=>{const info=gpi(pl.name);h+='<div class="tri-place-row" id="tpi-'+di+'-'+pi+'"><div class="tri-place-ic">'+info.ic+'</div><div class="tri-place-body"><div class="tri-place-name">'+pl.name+'</div><div class="tri-place-tp">'+info.tp+'</div><div class="tri-place-cm">'+info.cm+'</div>'+(pl.time?'<div class="tri-place-time">&#9200; '+pl.time+'</div>':'')+'</div></div>';});
+    d.places.forEach((pl,pi)=>{const info=gpi(pl.name);const tipTxt=pl.tip||info.cm;h+='<div class="tri-place-row" id="tpi-'+di+'-'+pi+'"><div class="tri-place-ic">'+info.ic+'</div><div class="tri-place-body"><div class="tri-place-name">'+pl.name+'</div><div class="tri-place-tp">'+info.tp+'</div><div class="tri-place-cm">'+tipTxt+'</div>'+(pl.time?'<div class="tri-place-time">&#9200; '+pl.time+'</div>':'')+'</div></div>';});
     return h;
   }
   const tabs=days.map((_,i)=>'<button class="tri-daytab'+(i===0?' on':'')+'" onclick="switchTD('+i+')">Day '+(i+1)+'</button>').join('');
@@ -1189,7 +1189,7 @@ function switchTD(di){
   const m=document.getElementById('triMap');
   if(m)m.innerHTML='<div class="tri-map-grid"></div>'+svg+pins+'<div class="road-h" style="top:44%;height:5px"></div><div class="road-v" style="left:32%;width:5px"></div>';
   let h='<div class="tri-day-hd"><div class="tri-day-dot" style="background:'+d.col+'">'+(di+1)+'</div><div class="tri-day-lbl">'+d.label+'</div></div>';
-  d.places.forEach((pl,pi)=>{const info=gpi(pl.name);h+='<div class="tri-place-row" id="tpi-'+di+'-'+pi+'"><div class="tri-place-ic">'+info.ic+'</div><div class="tri-place-body"><div class="tri-place-name">'+pl.name+'</div><div class="tri-place-tp">'+info.tp+'</div><div class="tri-place-cm">'+info.cm+'</div>'+(pl.time?'<div class="tri-place-time">&#9200; '+pl.time+'</div>':'')+'</div></div>';});
+  d.places.forEach((pl,pi)=>{const info=gpi(pl.name);const tipTxt=pl.tip||info.cm;h+='<div class="tri-place-row" id="tpi-'+di+'-'+pi+'"><div class="tri-place-ic">'+info.ic+'</div><div class="tri-place-body"><div class="tri-place-name">'+pl.name+'</div><div class="tri-place-tp">'+info.tp+'</div><div class="tri-place-cm">'+tipTxt+'</div>'+(pl.time?'<div class="tri-place-time">&#9200; '+pl.time+'</div>':'')+'</div></div>';});
   const pl=document.getElementById('triPlaces');if(pl)pl.innerHTML=h;
 }
 function hlPin(pi){
@@ -1271,11 +1271,10 @@ async function genItinerary(){
   }catch(e){
     console.warn('AI API 실패, 데모 데이터 사용:', e.message);
     const fb=AI_DB[aiCity]||AI_DB['도쿄'];
-    const sliced=fb.slice(0,totalDays);
-    // 데모 데이터도 totalDays에 맞게 패딩
+    const sliced=fb.slice(0,totalDays).map(d=>({label:d.label,places:d.places.map(p=>Object.assign({},p))}));
     while(sliced.length<totalDays){
       const idx=sliced.length%fb.length;
-      sliced.push(Object.assign({},fb[idx],{label:fb[idx].label+' ('+(sliced.length+1)+'일차)'}));
+      sliced.push({label:fb[idx].label+' ('+(sliced.length+1)+'일차)',places:fb[idx].places.map(p=>Object.assign({},p))});
     }
     resultEl.innerHTML=buildTriResult(sliced,aiCity,aiDays,aiStyle,aiPeople);
   }
