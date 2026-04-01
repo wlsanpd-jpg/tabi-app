@@ -126,9 +126,8 @@ button{font-family:var(--f);}
 .tri-em{font-size:40px;margin-bottom:8px;}
 .tri-title{font-family:var(--fd);font-size:20px;color:#fff;font-weight:700;margin-bottom:4px;line-height:1.3;}
 .tri-sub{font-size:12px;color:rgba(255,255,255,.5);}
-.tri-map{height:220px;position:relative;overflow:hidden;background:#e8eaf0;}
-.tri-map iframe{width:100%;height:100%;border:none;display:block;}
-.tri-map-pins{position:absolute;inset:0;pointer-events:none;}
+.tri-map{height:200px;position:relative;overflow:hidden;background:#f0f4f8;border-radius:0;}
+.tri-map-pins{display:none;}
 .tri-pin{position:absolute;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#fff;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,.25);border:2px solid rgba(255,255,255,.8);pointer-events:all;cursor:pointer;}
 .tri-daytabs{display:flex;gap:6px;padding:12px 14px;border-bottom:1px solid var(--bd);overflow-x:auto;}
 .tri-daytab{flex-shrink:0;padding:7px 18px;border-radius:20px;font-size:12px;font-weight:800;cursor:pointer;border:1.5px solid var(--bd2);background:var(--w);color:var(--tx3);font-family:var(--f);}
@@ -966,26 +965,112 @@ function openDetail(idx){
 }
 function closeDetail(){document.getElementById('detailPanel').classList.remove('open');}
 
-// ── AI Map
+// ── AI Map (SVG 심플 지도)
 function mkMap(di){
   var d=_tdays[di];
-  var coords=COORDS[_tcity]||{lat:35.6762,lng:139.6503};
-  var bbox=(coords.lng-.04)+'%2C'+(coords.lat-.03)+'%2C'+(coords.lng+.04)+'%2C'+(coords.lat+.03);
-  var src='https://www.openstreetmap.org/export/embed.html?bbox='+bbox+'&layer=mapnik&marker='+coords.lat+'%2C'+coords.lng;
+  var n=d.places.length;
   var wrap=mk('div','tri-map');wrap.id='triMap';
-  var iframe=document.createElement('iframe');iframe.src=src;iframe.loading='lazy';
-  wrap.appendChild(iframe);
-  var pins=mk('div','tri-map-pins');
-  var pts=[{x:72,y:60},{x:38,y:45},{x:60,y:28},{x:22,y:62},{x:58,y:76},{x:82,y:40}];
-  d.places.forEach(function(pl,i){
-    var pos=pts[i]||{x:28+i*13,y:38+i*12};
-    var pin=mk('div','tri-pin',String(i+1));
-    pin.style.left=pos.x+'%';pin.style.top=pos.y+'%';pin.style.background=d.col;
-    var gurl='https://maps.google.com/?q='+encodeURIComponent(pl.name+' '+_tcity);
-    pin.addEventListener('click',function(){window.open(gurl,'_blank');});
-    pins.appendChild(pin);
+  var ns='http://www.w3.org/2000/svg';
+  var svg=document.createElementNS(ns,'svg');
+  svg.setAttribute('viewBox','0 0 340 200');
+  svg.setAttribute('width','100%');
+  svg.setAttribute('height','100%');
+  svg.style.cssText='display:block;';
+
+  // 배경
+  var bg=document.createElementNS(ns,'rect');
+  bg.setAttribute('width','340');bg.setAttribute('height','200');
+  bg.setAttribute('fill','#f0f4f8');svg.appendChild(bg);
+
+  // 격자
+  var defs=document.createElementNS(ns,'defs');
+  var pat=document.createElementNS(ns,'pattern');
+  pat.setAttribute('id','g'+di);pat.setAttribute('width','24');pat.setAttribute('height','24');
+  pat.setAttribute('patternUnits','userSpaceOnUse');
+  var ph=document.createElementNS(ns,'path');
+  ph.setAttribute('d','M 24 0 L 0 0 0 24');
+  ph.setAttribute('fill','none');ph.setAttribute('stroke','#dde3ea');ph.setAttribute('stroke-width','0.7');
+  pat.appendChild(ph);defs.appendChild(pat);svg.appendChild(defs);
+  var gr=document.createElementNS(ns,'rect');
+  gr.setAttribute('width','340');gr.setAttribute('height','200');
+  gr.setAttribute('fill','url(#g'+di+')');svg.appendChild(gr);
+
+  // 도로
+  [[0,95,340,95],[0,148,340,148],[105,0,105,200],[215,0,215,200]].forEach(function(r){
+    var line=document.createElementNS(ns,'line');
+    line.setAttribute('x1',r[0]);line.setAttribute('y1',r[1]);
+    line.setAttribute('x2',r[2]);line.setAttribute('y2',r[3]);
+    line.setAttribute('stroke','#fff');line.setAttribute('stroke-width','6');
+    line.setAttribute('opacity','0.6');svg.appendChild(line);
   });
-  wrap.appendChild(pins);return wrap;
+
+  // 핀 위치
+  var pts=[{x:155,y:92},{x:68,y:65},{x:240,y:55},{x:42,y:135},{x:195,y:152},{x:295,y:105}];
+
+  // 연결선
+  if(n>1){
+    var pp=d.places.slice(0,Math.min(n,6)).map(function(_,i){var p=pts[i]||{x:40+i*44,y:60+i*22};return p.x+' '+p.y;});
+    var poly=document.createElementNS(ns,'polyline');
+    poly.setAttribute('points',pp.join(', '));
+    poly.setAttribute('fill','none');poly.setAttribute('stroke',d.col);
+    poly.setAttribute('stroke-width','2');poly.setAttribute('stroke-dasharray','6,4');
+    poly.setAttribute('opacity','0.55');svg.appendChild(poly);
+  }
+
+  // 도시 레이블
+  var lbl=document.createElementNS(ns,'text');
+  lbl.setAttribute('x','10');lbl.setAttribute('y','188');
+  lbl.setAttribute('font-size','10');lbl.setAttribute('font-weight','700');
+  lbl.setAttribute('fill','#a8a7a2');lbl.setAttribute('font-family','Noto Sans KR,sans-serif');
+  lbl.textContent=_tcity+' 일정 순서';svg.appendChild(lbl);
+
+  // 핀
+  d.places.forEach(function(pl,i){
+    var pos=pts[i]||{x:40+i*44,y:60+i*22};
+    var gurl='https://maps.google.com/?q='+encodeURIComponent(pl.name+' '+_tcity);
+    var g=document.createElementNS(ns,'g');
+    g.style.cursor='pointer';
+    g.addEventListener('click',function(){window.open(gurl,'_blank');});
+
+    // 핀 원
+    var c=document.createElementNS(ns,'circle');
+    c.setAttribute('cx',String(pos.x));c.setAttribute('cy',String(pos.y));
+    c.setAttribute('r','14');c.setAttribute('fill',d.col);
+    c.setAttribute('stroke','#fff');c.setAttribute('stroke-width','2.5');
+    g.appendChild(c);
+
+    // 번호
+    var t=document.createElementNS(ns,'text');
+    t.setAttribute('x',String(pos.x));t.setAttribute('y',String(pos.y+4));
+    t.setAttribute('text-anchor','middle');t.setAttribute('font-size','11');
+    t.setAttribute('font-weight','900');t.setAttribute('fill','#fff');
+    t.setAttribute('font-family','Noto Sans KR,sans-serif');
+    t.textContent=String(i+1);g.appendChild(t);
+
+    // 이름 레이블
+    var nm=pl.name.length>6?pl.name.slice(0,5)+'..':pl.name;
+    var lby=pos.y>155?pos.y-22:pos.y+26;
+    var lbx=pos.x;
+    var lw=nm.length*8+10;
+
+    var lbg=document.createElementNS(ns,'rect');
+    lbg.setAttribute('x',String(lbx-lw/2));lbg.setAttribute('y',String(lby-12));
+    lbg.setAttribute('width',String(lw));lbg.setAttribute('height','15');
+    lbg.setAttribute('rx','4');lbg.setAttribute('fill','rgba(255,255,255,0.92)');
+    g.appendChild(lbg);
+
+    var lt=document.createElementNS(ns,'text');
+    lt.setAttribute('x',String(lbx));lt.setAttribute('y',String(lby));
+    lt.setAttribute('text-anchor','middle');lt.setAttribute('font-size','9');
+    lt.setAttribute('font-weight','700');lt.setAttribute('fill','#1a1a18');
+    lt.setAttribute('font-family','Noto Sans KR,sans-serif');
+    lt.textContent=nm;g.appendChild(lt);
+
+    svg.appendChild(g);
+  });
+
+  wrap.appendChild(svg);
+  return wrap;
 }
 function mkPlaces(di){
   var d=_tdays[di];
