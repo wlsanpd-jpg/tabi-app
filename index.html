@@ -215,6 +215,16 @@ button{font-family:var(--f);}
 .d-btn.s{background:var(--sf);color:var(--tx);border:1.5px solid var(--bd2);}
 .d-btn.h{background:var(--sf);color:var(--tx3);border:1.5px solid var(--bd);}
 .d-btn.h.on{color:var(--red);background:rgba(255,71,87,.06);}
+.bk-btn{color:#003580;}.bk-btn:hover{background:rgba(0,53,128,.06);}
+.ag-btn{color:#ef6614;}.ag-btn:hover{background:rgba(239,102,20,.06);}
+/* 5번: 맛집 세부탭 */
+.food-sub-row{display:flex;overflow-x:auto;gap:6px;padding:8px 16px;background:var(--w);border-bottom:1px solid var(--bd);}
+.food-sub-btn{flex-shrink:0;background:var(--sf);border:1.5px solid var(--bd);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700;color:var(--tx2);cursor:pointer;white-space:nowrap;font-family:var(--f);}
+.food-sub-btn.on{background:var(--ac);border-color:var(--ac);color:#fff;}
+/* 6번: 정렬바 */
+.sort-row{display:flex;gap:8px;padding:8px 16px;background:var(--w);border-bottom:1px solid var(--bd);align-items:center;}
+.sort-btn{background:var(--sf);border:1.5px solid var(--bd);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700;color:var(--tx2);cursor:pointer;white-space:nowrap;font-family:var(--f);}
+.sort-btn.on{background:var(--ac);border-color:var(--ac);color:#fff;}
 </style>
 </head>
 <body>
@@ -242,6 +252,24 @@ button{font-family:var(--f);}
   </div>
   <div class="city-row" id="cityRow"></div>
   <div class="cat-row" id="catRow"></div>
+  <!-- 5번: 맛집 세부탭 -->
+  <div class="food-sub-row" id="foodSubRow" style="display:none">
+    <button class="food-sub-btn on" data-key="all">전체</button>
+    <button class="food-sub-btn" data-key="ramen">라멘</button>
+    <button class="food-sub-btn" data-key="sushi">스시·회</button>
+    <button class="food-sub-btn" data-key="izakaya">이자카야</button>
+    <button class="food-sub-btn" data-key="tonkatsu">돈카츠</button>
+    <button class="food-sub-btn" data-key="yakitori">야키토리</button>
+    <button class="food-sub-btn" data-key="yakiniku">야키니쿠</button>
+    <button class="food-sub-btn" data-key="udon">우동·소바</button>
+    <button class="food-sub-btn" data-key="cafe">카페·디저트</button>
+    <button class="food-sub-btn" data-key="other">기타</button>
+  </div>
+  <!-- 6번: 정렬/필터 바 -->
+  <div class="sort-row" id="sortRow" style="display:none">
+    <button class="sort-btn" id="btnSortRating">⭐ 평점순</button>
+    <button class="sort-btn toggle" id="btnOnlyOpen">🟢 영업중만</button>
+  </div>
   <div class="scroll" id="mainContent" style="padding-bottom:calc(var(--nav) + var(--safe) + 16px)"></div>
 </div>
 <div class="page" id="page-ai">
@@ -356,8 +384,10 @@ var CATS=[
 ];
 var catLbl={};
 CATS.forEach(function(c){catLbl[c.key]=c.label;});
-var KLOOK_AFF='YOUR_KLOOK_ID';
-var MRT_AFF='YOUR_MRT_ID';
+var KLOOK_AFF='YOUR_KLOOK_ID';   // 클룩 파트너 ID 입력
+var MRT_AFF='YOUR_MRT_ID';     // 마이리얼트립 파트너 ID 입력
+var BOOKING_AFF='YOUR_BOOKING_ID'; // Booking.com 제휴 ID 입력
+var AGODA_AFF='YOUR_AGODA_ID';     // Agoda 파트너 ID 입력
 function aff(url,p){
   if(p==='kl'&&KLOOK_AFF!=='YOUR_KLOOK_ID')
     return 'https://affiliate.klook.com/redirect?aid='+KLOOK_AFF+'&url='+encodeURIComponent(url);
@@ -560,6 +590,9 @@ AI_DB['\ubcb3\ud478']=[{label:'\uc628\uccad \uccad\uad6d',places:[
 
 // ── State
 var city=CITIES[0].kr,cityEn=CITIES[0].en,cat=CATS[0].key;
+var foodSubCat='all'; // 5번: 맛집 세부탭 ('all','ramen','sushi','izakaya','tonkatsu','yakitori','yakiniku','udon','cafe','other')
+var sortBy='none';   // 6번: 정렬 ('none','rating_desc','rating_asc')
+var onlyOpen=false;  // 6번: 영업중 필터
 var saved=JSON.parse(localStorage.getItem('tabi_saved')||'[]');
 var _places=[],_tdays=null,_tcity='';
 
@@ -596,7 +629,16 @@ function buildCatTabs(){
     var btn=mk('button','cat-btn'+(i===0?' on':''),c.label);
     btn.addEventListener('click',function(){
       row.querySelectorAll('.cat-btn').forEach(function(b){b.classList.remove('on');});
-      btn.classList.add('on');cat=c.key;load();
+      btn.classList.add('on');cat=c.key;
+      // 5번: 맛집 세부탭 표시/숨김
+      foodSubCat='all';
+      var foodRow=document.getElementById('foodSubRow');
+      if(foodRow)foodRow.style.display=(c.key==='restaurant')?'flex':'none';
+      // 6번: 정렬바 표시
+      var sortRow=document.getElementById('sortRow');
+      if(sortRow)sortRow.style.display='flex';
+      sortBy='none';onlyOpen=false;
+      load();
     });
     row.appendChild(btn);
   });
@@ -630,6 +672,29 @@ function bindAll(){
   });
   on('btnClearAll','click',clearAll);
   on('btnBack','click',closeDetail);
+  // 5번: 맛집 세부탭 이벤트
+  document.getElementById('foodSubRow').addEventListener('click',function(e){
+    var btn=e.target.closest('.food-sub-btn');if(!btn)return;
+    document.querySelectorAll('.food-sub-btn').forEach(function(b){b.classList.remove('on');});
+    btn.classList.add('on');
+    foodSubCat=btn.dataset.key;
+    load();
+  });
+  // 6번: 정렬 버튼
+  on('btnSortRating','click',function(){
+    var btn=document.getElementById('btnSortRating');
+    if(sortBy==='rating_desc'){sortBy='rating_asc';btn.textContent='⭐ 평점 낮은순';}
+    else{sortBy='rating_desc';btn.textContent='⭐ 평점 높은순';}
+    renderList(_places);
+  });
+  // 6번: 영업중만 토글
+  on('btnOnlyOpen','click',function(){
+    onlyOpen=!onlyOpen;
+    var btn=document.getElementById('btnOnlyOpen');
+    btn.classList.toggle('on',onlyOpen);
+    btn.textContent=onlyOpen?'🟢 영업중만 ✓':'🟢 영업중만';
+    renderList(_places);
+  });
 }
 
 function switchPage(p){
@@ -646,7 +711,26 @@ function doSearch(){
   fetchPlaces(q+' Japan',null);
   document.getElementById('srchBar').classList.add('off');
 }
-function load(){fetchPlaces(cityEn+' '+catLbl[cat],cat);}
+function load(){
+  // 5번: 맛집 세부탭별 검색어
+  var FOOD_QUERIES={
+    all:      cityEn+' restaurant',
+    ramen:    cityEn+' 라멘 ramen',
+    sushi:    cityEn+' 스시 sushi',
+    izakaya:  cityEn+' 이자카야 izakaya',
+    tonkatsu: cityEn+' 돈카츠 tonkatsu',
+    yakitori: cityEn+' 야키토리 yakitori',
+    yakiniku: cityEn+' 야키니쿠 yakiniku',
+    udon:     cityEn+' 우동 udon soba',
+    cafe:     cityEn+' cafe dessert',
+    other:    cityEn+' restaurant local'
+  };
+  if(cat==='restaurant'){
+    fetchPlaces(FOOD_QUERIES[foodSubCat]||FOOD_QUERIES.all,'restaurant');
+  } else {
+    fetchPlaces(cityEn+' '+catLbl[cat],cat);
+  }
+}
 async function fetchPlaces(query,type){
   showMsg('loading');
   try{
@@ -654,17 +738,37 @@ async function fetchPlaces(query,type){
     if(type)p.append('type',type);
     var res=await fetch(PROXY+'/api/places?'+p);
     var d=await res.json();
+    // 5번: 맛집은 최대 60개 (pagetoken으로 추가 요청)
+    if(type==='restaurant'&&d.next_page_token){
+      try{
+        await new Promise(function(r){setTimeout(r,2000);}); // pagetoken 활성화 대기
+        var p2=new URLSearchParams({pagetoken:d.next_page_token,language:'ko'});
+        var res2=await fetch(PROXY+'/api/places?'+p2);
+        var d2=await res2.json();
+        if(d2.results)d.results=(d.results||[]).concat(d2.results);
+        if(d2.next_page_token){
+          await new Promise(function(r){setTimeout(r,2000);});
+          var p3=new URLSearchParams({pagetoken:d2.next_page_token,language:'ko'});
+          var res3=await fetch(PROXY+'/api/places?'+p3);
+          var d3=await res3.json();
+          if(d3.results)d.results=d.results.concat(d3.results);
+        }
+      }catch(e){console.warn('pagetoken fetch failed',e);}
+    }
     if(!d.results||!d.results.length){showMsg('empty');return;}
-    _places=d.results.map(function(r){
+    var raw=d.results.map(function(r){
       return{
         name:r.name,addr:r.formatted_address,rating:r.rating,cnt:r.user_ratings_total,
         open:r.opening_hours&&r.opening_hours.open_now,
         types:(r.types||[]).slice(0,3),
         photo_ref:r.photos&&r.photos[0]&&r.photos[0].photo_reference,
         place_id:r.place_id,
-        url:'https://maps.google.com/?cid='+r.place_id
+        url:r.place_id?('https://maps.google.com/maps?place_id='+r.place_id):null
       };
     });
+    // 1번: 리뷰 50개 미만 + 평점 3.5 미만 필터
+    _places=raw.filter(function(r){return(r.cnt||0)>=50&&(r.rating||0)>=3.5;});
+    if(!_places.length){showMsg('empty');return;}
     renderList(_places);
   }catch(e){console.error(e);showMsg('error');}
 }
@@ -726,7 +830,10 @@ function mkBkStrip(data){
 // ── CTA
 function mkCTA(p){
   var cta=mk('div','pc-cta');
-  var gurl=p.url||('https://maps.google.com/?q='+encodeURIComponent(p.name));
+  // 2번: place_id 있으면 정확한 장소로, 없으면 검색어로
+  var gurl=p.place_id
+    ?('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(p.name)+'&query_place_id='+p.place_id)
+    :('https://maps.google.com/?q='+encodeURIComponent(p.name+' '+city));
   var nurl='https://map.naver.com/v5/search/'+encodeURIComponent(p.name+' '+city);
   var bk=BKP[p.name];
   if(bk&&bk.length){
@@ -734,9 +841,24 @@ function mkCTA(p){
       var a=mk('a','kl','\ud83d\udd16 '+b.logo+' \uc608\uc57d');
       a.href=b.url;a.target='_blank';cta.appendChild(a);
     });
+  } else if(cat==='lodging'){
+    // 3번: 숙박 탭 - Booking.com + Agoda 버튼
+    var BOOKING_AFF='YOUR_BOOKING_ID';
+    var AGODA_AFF='YOUR_AGODA_ID';
+    var hotelQ=encodeURIComponent(p.name);
+    var bkUrl=BOOKING_AFF!=='YOUR_BOOKING_ID'
+      ?'https://www.booking.com/search.html?ss='+hotelQ+'&aid='+BOOKING_AFF
+      :'https://www.booking.com/search.html?ss='+hotelQ;
+    var agUrl=AGODA_AFF!=='YOUR_AGODA_ID'
+      ?'https://www.agoda.com/search?q='+hotelQ+'&cid='+AGODA_AFF
+      :'https://www.agoda.com/search?q='+hotelQ;
+    var ab=mk('a','bk-btn','🏨 Booking');ab.href=bkUrl;ab.target='_blank';
+    var ag=mk('a','ag-btn','🟠 Agoda');ag.href=agUrl;ag.target='_blank';
+    var gm=mk('a',null,'🗺 지도');gm.href=gurl;gm.target='_blank';
+    cta.appendChild(ab);cta.appendChild(ag);cta.appendChild(gm);
   } else {
-    var a1=mk('a',null,'\ud83d\uddfa Google \uc9c0\ub3c4');a1.href=gurl;a1.target='_blank';
-    var a2=mk('a',null,'\ud83d\udccd \ub124\uc774\ubc84');a2.href=nurl;a2.target='_blank';
+    var a1=mk('a',null,'🗺 Google 지도');a1.href=gurl;a1.target='_blank';
+    var a2=mk('a',null,'📍 네이버');a2.href=nurl;a2.target='_blank';
     cta.appendChild(a1);cta.appendChild(a2);
   }
   return cta;
@@ -783,14 +905,20 @@ function mkCard(p,idx){
 function renderList(places){
   var mc=document.getElementById('mainContent');mc.innerHTML='';
   if(!places.length){showMsg('empty');return;}
+  // 6번: 영업중 필터
+  var shown=onlyOpen?places.filter(function(p){return p.open===true;}):places.slice();
+  // 6번: 평점 정렬
+  if(sortBy==='rating_desc')shown.sort(function(a,b){return(b.rating||0)-(a.rating||0);});
+  else if(sortBy==='rating_asc')shown.sort(function(a,b){return(a.rating||0)-(b.rating||0);});
+  if(!shown.length){showMsg('empty');return;}
   var strip=mkBkStrip(CBK[city]);
   if(strip)mc.appendChild(strip);
   var hd=mk('div','sec-hd');
   hd.appendChild(mk('span','sec-ttl',city+' '+catLbl[cat]));
-  hd.appendChild(mk('span','sec-cnt',places.length+'\uacf3'));
+  hd.appendChild(mk('span','sec-cnt',shown.length+'곳'));
   mc.appendChild(hd);
   var list=mk('div','place-list');
-  places.forEach(function(p,i){list.appendChild(mkCard(p,i));});
+  shown.forEach(function(p,i){list.appendChild(mkCard(p,i));});
   mc.appendChild(list);
 }
 
@@ -954,7 +1082,10 @@ function openDetail(idx){
   var hb=mk('button','d-btn h'+(isSaved?' on':''),isSaved?'\u2665 \uc800\uc7a5\ub428':'\u2661 \uc800\uc7a5\ud558\uae30');
   hb.id='dHeartBtn';
   hb.addEventListener('click',function(){toggleSD(p.name);});
-  var gurl=p.url||('https://maps.google.com/?q='+encodeURIComponent(p.name));
+  // 2번: place_id 있으면 정확한 장소로, 없으면 검색어로
+  var gurl=p.place_id
+    ?('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(p.name)+'&query_place_id='+p.place_id)
+    :('https://maps.google.com/?q='+encodeURIComponent(p.name+' '+city));
   var nurl='https://map.naver.com/v5/search/'+encodeURIComponent(p.name+' '+city);
   var gb=mk('button','d-btn p','\ud83d\uddfa Google \uc9c0\ub3c4\uc5d0\uc11c \ubcf4\uae30');
   gb.addEventListener('click',function(){window.open(gurl,'_blank');});
