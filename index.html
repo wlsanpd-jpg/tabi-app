@@ -126,7 +126,7 @@ button{font-family:var(--f);}
 .tri-em{font-size:40px;margin-bottom:8px;}
 .tri-title{font-family:var(--fd);font-size:20px;color:#fff;font-weight:700;margin-bottom:4px;line-height:1.3;}
 .tri-sub{font-size:12px;color:rgba(255,255,255,.5);}
-.tri-map{height:200px;position:relative;overflow:hidden;background:#f0f4f8;border-radius:0;}
+.tri-map{height:240px;position:relative;overflow:hidden;background:#f0f4f8;border-radius:0;}
 .tri-map-pins{display:none;}
 .tri-pin{position:absolute;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#fff;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,.25);border:2px solid rgba(255,255,255,.8);pointer-events:all;cursor:pointer;}
 .tri-daytabs{display:flex;gap:6px;padding:12px 14px;border-bottom:1px solid var(--bd);overflow-x:auto;}
@@ -332,6 +332,11 @@ button{font-family:var(--f);}
 (function(){
 'use strict';
 var PROXY='https://tabi-app-wheat.vercel.app';
+var GMAPS_KEY='';  // Vercel 환경변수에서 자동 로드
+// Google Maps Embed API 키 로드
+fetch(PROXY+'/api/maps-key').then(function(r){return r.json();}).then(function(d){
+  if(d&&d.key)GMAPS_KEY=d.key;
+}).catch(function(){});
 var CITIES=[
   {kr:'도쿄',en:'Tokyo Japan'},{kr:'오사카',en:'Osaka Japan'},
   {kr:'교토',en:'Kyoto Japan'},{kr:'후쿠오카',en:'Fukuoka Japan'},
@@ -378,7 +383,7 @@ function mrc(c){return aff('https://www.myrealtrip.com/offers?query='+encodeURIC
 var BKP={};
 BKP['\ub3c4\ucfc4 \uc2a4\uce74\uc774\ud2b8\ub9ac']=[
   {cls:'kl',logo:'KLOOK',nm:'\ub3c4\ucfc4 \uc2a4\uce74\uc774\ud2b8\ub9ac \uc785\uc7a5\uad8c',dc:'\ubaa8\ubc14\uc77c \ud2f0\ucf13 \u00b7 \ud604\uc7a5 \ubc14\ub85c \uc785\uc7a5',pr:'38,000\uc6d0~',cm:'\ucd5c\ub300 8%',url:KU.skytree},
-  {cls:'mr',logo:'MRT',nm:'\ub3c4\ucfc4 \uc2a4\ce74\uc774\ud2b8\ub9ac \ud22c\uc5b4',dc:'\ub9c8\uc774\ub9ac\uc5bc\ud2b8\ub9bd \ub3c4\ucfc4 \ucd94\ucc9c',pr:'35,000\uc6d0~',cm:'\ucd5c\ub300 5%',url:mrc('\ub3c4\ucfc4')}
+  {cls:'mr',logo:'MRT',nm:'\ub3c4\ucfc4 \uc2a4\uce74\uc774\ud2b8\ub9ac \ud22c\uc5b4',dc:'\ub9c8\uc774\ub9ac\uc5bc\ud2b8\ub9bd \ub3c4\ucfc4 \ucd94\ucc9c',pr:'35,000\uc6d0~',cm:'\ucd5c\ub300 5%',url:mrc('\ub3c4\ucfc4')}
 ];
 BKP['\ud300\ub7a9 \ud50c\ub798\ub2db \ub3c4\ucfc4']=[
   {cls:'kl',logo:'KLOOK',nm:'\ud300\ub7a9 \ud50c\ub798\ub2db \uc785\uc7a5\uad8c',dc:'\ub0a0\uc9dc \uc9c0\uc815 \u00b7 \uc0ac\uc804\uc608\uc57d \ud544\uc218',pr:'36,000\uc6d0~',cm:'\ucd5c\ub300 8%',url:KU.teamlab}
@@ -400,7 +405,7 @@ BKP['\ud558\ucf54\ub124 \uc624\ud508\uc5d0\uc5b4 \ubba4\uc9c0\uc5c4']=[
 ];
 var CBK={};
 CBK['\ub3c4\ucfc4']=[
-  {cls:'kl',nm:'\uc2a4\ce74\uc774\ud2b8\ub9ac \uc785\uc7a5\uad8c',pr:'38,000\uc6d0~',url:KU.skytree},
+  {cls:'kl',nm:'\uc2a4\uce74\uc774\ud2b8\ub9ac \uc785\uc7a5\uad8c',pr:'38,000\uc6d0~',url:KU.skytree},
   {cls:'kl',nm:'\ud300\ub7a9 \ud50c\ub798\ub2db',pr:'36,000\uc6d0~',url:KU.teamlab},
   {cls:'mr',nm:'\ub3c4\ucfc4 \uc778\uae30 \ud22c\uc5b4',pr:'20,000\uc6d0~',url:mrc('\ub3c4\ucfc4')}
 ];
@@ -419,7 +424,7 @@ CBK['\ud558\ucf54\ub124']=[
   {cls:'mr',nm:'\ud558\ucf54\ub124 \uc778\uae30 \ud22c\uc5b4',pr:'50,000\uc6d0~',url:mrc('\ud558\ucf54\ub124')}
 ];
 var PINFO={};
-PINFO['\ub3c4\ucfc4 \uc2a4\ce74\uc774\ud2b8\ub9ac']={ic:'\ud83d\uddfc',tp:'\uc804\ub9dd\ub300',cm:'\ub9d1\uc740 \ub0a0\uc5d4 \ud6c4\uc9c0\uc0b0\uae4c\uc9c0 \ubcf4\uc5ec\uc694! \uc57c\uacbd\ub3c4 \ud658\uc0c1\uc801'};
+PINFO['\ub3c4\ucfc4 \uc2a4\uce74\uc774\ud2b8\ub9ac']={ic:'\ud83d\uddfc',tp:'\uc804\ub9dd\ub300',cm:'\ub9d1\uc740 \ub0a0\uc5d4 \ud6c4\uc9c0\uc0b0\uae4c\uc9c0 \ubcf4\uc5ec\uc694! \uc57c\uacbd\ub3c4 \ud658\uc0c1\uc801'};
 PINFO['\uc544\uc0ac\ucfe0\uc0ac \uc13c\uc18c\uc9c0']={ic:'\u26e9\ufe0f',tp:'\uc2e0\uc0ac',cm:'\uc544\uce68 \uc77c\uc801 \uc624\uba74 \uc778\ud30c \uc5c6\uc774 \uc2e0\ube44\ub85c\uc6b4 \ubd84\uc704\uae30'};
 PINFO['\uba54\uc774\uc9c0 \uc2e0\uad81']={ic:'\ud83c\udf32',tp:'\uc2e0\uc0ac\u00b7\uacf5\uc6d0',cm:'70\ub9cc \uadf8\ub8e8 \ub098\ubb34\ub85c \ub458\ub7ec\uc2f8\uc778 \ub3c4\uc2ec \ud790\ub9c1 \uacf5\uac04'};
 PINFO['\uc2dc\ubd80\uc57c \uc2a4\ud06c\ub7a8\ube14 \uad50\ucc28\ub85c']={ic:'\ud83d\udea6',tp:'\ub79c\ub4dc\ub9c8\ud06c',cm:'\uc2a4\ud0c0\ubc85\uc2a4 2\uce35\uc5d0\uc11c \ub0b4\ub824\ub2e4\ubcf4\ub294 \ubdf0\uac00 \ucd5c\uace0'};
@@ -456,7 +461,7 @@ var AI_DB={};
 AI_DB['\ub3c4\ucfc4']=[
   {label:'\uc804\ud1b5\uacfc \ud604\ub300 \u2014 \uc785\ubb38',places:[
     {name:'\uc544\uc0ac\ucfe0\uc0ac \uc13c\uc18c\uc9c0',time:'08:30',tip:'\uac1c\uc7a5 \uc804 \ub3c4\uc0b0\ud558\uba74 \uc778\ud30c \uc5c6\uc774 \uc870\uc6a9\ud788 \uac10\uc0c1 \uac00\ub2a5'},
-    {name:'\ub3c4\ucfc4 \uc2a4\ce74\uc774\ud2b8\ub9ac',time:'11:00',tip:'\ub0a0\uc528 \uc88b\uc73c\uba74 \ud6c4\uc9c0\uc0b0 \uc870\ub9dd, 350m \uc804\ub9dd\ub371'},
+    {name:'\ub3c4\ucfc4 \uc2a4\uce74\uc774\ud2b8\ub9ac',time:'11:00',tip:'\ub0a0\uc528 \uc88b\uc73c\uba74 \ud6c4\uc9c0\uc0b0 \uc870\ub9dd, 350m \uc804\ub9dd\ub371'},
     {name:'\uc544\ud0a4\ud558\ubc14\ub77c',time:'14:00',tip:'\uc560\ub2c8\u00b7\uac8c\uc784\u00b7\ud53c\uaddc\uc5b4\u00b7\uc804\uc790\uc81c\ud488\uc758 \uccad\uad6d'},
     {name:'\uc2dc\ubd80\uc57c \uc2a4\ud06c\ub7a8\ube14 \uad50\ucc28\ub85c',time:'18:00',tip:'\uc2a4\ud0c0\ubc85\uc2a4 2\uce35\uc5d0\uc11c \ud53c\ud06c\ud0c0\uc784 \uad50\ucc28\ub85c \uc870\ub9dd'}
   ]},
@@ -965,111 +970,47 @@ function openDetail(idx){
 }
 function closeDetail(){document.getElementById('detailPanel').classList.remove('open');}
 
-// ── AI Map (SVG 심플 지도)
+// ── AI Map (Google Maps Embed)
 function mkMap(di){
   var d=_tdays[di];
-  var n=d.places.length;
+  var tc=_tcity||'도쿄';
   var wrap=mk('div','tri-map');wrap.id='triMap';
-  var ns='http://www.w3.org/2000/svg';
-  var svg=document.createElementNS(ns,'svg');
-  svg.setAttribute('viewBox','0 0 340 200');
-  svg.setAttribute('width','100%');
-  svg.setAttribute('height','100%');
-  svg.style.cssText='display:block;';
 
-  // 배경
-  var bg=document.createElementNS(ns,'rect');
-  bg.setAttribute('width','340');bg.setAttribute('height','200');
-  bg.setAttribute('fill','#f0f4f8');svg.appendChild(bg);
-
-  // 격자
-  var defs=document.createElementNS(ns,'defs');
-  var pat=document.createElementNS(ns,'pattern');
-  pat.setAttribute('id','g'+di);pat.setAttribute('width','24');pat.setAttribute('height','24');
-  pat.setAttribute('patternUnits','userSpaceOnUse');
-  var ph=document.createElementNS(ns,'path');
-  ph.setAttribute('d','M 24 0 L 0 0 0 24');
-  ph.setAttribute('fill','none');ph.setAttribute('stroke','#dde3ea');ph.setAttribute('stroke-width','0.7');
-  pat.appendChild(ph);defs.appendChild(pat);svg.appendChild(defs);
-  var gr=document.createElementNS(ns,'rect');
-  gr.setAttribute('width','340');gr.setAttribute('height','200');
-  gr.setAttribute('fill','url(#g'+di+')');svg.appendChild(gr);
-
-  // 도로
-  [[0,95,340,95],[0,148,340,148],[105,0,105,200],[215,0,215,200]].forEach(function(r){
-    var line=document.createElementNS(ns,'line');
-    line.setAttribute('x1',r[0]);line.setAttribute('y1',r[1]);
-    line.setAttribute('x2',r[2]);line.setAttribute('y2',r[3]);
-    line.setAttribute('stroke','#fff');line.setAttribute('stroke-width','6');
-    line.setAttribute('opacity','0.6');svg.appendChild(line);
-  });
-
-  // 핀 위치
-  var pts=[{x:155,y:92},{x:68,y:65},{x:240,y:55},{x:42,y:135},{x:195,y:152},{x:295,y:105}];
-
-  // 연결선
-  if(n>1){
-    var pp=d.places.slice(0,Math.min(n,6)).map(function(_,i){var p=pts[i]||{x:40+i*44,y:60+i*22};return p.x+' '+p.y;});
-    var poly=document.createElementNS(ns,'polyline');
-    poly.setAttribute('points',pp.join(', '));
-    poly.setAttribute('fill','none');poly.setAttribute('stroke',d.col);
-    poly.setAttribute('stroke-width','2');poly.setAttribute('stroke-dasharray','6,4');
-    poly.setAttribute('opacity','0.55');svg.appendChild(poly);
+  if(!GMAPS_KEY||GMAPS_KEY===''){
+    // API 키 없으면 안내 메시지
+    var msg=mk('div');
+    msg.style.cssText='display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:8px;background:#f0f4f8;';
+    var ic=mk('div');ic.textContent='🗺';ic.style.fontSize='32px';
+    var tx=mk('div');tx.style.cssText='font-size:12px;color:#6b6a66;font-weight:600;';tx.textContent='지도 로딩 중...';
+    msg.appendChild(ic);msg.appendChild(tx);wrap.appendChild(msg);
+    return wrap;
   }
 
-  // 도시 레이블
-  var lbl=document.createElementNS(ns,'text');
-  lbl.setAttribute('x','10');lbl.setAttribute('y','188');
-  lbl.setAttribute('font-size','10');lbl.setAttribute('font-weight','700');
-  lbl.setAttribute('fill','#a8a7a2');lbl.setAttribute('font-family','Noto Sans KR,sans-serif');
-  lbl.textContent=_tcity+' 일정 순서';svg.appendChild(lbl);
+  // Google Maps Embed - directions mode with waypoints
+  var places=d.places;
+  var origin=encodeURIComponent(places[0].name+' '+tc);
+  var dest=encodeURIComponent(places[places.length-1].name+' '+tc);
+  var waypoints='';
+  if(places.length>2){
+    waypoints='&waypoints='+places.slice(1,-1).map(function(p){
+      return encodeURIComponent(p.name+' '+tc);
+    }).join('|');
+  }
+  var src='https://www.google.com/maps/embed/v1/directions'
+    +'?key='+GMAPS_KEY
+    +'&origin='+origin
+    +'&destination='+dest
+    +waypoints
+    +'&mode=walking'
+    +'&language=ko';
 
-  // 핀
-  d.places.forEach(function(pl,i){
-    var pos=pts[i]||{x:40+i*44,y:60+i*22};
-    var gurl='https://maps.google.com/?q='+encodeURIComponent(pl.name+' '+_tcity);
-    var g=document.createElementNS(ns,'g');
-    g.style.cursor='pointer';
-    g.addEventListener('click',function(){window.open(gurl,'_blank');});
-
-    // 핀 원
-    var c=document.createElementNS(ns,'circle');
-    c.setAttribute('cx',String(pos.x));c.setAttribute('cy',String(pos.y));
-    c.setAttribute('r','14');c.setAttribute('fill',d.col);
-    c.setAttribute('stroke','#fff');c.setAttribute('stroke-width','2.5');
-    g.appendChild(c);
-
-    // 번호
-    var t=document.createElementNS(ns,'text');
-    t.setAttribute('x',String(pos.x));t.setAttribute('y',String(pos.y+4));
-    t.setAttribute('text-anchor','middle');t.setAttribute('font-size','11');
-    t.setAttribute('font-weight','900');t.setAttribute('fill','#fff');
-    t.setAttribute('font-family','Noto Sans KR,sans-serif');
-    t.textContent=String(i+1);g.appendChild(t);
-
-    // 이름 레이블
-    var nm=pl.name.length>6?pl.name.slice(0,5)+'..':pl.name;
-    var lby=pos.y>155?pos.y-22:pos.y+26;
-    var lbx=pos.x;
-    var lw=nm.length*8+10;
-
-    var lbg=document.createElementNS(ns,'rect');
-    lbg.setAttribute('x',String(lbx-lw/2));lbg.setAttribute('y',String(lby-12));
-    lbg.setAttribute('width',String(lw));lbg.setAttribute('height','15');
-    lbg.setAttribute('rx','4');lbg.setAttribute('fill','rgba(255,255,255,0.92)');
-    g.appendChild(lbg);
-
-    var lt=document.createElementNS(ns,'text');
-    lt.setAttribute('x',String(lbx));lt.setAttribute('y',String(lby));
-    lt.setAttribute('text-anchor','middle');lt.setAttribute('font-size','9');
-    lt.setAttribute('font-weight','700');lt.setAttribute('fill','#1a1a18');
-    lt.setAttribute('font-family','Noto Sans KR,sans-serif');
-    lt.textContent=nm;g.appendChild(lt);
-
-    svg.appendChild(g);
-  });
-
-  wrap.appendChild(svg);
+  var iframe=document.createElement('iframe');
+  iframe.src=src;
+  iframe.loading='lazy';
+  iframe.allowFullscreen=false;
+  iframe.style.cssText='width:100%;height:100%;border:none;display:block;pointer-events:none;';
+  iframe.setAttribute('referrerpolicy','no-referrer-when-downgrade');
+  wrap.appendChild(iframe);
   return wrap;
 }
 function mkPlaces(di){
