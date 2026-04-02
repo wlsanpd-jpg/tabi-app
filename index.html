@@ -347,11 +347,10 @@ button{font-family:var(--f);}
     <button class="food-sub-btn" data-key="yakitori">야키토리</button>
     <button class="food-sub-btn" data-key="yakiniku">야키니쿠</button>
     <button class="food-sub-btn" data-key="udon">우동·소바</button>
-    <button class="food-sub-btn" data-key="nabe">나베·샤부샤부</button>
+    <button class="food-sub-btn" data-key="nabe">나베</button>
+    <button class="food-sub-btn" data-key="shabu">샤부샤부</button>
     <button class="food-sub-btn" data-key="oden">오뎅·꼬치</button>
-    <button class="food-sub-btn" data-key="seafood">해산물</button>
     <button class="food-sub-btn" data-key="gyoza">교자</button>
-    <button class="food-sub-btn" data-key="other">기타</button>
   </div>
   <!-- 6번: 정렬/필터 바 -->
   <div class="sort-row" id="sortRow" style="display:none">
@@ -887,11 +886,10 @@ function load(){
     yakitori: cityEn+' 야키토리 yakitori',
     yakiniku: cityEn+' 야키니쿠 yakiniku',
     udon:     cityEn+' 우동 소바 udon soba',
-    nabe:     cityEn+' 나베 샤부샤부 nabe shabu',
+    nabe:     cityEn+' 나베 나베요리 nabe hot pot',
+    shabu:    cityEn+' 샤부샤부 shabu shabu',
     oden:     cityEn+' 오뎅 꼬치 oden kushikatsu',
-    seafood:  cityEn+' 해산물 카이센동 seafood',
-    gyoza:    cityEn+' 교자 gyoza dumpling',
-    other:    cityEn+' 도시락 중화 카레 bento curry chinese'
+    gyoza:    cityEn+' 교자 gyoza dumpling'
   };
   if(cat==='restaurant'){
     fetchPlaces(FOOD_QUERIES[foodSubCat]||FOOD_QUERIES.all,'restaurant');
