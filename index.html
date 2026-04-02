@@ -223,8 +223,11 @@ button{font-family:var(--f);}
 .d-hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
 .d-hero-fade{position:absolute;bottom:0;left:0;right:0;height:90px;background:linear-gradient(transparent,var(--w));}
 .hero-dots{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:5;}
-.hero-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.5);cursor:pointer;transition:all .2s;}
+.hero-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.5);cursor:pointer;transition:all .22s;}
 .hero-dot.on{background:#fff;width:20px;border-radius:3px;}
+.hero-arr{position:absolute;top:50%;transform:translateY(-50%);z-index:6;background:rgba(0,0,0,.38);border:none;color:#fff;font-size:24px;line-height:1;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.hero-arr-l{left:10px;}
+.hero-arr-r{right:10px;}
 .d-body{padding-bottom:120px;}
 .d-title-sec{padding:18px 16px 14px;border-bottom:1px solid var(--bd);}
 .d-name{font-family:var(--fd);font-size:26px;font-weight:900;color:var(--tx);letter-spacing:-.5px;margin-bottom:4px;line-height:1.2;}
@@ -275,6 +278,38 @@ button{font-family:var(--f);}
 .sort-row{display:flex;gap:8px;padding:9px 16px;background:var(--w);border-bottom:1px solid var(--bd);align-items:center;}
 .sort-btn{background:var(--sf);border:1.5px solid transparent;border-radius:20px;padding:5px 13px;font-size:11px;font-weight:700;color:var(--tx2);cursor:pointer;white-space:nowrap;font-family:var(--f);transition:all .15s;}
 .sort-btn.on{background:var(--ac);border-color:var(--ac);color:#fff;}
+
+/* ─── Bottom Sheet ─── */
+.sheet-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0);pointer-events:none;transition:background .3s;}
+.sheet-overlay.open{background:rgba(0,0,0,.5);pointer-events:all;}
+.sheet{position:fixed;bottom:0;left:50%;transform:translate(-50%,110%);width:100%;max-width:480px;z-index:501;background:var(--w);border-radius:22px 22px 0 0;transition:transform .38s cubic-bezier(.16,1,.3,1);}
+.sheet.open{transform:translate(-50%,0);}
+.sheet-handle{width:36px;height:4px;background:var(--bd2);border-radius:2px;margin:14px auto 0;}
+.sheet-hd{padding:14px 20px 12px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;}
+.sheet-hd-ttl{font-size:11px;font-weight:800;color:var(--tx3);letter-spacing:.8px;text-transform:uppercase;}
+.sheet-x{background:var(--sf);border:none;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;color:var(--tx3);display:flex;align-items:center;justify-content:center;}
+.sheet-body{padding:20px 20px calc(20px + var(--safe));}
+.sheet-plat-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.sheet-badge{height:26px;padding:0 10px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#fff;letter-spacing:.2px;}
+.sheet-badge.kl{background:#f74801;}
+.sheet-badge.mr{background:#00bcd4;}
+.sheet-badge.eat{background:#e84040;}
+.sheet-badge.bk{background:#003580;}
+.sheet-badge.ag{background:#e94057;}
+.sheet-plat-lbl{font-size:12px;color:var(--tx3);font-weight:600;}
+.sheet-nm{font-size:17px;font-weight:900;color:var(--tx);line-height:1.3;margin-bottom:5px;}
+.sheet-dc{font-size:13px;color:var(--tx3);margin-bottom:14px;line-height:1.5;}
+.sheet-pr{font-size:22px;font-weight:900;color:var(--ac);margin-bottom:18px;}
+.sheet-go{width:100%;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;border:none;border-radius:14px;padding:16px;font-size:15px;font-weight:900;cursor:pointer;font-family:var(--f);display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;}
+.sheet-cancel{width:100%;background:none;border:none;color:var(--tx3);font-size:13px;font-weight:700;cursor:pointer;font-family:var(--f);padding:10px;}
+
+/* ─── Stylish affiliate logos ─── */
+.dbr-logo{width:56px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:#fff;letter-spacing:.4px;}
+.dbr-logo.kl{background:linear-gradient(135deg,#ff6b18,#f74801);}
+.dbr-logo.mr{background:linear-gradient(135deg,#00d4e8,#00a8c2);}
+.dbr-logo.eat{background:#e84040;}
+.dbr-logo.bk{background:#003580;}
+.dbr-logo.ag{background:#e94057;}
 </style>
 </head>
 <body>
@@ -419,10 +454,55 @@ button{font-family:var(--f);}
   <div class="d-hero" id="dHero"><div class="d-hero-fade"></div></div>
   <div class="d-body" id="dBody"></div>
 </div>
+<!-- Bottom Sheet -->
+<div class="sheet-overlay" id="sheetOverlay"></div>
+<div class="sheet" id="sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-hd">
+    <span class="sheet-hd-ttl" id="sheetHdTtl">예약 정보</span>
+    <button class="sheet-x" id="sheetX">✕</button>
+  </div>
+  <div class="sheet-body">
+    <div class="sheet-plat-row">
+      <span class="sheet-badge" id="sheetBadge"></span>
+      <span class="sheet-plat-lbl" id="sheetPlatLbl"></span>
+    </div>
+    <div class="sheet-nm" id="sheetNm"></div>
+    <div class="sheet-dc" id="sheetDc"></div>
+    <div class="sheet-pr" id="sheetPr"></div>
+    <button class="sheet-go" id="sheetGo">사이트에서 보기 →</button>
+    <button class="sheet-cancel" id="sheetCancel">닫기</button>
+  </div>
+</div>
 <script>
 (function(){
 'use strict';
 var PROXY='https://tabi-app-wheat.vercel.app';
+
+// ── Bottom Sheet
+var _sheetUrl='';
+var PLAT_LABELS={kl:'KLOOK',mr:'마이리얼트립',eat:'Eatery',bk:'Booking.com',ag:'Agoda'};
+function showSheet(nm,url,cls,pr,dc,hdTtl){
+  _sheetUrl=url;
+  document.getElementById('sheetHdTtl').textContent=hdTtl||'예약 상품';
+  var badge=document.getElementById('sheetBadge');
+  badge.textContent=PLAT_LABELS[cls]||cls.toUpperCase();
+  badge.className='sheet-badge '+cls;
+  document.getElementById('sheetPlatLbl').textContent='';
+  document.getElementById('sheetNm').textContent=nm||'';
+  document.getElementById('sheetDc').textContent=dc||'';
+  document.getElementById('sheetPr').textContent=pr||'';
+  document.getElementById('sheet').classList.add('open');
+  document.getElementById('sheetOverlay').classList.add('open');
+}
+function closeSheet(){
+  document.getElementById('sheet').classList.remove('open');
+  document.getElementById('sheetOverlay').classList.remove('open');
+}
+document.getElementById('sheetGo').addEventListener('click',function(){window.open(_sheetUrl,'_blank');closeSheet();});
+document.getElementById('sheetCancel').addEventListener('click',closeSheet);
+document.getElementById('sheetX').addEventListener('click',closeSheet);
+document.getElementById('sheetOverlay').addEventListener('click',closeSheet);
 
 var CITIES=[
   {kr:'도쿄',en:'Tokyo Japan'},{kr:'오사카',en:'Osaka Japan'},
@@ -1105,44 +1185,74 @@ function openDetail(idx){
   // 2번: Wikipedia 사진 우선, Google 사진 스와이프
   var heroImgs=[];
   var currentHeroIdx=0;
-  function showHeroImg(idx){
-    if(!heroImgs.length)return;
-    var existing=hero.querySelector('img');
-    if(existing)existing.remove();
+  var _heroAnimating=false;
+  function showHeroImg(nextIdx,dir){
+    if(!heroImgs.length||_heroAnimating)return;
+    _heroAnimating=true;
+    var existing=hero.querySelector('img.hero-img');
     var img=document.createElement('img');
+    img.className='hero-img';
     img.alt=p.name;
-    img.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .3s';
-    img.src=heroImgs[idx];
+    var fromX=dir===0?'0%':(dir>0?'100%':'-100%');
+    img.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:translateX('+fromX+');transition:transform .32s cubic-bezier(.25,.46,.45,.94);will-change:transform;';
+    img.src=heroImgs[nextIdx];
     img.addEventListener('error',function(){
-      heroImgs.splice(idx,1);
-      if(heroImgs.length)showHeroImg(Math.min(currentHeroIdx,heroImgs.length-1));
+      heroImgs.splice(nextIdx,1);_heroAnimating=false;
+      if(heroImgs.length)showHeroImg(Math.min(currentHeroIdx,heroImgs.length-1),0);
       else{hero.style.fontSize='80px';hero.textContent=gpi(p.name).ic;}
     });
     hero.insertBefore(img,hero.firstChild);
     // 인디케이터 업데이트
     var dots=hero.querySelectorAll('.hero-dot');
-    dots.forEach(function(d,i){d.classList.toggle('on',i===idx);});
+    dots.forEach(function(d,i){d.classList.toggle('on',i===nextIdx);});
+    if(dir!==0&&existing){
+      existing.style.transition='transform .32s cubic-bezier(.25,.46,.45,.94)';
+      existing.style.willChange='transform';
+    }
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        img.style.transform='translateX(0)';
+        if(dir!==0&&existing){
+          existing.style.transform='translateX('+(dir>0?'-100%':'100%')+')';
+        }
+        setTimeout(function(){
+          if(existing&&existing.parentNode)existing.remove();
+          _heroAnimating=false;
+        },340);
+      });
+    });
   }
   function buildHeroWithImgs(imgs){
     heroImgs=imgs;currentHeroIdx=0;
     if(!imgs.length){hero.style.fontSize='80px';hero.textContent=gpi(p.name).ic;return;}
-    showHeroImg(0);
+    showHeroImg(0,0);
     if(imgs.length>1){
       var dotsWrap=mk('div','hero-dots');
       imgs.forEach(function(_,i){
         var dot=mk('div','hero-dot'+(i===0?' on':''));
-        dot.addEventListener('click',function(){currentHeroIdx=i;showHeroImg(i);});
+        dot.addEventListener('click',function(){
+          if(i===currentHeroIdx)return;
+          var d=i>currentHeroIdx?1:-1;currentHeroIdx=i;showHeroImg(i,d);
+        });
         dotsWrap.appendChild(dot);
       });
       hero.appendChild(dotsWrap);
+      // 좌우 화살표
+      var arL=mk('button','hero-arr hero-arr-l','‹');
+      var arR=mk('button','hero-arr hero-arr-r','›');
+      arL.addEventListener('click',function(){if(_heroAnimating)return;currentHeroIdx=(currentHeroIdx-1+heroImgs.length)%heroImgs.length;showHeroImg(currentHeroIdx,-1);});
+      arR.addEventListener('click',function(){if(_heroAnimating)return;currentHeroIdx=(currentHeroIdx+1)%heroImgs.length;showHeroImg(currentHeroIdx,1);});
+      hero.appendChild(arL);hero.appendChild(arR);
       // 스와이프
-      var startX=0;
-      hero.addEventListener('touchstart',function(e){startX=e.touches[0].clientX;},{passive:true});
+      var startX=0,startY=0;
+      hero.addEventListener('touchstart',function(e){startX=e.touches[0].clientX;startY=e.touches[0].clientY;},{passive:true});
       hero.addEventListener('touchend',function(e){
         var dx=e.changedTouches[0].clientX-startX;
-        if(Math.abs(dx)>40){
-          currentHeroIdx=(currentHeroIdx+(dx<0?1:-1)+heroImgs.length)%heroImgs.length;
-          showHeroImg(currentHeroIdx);
+        var dy=e.changedTouches[0].clientY-startY;
+        if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)){
+          var dir=dx<0?1:-1;
+          currentHeroIdx=(currentHeroIdx+dir+heroImgs.length)%heroImgs.length;
+          showHeroImg(currentHeroIdx,dir);
         }
       },{passive:true});
     }
@@ -1228,7 +1338,7 @@ function openDetail(idx){
     bk.forEach(function(b){
       var row=mk('button','d-bk-row');
       var L=mk('div','dbr-l');
-      L.appendChild(mk('div','dbr-logo '+b.cls,b.logo));
+      L.appendChild(mk('div','dbr-logo '+b.cls,PLAT_LABELS[b.cls]||b.logo));
       var txt=mk('div');
       txt.appendChild(mk('div','dbr-nm',b.nm));
       txt.appendChild(mk('div','dbr-dc',b.dc));
@@ -1240,7 +1350,7 @@ function openDetail(idx){
       var arr=mk('span');arr.textContent='\u203a';arr.style.cssText='color:var(--bd2);font-size:18px';
       R.appendChild(rr);R.appendChild(arr);
       row.appendChild(L);row.appendChild(R);
-      row.addEventListener('click',function(){window.open(b.url,'_blank');});
+      (function(bb){row.addEventListener('click',function(){showSheet(bb.nm,bb.url,bb.cls,bb.pr,bb.dc,'예약 상품');});})(b);
       bs.appendChild(row);
     });
     body.appendChild(bs);
@@ -1259,7 +1369,7 @@ function openDetail(idx){
   var klTxt=mk('div');klTxt.appendChild(mk('div','dbr-nm',p.name+' 관련 상품'));klTxt.appendChild(mk('div','dbr-dc','클룩에서 예약 가능한 상품 보기'));
   klL.appendChild(klTxt);var klArr=mk('span');klArr.textContent='›';klArr.style.cssText='color:var(--bd2);font-size:18px';
   klRow.appendChild(klL);klRow.appendChild(klArr);
-  klRow.addEventListener('click',function(){window.open(klookSearchUrl,'_blank');});
+  klRow.addEventListener('click',function(){showSheet(p.name+' 관련 상품',klookSearchUrl,'kl','','클룩에서 예약 가능한 상품 보기','관련 상품');});
   bkSearch.appendChild(klRow);
   var mrRow=mk('button','d-bk-row');
   var mrL=mk('div','dbr-l');
@@ -1267,19 +1377,18 @@ function openDetail(idx){
   var mrTxt=mk('div');mrTxt.appendChild(mk('div','dbr-nm',p.name+' 관련 상품'));mrTxt.appendChild(mk('div','dbr-dc','마이리얼트립에서 투어·티켓 보기'));
   mrL.appendChild(mrTxt);var mrArr=mk('span');mrArr.textContent='›';mrArr.style.cssText='color:var(--bd2);font-size:18px';
   mrRow.appendChild(mrL);mrRow.appendChild(mrArr);
-  mrRow.addEventListener('click',function(){window.open(mrtSearchUrl,'_blank');});
+  mrRow.addEventListener('click',function(){showSheet(p.name+' 관련 상품',mrtSearchUrl,'mr','','마이리얼트립에서 투어·티켓 보기','관련 상품');});
   bkSearch.appendChild(mrRow);
   // 8번: 맛집이면 이터리 예약 링크
   if(cat==='restaurant'){
     var eateryUrl='https://eatery.jp/search?q='+encodeURIComponent(p.name)+(EATERY_AFF!=='YOUR_EATERY_ID'?'&ref='+EATERY_AFF:'');
     var eatRow=mk('button','d-bk-row');
     var eatL=mk('div','dbr-l');
-    var eatLogo=mk('div','dbr-logo');eatLogo.style.background='#e84040';eatLogo.textContent='EATERY';
-    eatL.appendChild(eatLogo);
+    eatL.appendChild(mk('div','dbr-logo eat','Eatery'));
     var eatTxt=mk('div');eatTxt.appendChild(mk('div','dbr-nm',p.name+' 예약'));eatTxt.appendChild(mk('div','dbr-dc','이터리에서 레스토랑 예약하기'));
     eatL.appendChild(eatTxt);var eatArr=mk('span');eatArr.textContent='›';eatArr.style.cssText='color:var(--bd2);font-size:18px';
     eatRow.appendChild(eatL);eatRow.appendChild(eatArr);
-    eatRow.addEventListener('click',function(){window.open(eateryUrl,'_blank');});
+    (function(eu){eatRow.addEventListener('click',function(){showSheet(p.name+' 예약',eu,'eat','','이터리에서 레스토랑 예약하기','레스토랑 예약');});})(eateryUrl);
     bkSearch.appendChild(eatRow);
   }
   body.appendChild(bkSearch);
