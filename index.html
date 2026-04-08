@@ -251,8 +251,7 @@ button{font-family:var(--f);}
 .d-bk-row:active{background:var(--sf);}
 .d-bk-row:not(:last-child){border-bottom:1px solid var(--bd);}
 .dbr-l{display:flex;align-items:center;gap:10px;}
-.dbr-logo{width:50px;height:20px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:#fff;}
-.dbr-logo.kl{background:var(--kl);}.dbr-logo.mr{background:var(--mr);}
+.dbr-logo-wrap{display:flex;align-items:center;}
 .dbr-nm{font-size:12px;font-weight:800;color:var(--tx);text-align:left;}
 .dbr-dc{font-size:10px;color:var(--tx3);margin-top:1px;text-align:left;}
 .dbr-price{font-size:13px;font-weight:900;color:var(--ac);}
@@ -290,12 +289,7 @@ button{font-family:var(--f);}
 .sheet-x{background:var(--sf);border:none;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;color:var(--tx3);display:flex;align-items:center;justify-content:center;}
 .sheet-body{padding:20px 20px calc(20px + var(--safe));}
 .sheet-plat-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
-.sheet-badge{height:26px;padding:0 10px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#fff;letter-spacing:.2px;}
-.sheet-badge.kl{background:#f74801;}
-.sheet-badge.mr{background:#00bcd4;}
-.sheet-badge.eat{background:#e84040;}
-.sheet-badge.bk{background:#003580;}
-.sheet-badge.ag{background:#e94057;}
+.sheet-badge-wrap{display:inline-flex;align-items:center;}
 .sheet-plat-lbl{font-size:12px;color:var(--tx3);font-weight:600;}
 .sheet-nm{font-size:17px;font-weight:900;color:var(--tx);line-height:1.3;margin-bottom:5px;}
 .sheet-dc{font-size:13px;color:var(--tx3);margin-bottom:14px;line-height:1.5;}
@@ -303,13 +297,9 @@ button{font-family:var(--f);}
 .sheet-go{width:100%;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;border:none;border-radius:14px;padding:16px;font-size:15px;font-weight:900;cursor:pointer;font-family:var(--f);display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;}
 .sheet-cancel{width:100%;background:none;border:none;color:var(--tx3);font-size:13px;font-weight:700;cursor:pointer;font-family:var(--f);padding:10px;}
 
-/* ─── Stylish affiliate logos ─── */
-.dbr-logo{width:56px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:#fff;letter-spacing:.4px;}
-.dbr-logo.kl{background:linear-gradient(135deg,#ff6b18,#f74801);}
-.dbr-logo.mr{background:linear-gradient(135deg,#00d4e8,#00a8c2);}
-.dbr-logo.eat{background:#e84040;}
-.dbr-logo.bk{background:#003580;}
-.dbr-logo.ag{background:#e94057;}
+/* ─── Affiliate logo images ─── */
+.dbr-logo-img{height:24px;border-radius:5px;display:block;flex-shrink:0;}
+.sheet-badge-img{height:32px;border-radius:7px;display:block;}
 </style>
 </head>
 <body>
@@ -482,12 +472,28 @@ var PROXY='https://tabi-app-wheat.vercel.app';
 // ── Bottom Sheet
 var _sheetUrl='';
 var PLAT_LABELS={kl:'KLOOK',mr:'마이리얼트립',eat:'Eatery',bk:'Booking.com',ag:'Agoda'};
+var LOGO_SVG={
+  kl:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 28"><rect width="72" height="28" rx="6" fill="#FF6000"/><text x="36" y="19.5" font-family="Arial Black,Arial,sans-serif" font-size="14" font-weight="900" fill="white" text-anchor="middle" letter-spacing="-0.3">klook</text></svg>',
+  mr:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 28"><rect width="80" height="28" rx="6" fill="#1EC8C8"/><text x="40" y="18" font-family="Arial,sans-serif" font-size="9.5" font-weight="800" fill="white" text-anchor="middle">마이리얼트립</text></svg>',
+  bk:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 82 28"><rect width="82" height="28" rx="6" fill="#003580"/><text x="41" y="18.5" font-family="Arial,sans-serif" font-size="11" font-weight="700" fill="white" text-anchor="middle">Booking.com</text></svg>',
+  ag:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 68 28"><rect width="68" height="28" rx="6" fill="#5392F9"/><text x="34" y="19.5" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="white" text-anchor="middle">agoda</text></svg>',
+  eat:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 28"><rect width="64" height="28" rx="6" fill="#E84040"/><text x="32" y="19.5" font-family="Arial,sans-serif" font-size="12" font-weight="700" fill="white" text-anchor="middle">eatery</text></svg>'
+};
+function mkLogoImg(cls,h){
+  var svg=LOGO_SVG[cls];
+  if(!svg){var d=document.createElement('div');d.style.cssText='height:'+(h||24)+'px;padding:0 8px;border-radius:5px;background:#999;color:#fff;font-size:9px;font-weight:900;display:flex;align-items:center;';d.textContent=PLAT_LABELS[cls]||cls;return d;}
+  var img=document.createElement('img');
+  img.src='data:image/svg+xml,'+encodeURIComponent(svg);
+  img.className=h&&h>24?'sheet-badge-img':'dbr-logo-img';
+  img.alt=PLAT_LABELS[cls]||cls;
+  return img;
+}
 function showSheet(nm,url,cls,pr,dc,hdTtl){
   _sheetUrl=url;
   document.getElementById('sheetHdTtl').textContent=hdTtl||'예약 상품';
   var badge=document.getElementById('sheetBadge');
-  badge.textContent=PLAT_LABELS[cls]||cls.toUpperCase();
-  badge.className='sheet-badge '+cls;
+  badge.innerHTML='';badge.className='sheet-badge-wrap';
+  badge.appendChild(mkLogoImg(cls,32));
   document.getElementById('sheetPlatLbl').textContent='';
   document.getElementById('sheetNm').textContent=nm||'';
   document.getElementById('sheetDc').textContent=dc||'';
@@ -1356,7 +1362,7 @@ function openDetail(idx){
     bk.forEach(function(b){
       var row=mk('button','d-bk-row');
       var L=mk('div','dbr-l');
-      L.appendChild(mk('div','dbr-logo '+b.cls,PLAT_LABELS[b.cls]||b.logo));
+      L.appendChild(mkLogoImg(b.cls,24));
       var txt=mk('div');
       txt.appendChild(mk('div','dbr-nm',b.nm));
       txt.appendChild(mk('div','dbr-dc',b.dc));
@@ -1383,7 +1389,7 @@ function openDetail(idx){
   bkSearch.appendChild(bkSearchHd);
   var klRow=mk('button','d-bk-row');
   var klL=mk('div','dbr-l');
-  klL.appendChild(mk('div','dbr-logo kl','KLOOK'));
+  klL.appendChild(mkLogoImg('kl',24));
   var klTxt=mk('div');klTxt.appendChild(mk('div','dbr-nm',p.name+' 관련 상품'));klTxt.appendChild(mk('div','dbr-dc','클룩에서 예약 가능한 상품 보기'));
   klL.appendChild(klTxt);var klArr=mk('span');klArr.textContent='›';klArr.style.cssText='color:var(--bd2);font-size:18px';
   klRow.appendChild(klL);klRow.appendChild(klArr);
@@ -1391,7 +1397,7 @@ function openDetail(idx){
   bkSearch.appendChild(klRow);
   var mrRow=mk('button','d-bk-row');
   var mrL=mk('div','dbr-l');
-  mrL.appendChild(mk('div','dbr-logo mr','MRT'));
+  mrL.appendChild(mkLogoImg('mr',24));
   var mrTxt=mk('div');mrTxt.appendChild(mk('div','dbr-nm',p.name+' 관련 상품'));mrTxt.appendChild(mk('div','dbr-dc','마이리얼트립에서 투어·티켓 보기'));
   mrL.appendChild(mrTxt);var mrArr=mk('span');mrArr.textContent='›';mrArr.style.cssText='color:var(--bd2);font-size:18px';
   mrRow.appendChild(mrL);mrRow.appendChild(mrArr);
@@ -1402,7 +1408,7 @@ function openDetail(idx){
     var eateryUrl='https://eatery.jp/search?q='+encodeURIComponent(p.name)+(EATERY_AFF!=='YOUR_EATERY_ID'?'&ref='+EATERY_AFF:'');
     var eatRow=mk('button','d-bk-row');
     var eatL=mk('div','dbr-l');
-    eatL.appendChild(mk('div','dbr-logo eat','Eatery'));
+    eatL.appendChild(mkLogoImg('eat',24));
     var eatTxt=mk('div');eatTxt.appendChild(mk('div','dbr-nm',p.name+' 예약'));eatTxt.appendChild(mk('div','dbr-dc','이터리에서 레스토랑 예약하기'));
     eatL.appendChild(eatTxt);var eatArr=mk('span');eatArr.textContent='›';eatArr.style.cssText='color:var(--bd2);font-size:18px';
     eatRow.appendChild(eatL);eatRow.appendChild(eatArr);
