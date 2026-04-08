@@ -938,6 +938,7 @@ async function fetchPlaces(query,type){
         open:r.opening_hours&&r.opening_hours.open_now,
         types:(r.types||[]).slice(0,3),
         photo_ref:r.photos&&r.photos[0]&&r.photos[0].photo_reference,
+        photo_refs:r.photos?r.photos.slice(0,5).map(function(ph){return ph.photo_reference;}):null,
         place_id:r.place_id,
         url:r.place_id?('https://maps.google.com/maps?place_id='+r.place_id):null,
         editorial_summary:r.editorial_summary&&r.editorial_summary.overview||null
@@ -1271,17 +1272,20 @@ function openDetail(idx){
       },{passive:true});
     }
   }
-  // Wikipedia 사진 먼저 시도
+  // Google Places 사진 여러 장 + Wikipedia 썸네일
   var imgs=[];
-  var pUrl=photoUrl(p.photo_ref,600);
-  if(pUrl)imgs.push(pUrl);
+  if(p.photo_refs&&p.photo_refs.length){
+    p.photo_refs.forEach(function(ref){var u=photoUrl(ref,800);if(u)imgs.push(u);});
+  } else if(p.photo_ref){
+    imgs.push(photoUrl(p.photo_ref,800));
+  }
   fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent(p.name))
     .then(function(r){return r.json();})
     .then(function(w){
-      var allImgs=[];
-      if(w.thumbnail&&w.thumbnail.source)allImgs.push(w.thumbnail.source);
-      allImgs=allImgs.concat(imgs);
-      buildHeroWithImgs(allImgs.slice(0,5));
+      var allImgs=imgs.slice();
+      if(w.thumbnail&&w.thumbnail.source&&allImgs.indexOf(w.thumbnail.source)<0)
+        allImgs.push(w.thumbnail.source);
+      buildHeroWithImgs(allImgs.slice(0,6));
     })
     .catch(function(){buildHeroWithImgs(imgs);});
   var body=document.getElementById('dBody');body.innerHTML='';
