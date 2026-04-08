@@ -491,7 +491,8 @@ function showSheet(nm,url,cls,pr,dc,hdTtl){
   document.getElementById('sheetPlatLbl').textContent='';
   document.getElementById('sheetNm').textContent=nm||'';
   document.getElementById('sheetDc').textContent=dc||'';
-  document.getElementById('sheetPr').textContent=pr||'';
+  var prEl=document.getElementById('sheetPr');
+  prEl.textContent=pr||'';prEl.style.display=pr?'':'none';
   document.getElementById('sheet').classList.add('open');
   document.getElementById('sheetOverlay').classList.add('open');
 }
@@ -764,7 +765,9 @@ function on(id,ev,fn){document.getElementById(id).addEventListener(ev,fn);}
 
 // ── Init
 window.addEventListener('DOMContentLoaded',function(){
-  buildCityTabs();buildCatTabs();buildAiSelect();bindAll();load();updateBadge();
+  buildCityTabs();buildCatTabs();buildAiSelect();bindAll();
+  var sortRow=document.getElementById('sortRow');if(sortRow)sortRow.style.display='flex';
+  load();updateBadge();
 });
 
 function buildCityTabs(){
@@ -787,10 +790,15 @@ function buildCatTabs(){
     btn.addEventListener('click',function(){
       row.querySelectorAll('.cat-btn').forEach(function(b){b.classList.remove('on');});
       btn.classList.add('on');cat=c.key;
-      // 5번: 맛집 세부탭 표시/숨김
+      // 5번: 맛집 세부탭 표시/숨김 + 버튼 상태 초기화
       foodSubCat='all';
       var foodRow=document.getElementById('foodSubRow');
-      if(foodRow)foodRow.style.display=(c.key==='restaurant')?'flex':'none';
+      if(foodRow){
+        foodRow.style.display=(c.key==='restaurant')?'flex':'none';
+        foodRow.querySelectorAll('.food-sub-btn').forEach(function(b){b.classList.remove('on');});
+        var allBtn=foodRow.querySelector('[data-key="all"]');
+        if(allBtn)allBtn.classList.add('on');
+      }
       // 6번: 정렬바 표시
       var sortRow=document.getElementById('sortRow');
       if(sortRow)sortRow.style.display='flex';
@@ -936,7 +944,8 @@ async function fetchPlaces(query,type){
       };
     });
     // 1번: 리뷰 50개 미만 + 평점 3.5 미만 필터
-    _places=raw.filter(function(r){return(r.cnt||0)>=300&&(r.rating||0)>=3.5;});
+    var minCnt=['삳포로','나라','가마쿠라','나고야','하코네','히로시마','요코하마','고베','벳푸','나가사키','가나자와','닛코'].indexOf(city)>=0?30:100;
+    _places=raw.filter(function(r){return(r.cnt||0)>=minCnt&&(r.rating||0)>=3.5;});
     if(!_places.length){showMsg('empty');return;}
     renderList(_places);
   }catch(e){console.error(e);showMsg('error');}
@@ -1163,7 +1172,12 @@ function renderSaved(){
       info.appendChild(meta);
       card.appendChild(imgW);card.appendChild(info);card.appendChild(mkCTA(p));
       card.addEventListener('click',function(e){
-        if(!e.target.closest('a')&&!e.target.closest('.pc-heart')){_places=[p];openDetail(0);}
+        if(!e.target.closest('a')&&!e.target.closest('.pc-heart')){
+          _places=[p];
+          city=s.city||city;cityEn=(CITIES.find(function(c){return c.kr===city;})||{en:cityEn}).en;
+          cat=s.cat||cat;
+          openDetail(0);
+        }
       });
       list.appendChild(card);
     });
