@@ -52,7 +52,7 @@ export default async function handler(req, res) {
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
+        model: 'claude-haiku-4-5-20251001',   // Haiku 4.5
         max_tokens: 3000,
         temperature: 0.7,
         messages: [{ role: 'user', content: prompt }]
@@ -62,7 +62,12 @@ export default async function handler(req, res) {
     if (!response.ok) {
       const errText = await response.text();
       console.error('Claude API error:', response.status, errText);
-      return res.status(502).json({ error: 'Upstream API error', status: response.status });
+      // 사용자에게 의미 있는 메시지 전달
+      let userMsg = `Claude API 오류 (${response.status})`;
+      if (response.status === 401) userMsg = 'API 키가 유효하지 않습니다. Vercel 환경변수를 확인하세요.';
+      if (response.status === 429) userMsg = '요청 한도 초과. 잠시 후 다시 시도하세요.';
+      if (response.status === 404) userMsg = '모델을 찾을 수 없습니다.';
+      return res.status(502).json({ error: userMsg, status: response.status, detail: errText.slice(0, 200) });
     }
 
     const data = await response.json();
