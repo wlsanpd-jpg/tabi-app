@@ -113,6 +113,12 @@ button{font-family:var(--f);}
 .pc-cta a:active{background:var(--sf);}
 .pc-cta a+a{border-left:1px solid var(--bd);}
 .pc-cta a.kl{color:var(--kl);}
+.pc-cta button{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 6px;border:none;background:none;cursor:pointer;transition:background .12s;}
+.pc-cta button:active{background:var(--sf);}
+.pc-cta a+button,.pc-cta button+a,.pc-cta button+button{border-left:1px solid var(--bd);}
+.pc-cta button{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 6px;border:none;background:none;cursor:pointer;transition:background .12s;}
+.pc-cta button:active{background:var(--sf);}
+.pc-cta a+button,.pc-cta button+a,.pc-cta button+button{border-left:1px solid var(--bd);}
 
 /* ─── Loading / Empty ─── */
 .loading{padding:80px 20px;text-align:center;}
@@ -1023,24 +1029,30 @@ function mkCTA(p){
   var bk=BKP[p.name];
   if(bk&&bk.length){
     bk.slice(0,2).forEach(function(b){
-      var a=mk('a','kl','\ud83d\udd16 '+b.logo+' \uc608\uc57d');
-      a.href=b.url;a.target='_blank';cta.appendChild(a);
+      (function(bb){
+        var btn=mk('button',null);
+        btn.appendChild(mkLogoImg(bb.cls,22));
+        btn.addEventListener('click',function(e){
+          e.stopPropagation();
+          showSheet(bb.nm,bb.url,bb.cls,bb.pr||'',bb.dc||'',PLAT_LABELS[bb.cls]+' 예약');
+        });
+        cta.appendChild(btn);
+      })(b);
     });
+    var gmb=mk('a',null,'🗺 지도');gmb.href=gurl;gmb.target='_blank';
+    cta.appendChild(gmb);
   } else if(cat==='lodging'){
-    // 3번: 숙박 탭 - Booking.com + Agoda 버튼
-    var BOOKING_AFF='YOUR_BOOKING_ID';
-    var AGODA_AFF='YOUR_AGODA_ID';
-    var hotelQ=encodeURIComponent(p.name);
-    var bkUrl=BOOKING_AFF!=='YOUR_BOOKING_ID'
-      ?'https://www.booking.com/search.html?ss='+hotelQ+'&aid='+BOOKING_AFF
-      :'https://www.booking.com/search.html?ss='+hotelQ;
-    var agUrl=AGODA_AFF!=='YOUR_AGODA_ID'
-      ?'https://www.agoda.com/search?q='+hotelQ+'&cid='+AGODA_AFF
-      :'https://www.agoda.com/search?q='+hotelQ;
-    var ab=mk('a','bk-btn','🏨 Booking');ab.href=bkUrl;ab.target='_blank';
-    var ag=mk('a','ag-btn','🟠 Agoda');ag.href=agUrl;ag.target='_blank';
-    var gm=mk('a',null,'🗺 지도');gm.href=gurl;gm.target='_blank';
-    cta.appendChild(ab);cta.appendChild(ag);cta.appendChild(gm);
+    (function(){
+      var hotelQ=encodeURIComponent(p.name);
+      var bkUrl='https://www.booking.com/search.html?ss='+hotelQ;
+      var agUrl='https://www.agoda.com/search?q='+hotelQ;
+      var bkBtn=mk('button',null);bkBtn.appendChild(mkLogoImg('bk',22));
+      (function(bu){bkBtn.addEventListener('click',function(e){e.stopPropagation();showSheet(p.name+' 숙소 예약',bu,'bk','','Booking.com에서 숙소 예약하기','숙소 예약');});})(bkUrl);
+      var agBtn=mk('button',null);agBtn.appendChild(mkLogoImg('ag',22));
+      (function(au){agBtn.addEventListener('click',function(e){e.stopPropagation();showSheet(p.name+' 숙소 예약',au,'ag','','Agoda에서 숙소 예약하기','숙소 예약');});})(agUrl);
+      var gm=mk('a',null,'🗺 지도');gm.href=gurl;gm.target='_blank';
+      cta.appendChild(bkBtn);cta.appendChild(agBtn);cta.appendChild(gm);
+    })();
   } else {
     var a1=mk('a',null,'🗺 Google 지도');a1.href=gurl;a1.target='_blank';
     var a2=mk('a',null,'📍 네이버');a2.href=nurl;a2.target='_blank';
@@ -1403,6 +1415,27 @@ function openDetail(idx){
   mrRow.appendChild(mrL);mrRow.appendChild(mrArr);
   mrRow.addEventListener('click',function(){showSheet(p.name+' 관련 상품',mrtSearchUrl,'mr','','마이리얼트립에서 투어·티켓 보기','관련 상품');});
   bkSearch.appendChild(mrRow);
+  // 숙박이면 Booking/Agoda 로우
+  if(cat==='lodging'){
+    var bkDetailUrl='https://www.booking.com/search.html?ss='+encodeURIComponent(p.name);
+    var agDetailUrl='https://www.agoda.com/search?q='+encodeURIComponent(p.name);
+    var bkRow2=mk('button','d-bk-row');
+    var bkL2=mk('div','dbr-l');
+    bkL2.appendChild(mkLogoImg('bk',24));
+    var bkTxt2=mk('div');bkTxt2.appendChild(mk('div','dbr-nm',p.name+' 숙소 예약'));bkTxt2.appendChild(mk('div','dbr-dc','Booking.com에서 숙소 예약하기'));
+    bkL2.appendChild(bkTxt2);var bkArr2=mk('span');bkArr2.textContent='›';bkArr2.style.cssText='color:var(--bd2);font-size:18px';
+    bkRow2.appendChild(bkL2);bkRow2.appendChild(bkArr2);
+    (function(u){bkRow2.addEventListener('click',function(){showSheet(p.name+' 숙소 예약',u,'bk','','Booking.com에서 숙소 예약하기','숙소 예약');});})(bkDetailUrl);
+    bkSearch.appendChild(bkRow2);
+    var agRow2=mk('button','d-bk-row');
+    var agL2=mk('div','dbr-l');
+    agL2.appendChild(mkLogoImg('ag',24));
+    var agTxt2=mk('div');agTxt2.appendChild(mk('div','dbr-nm',p.name+' 숙소 예약'));agTxt2.appendChild(mk('div','dbr-dc','Agoda에서 숙소 예약하기'));
+    agL2.appendChild(agTxt2);var agArr2=mk('span');agArr2.textContent='›';agArr2.style.cssText='color:var(--bd2);font-size:18px';
+    agRow2.appendChild(agL2);agRow2.appendChild(agArr2);
+    (function(u){agRow2.addEventListener('click',function(){showSheet(p.name+' 숙소 예약',u,'ag','','Agoda에서 숙소 예약하기','숙소 예약');});})(agDetailUrl);
+    bkSearch.appendChild(agRow2);
+  }
   // 8번: 맛집이면 이터리 예약 링크
   if(cat==='restaurant'){
     var eateryUrl='https://eatery.jp/search?q='+encodeURIComponent(p.name)+(EATERY_AFF!=='YOUR_EATERY_ID'?'&ref='+EATERY_AFF:'');
