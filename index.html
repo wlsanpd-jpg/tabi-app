@@ -424,9 +424,9 @@ button{font-family:var(--f);}
 <div class="page" id="page-ai">
   <div class="ai-pg" style="padding-bottom:calc(var(--nav) + var(--safe) + 16px)">
     <div class="ai-hero">
-      <div class="ai-hero-sub">Claude AI 탑재</div>
-      <div class="ai-hero-h">혼자 일정 짜기 어려울 때?</div>
-      <div class="ai-hero-p">도시·기간·스타일을 선택하면<br>AI가 맞춤 일정을 바로 짜드려요</div>
+      <div class="ai-hero-sub">Claude AI 맞춤 추천</div>
+      <div class="ai-hero-h">나만의 일정, AI가 설계해요</div>
+      <div class="ai-hero-p">도시·기간·스타일을 선택하면<br>Claude AI가 최적 동선으로 일정을 짜드려요</div>
     </div>
     <div class="ai-form">
       <div class="ai-sec">
@@ -545,6 +545,21 @@ var PROXY='https://tabi-app-wheat.vercel.app';
 
 // ── Bottom Sheet
 var _sheetUrl='';
+
+// ── Analytics (경량 이벤트 트래킹) ─────────────────
+var _anonId=(function(){var k='tabi_aid';var v=localStorage.getItem(k);if(!v){v=Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem(k,v);}return v;})();
+function track(event,data){
+  try{
+    var payload={event:event,data:data||{},ts:Date.now(),ua:navigator.userAgent,sid:_anonId};
+    fetch(PROXY+'/api/analytics',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload),
+      keepalive:true
+    }).catch(function(){});  // fire and forget
+  }catch(e){}
+}
+
 var PLAT_LABELS={kl:'KLOOK',mr:'마이리얼트립',eat:'Eatery',bk:'Booking.com',ag:'Agoda'};
 var LOGO_SVG={
   kl:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 28"><rect width="72" height="28" rx="6" fill="#FF6000"/><text x="36" y="19.5" font-family="Arial Black,Arial,sans-serif" font-size="14" font-weight="900" fill="white" text-anchor="middle" letter-spacing="-0.3">klook</text></svg>',
@@ -564,6 +579,7 @@ function mkLogoImg(cls,h){
 }
 function showSheet(nm,url,cls,pr,dc,hdTtl){
   _sheetUrl=url;
+  track('affiliate_click',{platform:cls,name:nm,cat:cat,city:city});
   document.getElementById('sheetHdTtl').textContent=hdTtl||'예약 상품';
   var badge=document.getElementById('sheetBadge');
   badge.innerHTML='';badge.className='sheet-badge-wrap';
@@ -667,6 +683,104 @@ BKP['\ud558\ucf54\ub124 \uc624\ud508\uc5d0\uc5b4 \ubba4\uc9c0\uc5c4']=[
   {cls:'kl',logo:'KLOOK',nm:'\ud558\ucf54\ub124 \ud504\ub9ac\ud328\uc2a4+\ub9ac\ubb34\uc9c4',dc:'\ub098\ub9ac\ud0c0 \ucd9c\ubc1c 2\uc77c \ud328\uc2a4',pr:'65,000\uc6d0~',cm:'\ucd5c\ub300 8%',url:KU.hakone},
   {cls:'mr',logo:'MRT',nm:'\ud558\ucf54\ub124 \ud22c\uc5b4 \uc804\uccb4 \ubcf4\uae30',dc:'\ub9c8\uc774\ub9ac\uc5bc\ud2b8\ub9bd \ud558\ucf54\ub124',pr:'80,000\uc6d0~',cm:'\ucd5c\ub300 5%',url:mrc('\ud558\ucf54\ub124')}
 ];
+
+// ─── 제휴 데이터 확장 (Phase 3) ───────────────────
+// 도쿄
+BKP['아사쿠사 센소지']=[
+  {cls:'kl',logo:'KLOOK',nm:'아사쿠사·센소지 인력거 투어',dc:'현지 인력거꾼과 함께하는 감성 코스',pr:'25,000원~',cm:'최대 8%',url:aff('https://www.klook.com/ko/search/?query=아사쿠사+센소지+인력거','kl')},
+  {cls:'mr',logo:'MRT',nm:'아사쿠사 도보 투어',dc:'한국인 가이드 동행',pr:'18,000원~',cm:'최대 5%',url:mrc('아사쿠사')}
+];
+BKP['메이지 신궁']=[
+  {cls:'kl',logo:'KLOOK',nm:'도쿄 신주쿠·하라주쿠 투어',dc:'메이지 신궁 포함 반나절 코스',pr:'22,000원~',cm:'최대 8%',url:aff('https://www.klook.com/ko/search/?query=메이지+신궁','kl')},
+  {cls:'mr',logo:'MRT',nm:'도쿄 신사·공원 반나절',dc:'마이리얼트립 인기 코스',pr:'20,000원~',cm:'최대 5%',url:mrc('메이지 신궁')}
+];
+BKP['시부야 스크램블 교차로']=[
+  {cls:'kl',logo:'KLOOK',nm:'도쿄 야경 버스 투어',dc:'시부야·신주쿠·도쿄 타워',pr:'35,000원~',cm:'최대 8%',url:aff('https://www.klook.com/ko/search/?query=도쿄+야경+버스','kl')},
+  {cls:'mr',logo:'MRT',nm:'시부야 스트리트 투어',dc:'숨은 명소 로컬 가이드',pr:'28,000원~',cm:'최대 5%',url:mrc('시부야')}
+];
+BKP['도쿄 디즈니랜드']=[
+  {cls:'kl',logo:'KLOOK',nm:'도쿄 디즈니랜드 1일 입장권',dc:'모바일 티켓·당일 입장 가능',pr:'88,000원~',cm:'최대 8%',url:aff('https://www.klook.com/ko/search/?query=도쿄+디즈니랜드','kl')},
+  {cls:'mr',logo:'MRT',nm:'디즈니랜드 패키지',dc:'마이리얼트립 특가',pr:'85,000원~',cm:'최대 5%',url:mrc('도쿄 디즈니랜드')}
+];
+BKP['도쿄 디즈니씨']=[
+  {cls:'kl',logo:'KLOOK',nm:'도쿄 디즈니씨 1일 입장권',dc:'성인·어린이 모바일 티켓',pr:'88,000원~',cm:'최대 8%',url:aff('https://www.klook.com/ko/search/?query=도쿄+디즈니씨','kl')},
+  {cls:'mr',logo:'MRT',nm:'디즈니씨 패키지',dc:'마이리얼트립 특가',pr:'85,000원~',cm:'최대 5%',url:mrc('도쿄 디즈니씨')}
+];
+BKP['롯폰기 힐즈']=[
+  {cls:'kl',logo:'KLOOK',nm:'도쿄 시티 뷰 전망대 입장권',dc:'롯폰기 힐즈 52층 전망대',pr:'18,000원~',cm:'최대 8%',url:aff('https://www.klook.com/ko/search/?query=롯폰기+힐즈+전망대','kl')},
+  {cls:'mr',logo:'MRT',nm:'도쿄 전망대 투어',dc:'마이리얼트립 야경 코스',pr:'22,000원~',cm:'최대 5%',url:mrc('롯폰기')}
+];
+BKP['오다이바']=[
+  {cls:'kl',logo:'KLOOK',nm:'오다이바 팀랩 디지털아트',dc:'가족 여행 최적 코스',pr:'36,000원~',cm:'최대 8%',url:KU.teamlab},
+  {cls:'mr',logo:'MRT',nm:'오다이바 반나절 투어',dc:'레인보우 브릿지·쇼핑',pr:'20,000원~',cm:'최대 5%',url:mrc('오다이바')}
+];
+// 오사카
+BKP['도톤보리']=[
+  {cls:'kl',logo:'KLOOK',nm:'오사카 나이트 스트리트 투어',dc:'도톤보리·신사이바시 야경',pr:'28,000원~',cm:'최대 8%',url:aff('https://www.klook.com/ko/search/?query=도톤보리+투어','kl')},
+  {cls:'mr',logo:'MRT',nm:'오사카 먹거리 투어',dc:'타코야키·오코노미야키 현지 체험',pr:'35,000원~',cm:'최대 5%',url:mrc('도톤보리')}
+];
+BKP['오사카성']=[
+  {cls:'kl',logo:'KLOOK',nm:'오사카성 입장권 + 오디오가이드',dc:'QR코드 즉시 입장',pr:'12,000원~',cm:'최대 8%',url:aff('https://www.klook.com/ko/search/?query=오사카성','kl')},
+  {cls:'mr',logo:'MRT',nm:'오사카 성 & 역사 투어',dc:'한국어 가이드 동행',pr:'25,000원~',cm:'최대 5%',url:mrc('오사카성')}
+];
+BKP['신사이바시']=[
+  {cls:'kl',logo:'KLOOK',nm:'오사카 쇼핑 투어',dc:'신사이바시·아메리카무라',pr:'22,000원~',cm:'최대 8%',url:aff('https://www.klook.com/ko/search/?query=신사이바시','kl')},
+  {cls:'mr',logo:'MRT',nm:'오사카 쇼핑 가이드',dc:'현지인 추천 쇼핑 코스',pr:'18,000원~',cm:'최대 5%',url:mrc('신사이바시')}
+];
+BKP['덴덴타운']=[
+  {cls:'kl',logo:'KLOOK',nm:'오사카 아니메 & 게임 투어',dc:'덴덴타운 깊숙이 탐방',pr:'20,000원~',cm:'최대 8%',url:aff('https://www.klook.com/ko/search/?query=덴덴타운','kl')},
+  {cls:'mr',logo:'MRT',nm:'오사카 서브컬처 투어',dc:'마이리얼트립 오타쿠 코스',pr:'25,000원~',cm:'최대 5%',url:mrc('덴덴타운')}
+];
+// 교토
+BKP['후시미 이나리 타이샤']=[
+  {cls:'kl',logo:'KLOOK',nm:'교토 후시미 이나리 조기 투어',dc:'새벽 인파 없이 붉은 도리이',pr:'32,000원~',cm:'최대 8%',url:aff('https://www.klook.com/ko/search/?query=후시미+이나리','kl')},
+  {cls:'mr',logo:'MRT',nm:'교토 신사 전문 투어',dc:'마이리얼트립 소규모 가이드',pr:'30,000원~',cm:'최대 5%',url:mrc('후시미 이나리')}
+];
+BKP['킨카쿠지 (금각사)']=[
+  {cls:'kl',logo:'KLOOK',nm:'교토 황금 일일 투어',dc:'금각사·니조성·철학의 길',pr:'45,000원~',cm:'최대 8%',url:aff('https://www.klook.com/ko/search/?query=금각사','kl')},
+  {cls:'mr',logo:'MRT',nm:'교토 핵심 사찰 투어',dc:'마이리얼트립 반나절 코스',pr:'38,000원~',cm:'최대 5%',url:mrc('금각사')}
+];
+BKP['기온 거리']=[
+  {cls:'kl',logo:'KLOOK',nm:'기온 마이코·기모노 체험',dc:'전통 기모노 + 사진 촬영',pr:'55,000원~',cm:'최대 8%',url:KU.kimono},
+  {cls:'mr',logo:'MRT',nm:'기온 야간 투어',dc:'마이코 문화 + 저녁 야경',pr:'40,000원~',cm:'최대 5%',url:mrc('기온')}
+];
+BKP['니시키 시장']=[
+  {cls:'kl',logo:'KLOOK',nm:'교토 미식 도보 투어',dc:'니시키 시장 + 시식 투어',pr:'38,000원~',cm:'최대 8%',url:aff('https://www.klook.com/ko/search/?query=니시키+시장','kl')},
+  {cls:'mr',logo:'MRT',nm:'교토 시장 음식 투어',dc:'현지인 즐겨 찾는 코스',pr:'35,000원~',cm:'최대 5%',url:mrc('니시키 시장')}
+];
+// 후쿠오카
+BKP['다자이후 텐만구']=[
+  {cls:'kl',logo:'KLOOK',nm:'후쿠오카 다자이후 반나절 투어',dc:'학문의 신·매화 명소',pr:'28,000원~',cm:'최대 8%',url:aff('https://www.klook.com/ko/search/?query=다자이후','kl')},
+  {cls:'mr',logo:'MRT',nm:'다자이후 역사 투어',dc:'마이리얼트립 후쿠오카',pr:'25,000원~',cm:'최대 5%',url:mrc('다자이후')}
+];
+BKP['캐널 시티 하카타']=[
+  {cls:'kl',logo:'KLOOK',nm:'후쿠오카 시내 투어',dc:'캐널 시티·나카스 야경',pr:'22,000원~',cm:'최대 8%',url:aff('https://www.klook.com/ko/search/?query=캐널+시티+후쿠오카','kl')},
+  {cls:'mr',logo:'MRT',nm:'후쿠오카 쇼핑+맛집 투어',dc:'현지인 추천 코스',pr:'20,000원~',cm:'최대 5%',url:mrc('후쿠오카 캐널시티')}
+];
+// 삿포로
+BKP['오도리 공원']=[
+  {cls:'kl',logo:'KLOOK',nm:'삿포로 시내 반나절 투어',dc:'오도리 공원·시계탑·라멘 횡정',pr:'25,000원~',cm:'최대 8%',url:aff('https://www.klook.com/ko/search/?query=삿포로+투어','kl')},
+  {cls:'mr',logo:'MRT',nm:'삿포로 핵심 코스',dc:'마이리얼트립 북해도',pr:'22,000원~',cm:'최대 5%',url:mrc('삿포로')}
+];
+BKP['삿포로 맥주 박물관']=[
+  {cls:'kl',logo:'KLOOK',nm:'삿포로 맥주 박물관 입장권',dc:'무료 견학 + 유료 시음 세트',pr:'8,000원~',cm:'최대 8%',url:aff('https://www.klook.com/ko/search/?query=삿포로+맥주','kl')},
+  {cls:'mr',logo:'MRT',nm:'북해도 음식 투어',dc:'게·스프카레·맥주',pr:'35,000원~',cm:'최대 5%',url:mrc('삿포로 맥주')}
+];
+// 나라
+BKP['나라 공원']=[
+  {cls:'kl',logo:'KLOOK',nm:'나라 사슴 공원 반나절 투어',dc:'오사카 출발 편리한 당일치기',pr:'20,000원~',cm:'최대 8%',url:aff('https://www.klook.com/ko/search/?query=나라+공원','kl')},
+  {cls:'mr',logo:'MRT',nm:'나라 역사 투어',dc:'마이리얼트립 관서 코스',pr:'22,000원~',cm:'최대 5%',url:mrc('나라')}
+];
+// 하코네
+BKP['하코네 신사']=[
+  {cls:'kl',logo:'KLOOK',nm:'하코네 당일 투어',dc:'신사·아시노코·로프웨이',pr:'55,000원~',cm:'최대 8%',url:KU.hakone},
+  {cls:'mr',logo:'MRT',nm:'하코네 온천 + 관광',dc:'료칸 체험 포함',pr:'80,000원~',cm:'최대 5%',url:mrc('하코네')}
+];
+BKP['아시노코']=[
+  {cls:'kl',logo:'KLOOK',nm:'하코네 해적선 + 로프웨이',dc:'아시노코 해적선 크루즈',pr:'45,000원~',cm:'최대 8%',url:aff('https://www.klook.com/ko/search/?query=하코네+해적선','kl')},
+  {cls:'mr',logo:'MRT',nm:'하코네 자연 투어',dc:'후지산 조망 명소',pr:'50,000원~',cm:'최대 5%',url:mrc('아시노코')}
+];
+
 var CBK={};
 CBK['\ub3c4\ucfc4']=[
   {cls:'kl',nm:'\uc2a4\uce74\uc774\ud2b8\ub9ac \uc785\uc7a5\uad8c',pr:'38,000\uc6d0~',url:KU.skytree},
@@ -863,7 +977,7 @@ function buildCityTabs(){
     var btn=mk('button','city-btn'+(i===0?' on':''),c.kr);
     btn.addEventListener('click',function(){
       row.querySelectorAll('.city-btn').forEach(function(b){b.classList.remove('on');});
-      btn.classList.add('on');city=c.kr;cityEn=c.en;load();
+      btn.classList.add('on');city=c.kr;cityEn=c.en;track('city_change',{city:c.kr});load();
     });
     row.appendChild(btn);
   });
@@ -1169,7 +1283,7 @@ function renderList(places){
 function toggleSC(name,btn,idx){
   var place=_places[idx]||{name:name};
   var i=saved.findIndex(function(s){return s.name===name;});
-  if(i===-1){saved.push({name:name,city:city,cat:cat,data:place});btn.textContent='\u2665';btn.classList.add('on');}
+  if(i===-1){saved.push({name:name,city:city,cat:cat,data:place});btn.textContent='\u2665';btn.classList.add('on');track('place_save',{name:name,city:city,cat:cat});}
   else{saved.splice(i,1);btn.textContent='\u2661';btn.classList.remove('on');}
   localStorage.setItem('tabi_saved',JSON.stringify(saved));updateBadge();
 }
@@ -1258,6 +1372,7 @@ function removeSaved(name){
 // ── Detail
 function openDetail(idx){
   var p=_places[idx];if(!p)return;
+  track('detail_open',{name:p.name,cat:cat,city:city});
   document.getElementById('dTitle').textContent=p.name;
   var hero=document.getElementById('dHero');hero.innerHTML='';hero.style.fontSize='';
   hero.appendChild(mk('div','d-hero-fade'));
@@ -1612,38 +1727,22 @@ async function genItinerary(){
   var dots=mk('div','tri-dots');
   dots.appendChild(mk('span'));dots.appendChild(mk('span'));dots.appendChild(mk('span'));
   loading.appendChild(dots);
-  loading.appendChild(mk('div','tri-ltxt','Claude AI\uac00 '+aiCity+' '+aiDays+'\ubc15'+total+'\uc77c \ub9de\ucda4 \uc77c\uc815\uc744 \uc124\uacc4\ud558\uace0 \uc788\uc5b4\uc694...'));
+  loading.appendChild(mk('div','tri-ltxt','Claude AI\uac00 '+aiCity+' '+aiDays+'\ubc15'+total+'\uc77c \uc77c\uc815\uc744 \uc124\uacc4\ud558\uace0 \uc788\uc5b4\uc694... (\ub300\ub7b218~30\ucd08)'));
   card.appendChild(loading);wrap.appendChild(card);result.appendChild(wrap);
-  var promptParts=[
-    '\ub2f9\uc2e0\uc740 \uc77c\ubcf8 \uc5ec\ud589 \uc804\ubb38 \ucf58\uc124\ud134\ud2b8\uc785\ub2c8\ub2e4. \uc544\ub798 \uc870\uac74\uc5d0 \ub9de\ub294 \uc5ec\ud589 \uc77c\uc815\uc744 JSON\uc73c\ub85c \uc791\uc131\ud574\uc8fc\uc138\uc694.',
-    '',
-    '\uc870\uac74: \ub3c4\uc2dc='+aiCity+', \uae30\uac04='+aiDays+'\ubc15'+total+'\uc77c, \uc2a4\ud0c0\uc77c='+aiStyle+', \ub3d9\ud589='+aiPeople+', \uad00\uc2ec\uc0ac='+(interests.join(', ')||'\uc804\ubc18\uc801 \uad00\uad11'),
-    '',
-    '\uaddc\uce59: days \ubc30\uc5f4\uc5d0 '+total+'\uac1c day \uac1d\uccb4, \uac01 day\uc5d0 5~6\uac1c \uc7a5\uc18c, \uc7a5\uc18c\uba85\uc740 \ud55c\uad6d\uc5b4, time\uc740 HH:MM, tip\uc740 \uc2e4\uc6a9\uc801 \uaf00\ud301 1~2\ubb38\uc7a5',
-    '',
-    '\ud615\uc2dd(JSON\ub9cc, \ub2e4\ub978 \ud14d\uc2a4\ud2b8 \uc5c6\uc774): {"days":[{"label":"\ud14c\ub9c8","places":[{"name":"\uc7a5\uc18c\uba85","time":"09:00","tip":"\uaf00\ud301"}]}]}'
-  ];
-  var prompt=promptParts.join('\n');
+  // 서버 프록시 호출 (API 키 보안)
+  track('ai_generate',{city:aiCity,days:aiDays,style:aiStyle,people:aiPeople});
   try{
-    var res=await fetch('https://api.anthropic.com/v1/messages',{
+    var res=await fetch(PROXY+'/api/itinerary',{
       method:'POST',
-      headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:2500,messages:[{role:'user',content:prompt}]})
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({city:aiCity,days:aiDays,style:aiStyle,people:aiPeople,interests:interests})
     });
     if(!res.ok)throw new Error('api '+res.status);
     var data=await res.json();
-    if(data.error)throw new Error(data.error.message);
-    var text=(data.content||[]).map(function(b){return b.text||'';}).join('');
-    var days=null;
-    try{
-      var clean=text.replace(/\u0060\u0060\u0060json\n?|\u0060\u0060\u0060/g,'').trim();
-      days=JSON.parse(clean).days;
-    }catch(e){
-      var match=text.match(/\{[\s\S]*"days"[\s\S]*\}/);
-      if(match)try{days=JSON.parse(match[0]).days;}catch(e2){}
-    }
+    if(data.error)throw new Error(data.error);
+    var days=data.days;
     if(days&&days.length){buildTriResult(days,aiCity,aiDays,aiStyle,aiPeople);}
-    else throw new Error('parse failed');
+    else throw new Error('empty days');
   }catch(e){
     console.warn('AI fallback:',e.message);
     var fb=AI_DB[aiCity]||AI_DB['\ub3c4\ucfc4'];
@@ -1686,6 +1785,7 @@ function resetFilters(){
 }
 function applyFilters(){
   var needLoad=(cat==='restaurant'&&_flt.foodSub!==foodSubCat);
+  track('filter_apply',{foodSub:_flt.foodSub,sort:_flt.sort,open:_flt.open,cat:cat,city:city});
   foodSubCat=_flt.foodSub;sortBy=_flt.sort;onlyOpen=_flt.open;
   closeFilterDrawer();
   updateFilterBar();
@@ -1842,6 +1942,7 @@ function renderItin(){
   scroll.appendChild(savedSec);
 }
 function copyItinerary(){
+  track('itinerary_copy',{days:_itinDays,places:Object.keys(_itinAssign).length});
   var lines=['📅 내 일본 여행 일정표 (TABI)',''];
   var byDay2={};
   Object.keys(_itinAssign).forEach(function(nm){
