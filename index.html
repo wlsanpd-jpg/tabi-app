@@ -116,9 +116,6 @@ button{font-family:var(--f);}
 .pc-cta button{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 6px;border:none;background:none;cursor:pointer;transition:background .12s;}
 .pc-cta button:active{background:var(--sf);}
 .pc-cta a+button,.pc-cta button+a,.pc-cta button+button{border-left:1px solid var(--bd);}
-.pc-cta button{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 6px;border:none;background:none;cursor:pointer;transition:background .12s;}
-.pc-cta button:active{background:var(--sf);}
-.pc-cta a+button,.pc-cta button+a,.pc-cta button+button{border-left:1px solid var(--bd);}
 
 /* ─── Loading / Empty ─── */
 .loading{padding:80px 20px;text-align:center;}
@@ -306,6 +303,86 @@ button{font-family:var(--f);}
 /* ─── Affiliate logo images ─── */
 .dbr-logo-img{height:24px;border-radius:5px;display:block;flex-shrink:0;}
 .sheet-badge-img{height:32px;border-radius:7px;display:block;}
+
+/* ─── Filter bar ─── */
+.filter-bar{display:flex;align-items:center;gap:8px;padding:8px 12px 8px 16px;background:var(--w);border-bottom:1px solid var(--bd);}
+.filter-active-row{display:flex;gap:6px;flex:1;overflow-x:auto;align-items:center;}
+.filter-tag{display:inline-flex;align-items:center;gap:3px;background:var(--tx);color:#fff;border-radius:20px;padding:5px 10px;font-size:11px;font-weight:700;white-space:nowrap;flex-shrink:0;}
+.filter-tag-x{background:none;border:none;color:rgba(255,255,255,.7);font-size:13px;cursor:pointer;padding:0;line-height:1;display:flex;align-items:center;}
+.filter-open-btn{display:flex;align-items:center;gap:5px;background:var(--sf);border:1.5px solid var(--bd);border-radius:22px;padding:7px 13px;font-size:12px;font-weight:700;color:var(--tx2);cursor:pointer;white-space:nowrap;font-family:var(--f);transition:all .15s;flex-shrink:0;}
+.filter-open-btn.active{background:var(--tx);border-color:var(--tx);color:#fff;}
+.filter-cnt-badge{width:18px;height:18px;border-radius:50%;background:var(--red);color:#fff;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+
+/* ─── Filter Drawer ─── */
+.flt-ov{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0);pointer-events:none;transition:background .3s;}
+.flt-ov.open{background:rgba(0,0,0,.5);pointer-events:all;}
+.flt-dw{position:fixed;bottom:0;left:50%;transform:translate(-50%,110%);width:100%;max-width:480px;z-index:501;background:var(--w);border-radius:22px 22px 0 0;transition:transform .38s cubic-bezier(.16,1,.3,1);max-height:86vh;display:flex;flex-direction:column;}
+.flt-dw.open{transform:translate(-50%,0);}
+.flt-dw-handle{width:36px;height:4px;background:var(--bd2);border-radius:2px;margin:14px auto 0;flex-shrink:0;}
+.flt-dw-hd{padding:14px 20px 12px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.flt-dw-ttl{font-size:15px;font-weight:900;color:var(--tx);}
+.flt-dw-reset{background:none;border:none;font-size:13px;font-weight:700;color:var(--tx3);cursor:pointer;font-family:var(--f);padding:4px 8px;}
+.flt-dw-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 20px 4px;}
+.flt-dw-sec{padding:18px 0 10px;border-bottom:1px solid var(--bd);}
+.flt-dw-sec:last-child{border-bottom:none;}
+.flt-dw-sec-ttl{font-size:10px;font-weight:800;color:var(--tx3);letter-spacing:.8px;text-transform:uppercase;margin-bottom:12px;}
+.flt-dw-chips{display:flex;gap:7px;flex-wrap:wrap;}
+.flt-dw-chip{background:var(--sf);border:1.5px solid var(--bd);border-radius:22px;padding:7px 14px;font-size:12px;font-weight:700;color:var(--tx2);cursor:pointer;white-space:nowrap;font-family:var(--f);transition:all .15s;}
+.flt-dw-chip.on{background:var(--tx);border-color:var(--tx);color:#fff;}
+.flt-dw-sort{display:flex;flex-direction:column;gap:8px;}
+.flt-dw-sort-btn{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;background:var(--sf);border:1.5px solid var(--bd);border-radius:var(--r);font-size:13px;font-weight:700;color:var(--tx2);cursor:pointer;font-family:var(--f);transition:all .15s;width:100%;}
+.flt-dw-sort-btn.on{background:var(--acbg);border-color:var(--ac);color:var(--ac2);}
+.flt-dw-sort-check{width:20px;height:20px;border-radius:50%;border:2px solid var(--bd2);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;}
+.flt-dw-sort-btn.on .flt-dw-sort-check{background:var(--ac);border-color:var(--ac);color:#fff;}
+.flt-dw-toggle-row{display:flex;align-items:center;justify-content:space-between;padding:16px 0;}
+.flt-dw-toggle-lbl{font-size:13px;font-weight:700;color:var(--tx);}
+.flt-dw-toggle{width:46px;height:26px;border-radius:13px;background:var(--bd2);border:none;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;}
+.flt-dw-toggle.on{background:var(--ac);}
+.flt-dw-toggle::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.flt-dw-toggle.on::after{transform:translateX(20px);}
+.flt-dw-ft{padding:14px 20px calc(16px + var(--safe));border-top:1px solid var(--bd);flex-shrink:0;}
+.flt-dw-apply{width:100%;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;border:none;border-radius:14px;padding:16px;font-size:15px;font-weight:900;cursor:pointer;font-family:var(--f);}
+
+/* ─── Itinerary Panel ─── */
+.itin-panel{position:fixed;inset:0;z-index:410;background:var(--bg);overflow:hidden;transform:translateX(100%);transition:transform .32s cubic-bezier(.16,1,.3,1);display:flex;flex-direction:column;}
+.itin-panel.open{transform:translateX(0);}
+.itin-nav{background:rgba(255,255,255,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);padding:13px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.itin-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:100px;}
+.itin-hero{padding:28px 20px 24px;background:linear-gradient(160deg,#08111f,#0f2218);}
+.itin-hero-ttl{font-family:var(--fd);font-size:26px;font-weight:900;color:#fff;margin-bottom:4px;}
+.itin-hero-sub{font-size:12px;color:rgba(255,255,255,.5);}
+.itin-days-row{display:flex;gap:8px;padding:14px 16px;background:var(--w);border-bottom:1px solid var(--bd);overflow-x:auto;}
+.itin-day-btn{flex-shrink:0;padding:8px 18px;border-radius:22px;font-size:12px;font-weight:800;cursor:pointer;border:1.5px solid var(--bd2);background:var(--w);color:var(--tx3);font-family:var(--f);transition:all .15s;}
+.itin-day-btn.on{background:var(--tx);border-color:var(--tx);color:#fff;}
+.itin-day-section{background:var(--w);margin-bottom:8px;}
+.itin-day-hd{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid var(--bd);}
+.itin-day-lbl{font-size:14px;font-weight:900;color:var(--tx);}
+.itin-day-cnt{font-size:11px;color:var(--tx3);}
+.itin-assigned-item{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--bd);}
+.itin-num{width:26px;height:26px;border-radius:50%;background:var(--ac);color:#fff;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.itin-item-info{flex:1;min-width:0;}
+.itin-item-nm{font-size:13px;font-weight:800;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.itin-item-ct{font-size:11px;color:var(--tx3);margin-top:1px;}
+.itin-item-rm{background:var(--sf);border:1px solid var(--bd);color:var(--tx3);font-size:14px;cursor:pointer;padding:5px 9px;border-radius:8px;flex-shrink:0;}
+.itin-day-empty{padding:14px 16px;font-size:12px;color:var(--tx3);font-style:italic;}
+.itin-saved-sec{background:var(--w);margin-top:8px;}
+.itin-saved-hd{padding:14px 16px 10px;border-bottom:1px solid var(--bd);}
+.itin-saved-ttl{font-size:10px;font-weight:800;color:var(--tx3);letter-spacing:.8px;text-transform:uppercase;}
+.itin-place-row{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--bd);cursor:pointer;transition:background .12s;}
+.itin-place-row:active{background:var(--sf);}
+.itin-place-ic{width:42px;height:42px;border-radius:12px;background:var(--sf2);display:flex;align-items:center;justify-content:center;font-size:22px;border:1px solid var(--bd);flex-shrink:0;}
+.itin-place-info{flex:1;min-width:0;}
+.itin-place-nm{font-size:13px;font-weight:800;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.itin-place-ct{font-size:11px;color:var(--tx3);margin-top:1px;}
+.itin-place-day-badge{background:var(--ac);color:#fff;font-size:10px;font-weight:900;border-radius:10px;padding:4px 10px;flex-shrink:0;white-space:nowrap;}
+.itin-ft{position:absolute;bottom:0;left:0;right:0;background:rgba(255,255,255,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--bd);padding:12px 16px calc(12px + var(--safe));display:flex;gap:10px;}
+.itin-copy-btn{flex:1;padding:14px;border-radius:12px;border:1.5px solid var(--bd2);background:var(--sf);font-size:13px;font-weight:800;cursor:pointer;font-family:var(--f);color:var(--tx);}
+.itin-copy-btn:active{background:var(--sf2);}
+.itin-make-btn{width:100%;margin-top:14px;padding:13px;border-radius:12px;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;border:none;font-size:14px;font-weight:900;cursor:pointer;font-family:var(--f);display:flex;align-items:center;justify-content:center;gap:7px;}
+
+/* ─── Toast ─── */
+.toast{position:fixed;bottom:100px;left:50%;transform:translate(-50%,20px);background:rgba(0,0,0,.85);color:#fff;border-radius:22px;padding:11px 24px;font-size:13px;font-weight:700;z-index:1000;opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;transform:translate(-50%,0);}
 </style>
 </head>
 <body>
@@ -333,27 +410,14 @@ button{font-family:var(--f);}
   </div>
   <div class="city-row" id="cityRow"></div>
   <div class="cat-row" id="catRow"></div>
-  <!-- 5번: 맛집 세부탭 -->
-  <div class="food-sub-row" id="foodSubRow" style="display:none">
-    <button class="food-sub-btn on" data-key="all">전체</button>
-    <button class="food-sub-btn" data-key="ramen">라멘</button>
-    <button class="food-sub-btn" data-key="sushi">스시·회</button>
-    <button class="food-sub-btn" data-key="izakaya">이자카야</button>
-    <button class="food-sub-btn" data-key="tonkatsu">돈카츠</button>
-    <button class="food-sub-btn" data-key="yakitori">야키토리</button>
-    <button class="food-sub-btn" data-key="yakiniku">야키니쿠</button>
-    <button class="food-sub-btn" data-key="udon">우동·소바</button>
-    <button class="food-sub-btn" data-key="nabe">나베</button>
-    <button class="food-sub-btn" data-key="shabu">샤부샤부</button>
-    <button class="food-sub-btn" data-key="oden">오뎅</button>
-    <button class="food-sub-btn" data-key="kushikatsu">꼬치</button>
-    <button class="food-sub-btn" data-key="gyoza">교자</button>
-  </div>
-  <!-- 6번: 정렬/필터 바 -->
-  <div class="sort-row" id="sortRow" style="display:none">
-    <button class="sort-btn" id="btnSortRating" data-key="rating_desc" data-label="⭐ 평점 높은순">⭐ 평점 높은순</button>
-    <button class="sort-btn" id="btnOnlyOpen" data-key="open" data-label="🟢 영업중만">🟢 영업중만</button>
-    <button class="sort-btn" id="btnSortCnt" data-key="cnt_desc" data-label="📊 리뷰수 높은순">📊 리뷰수 높은순</button>
+  <!-- 필터 바 (드로어 트리거) -->
+  <div class="filter-bar" id="filterBar" style="display:none">
+    <div class="filter-active-row" id="filterActiveRow"></div>
+    <button class="filter-open-btn" id="btnFilterOpen">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+      필터
+      <span class="filter-cnt-badge" id="filterCntBadge" style="display:none">0</span>
+    </button>
   </div>
   <div class="scroll" id="mainContent" style="padding-bottom:calc(var(--nav) + var(--safe) + 16px)"></div>
 </div>
@@ -417,6 +481,10 @@ button{font-family:var(--f);}
         <button class="saved-clear" id="btnClearAll">전체 삭제</button>
       </div>
       <div style="font-size:13px;color:var(--tx3)">하트 눌러 저장한 장소들이에요</div>
+      <button class="itin-make-btn" id="btnMakeItin">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        일정표 만들기
+      </button>
     </div>
     <div id="savedContent"></div>
   </div>
@@ -760,11 +828,16 @@ AI_DB['\ubcb3\ud478']=[{label:'\uc628\uccad \uccad\uad6d',places:[
 
 // ── State
 var city=CITIES[0].kr,cityEn=CITIES[0].en,cat=CATS[0].key;
-var foodSubCat='all'; // 5번: 맛집 세부탭 ('all','ramen','sushi','izakaya','tonkatsu','yakitori','yakiniku','udon','cafe','other')
-var sortBy='none';   // 6번: 정렬 ('none','rating_desc','rating_asc')
-var onlyOpen=false;  // 6번: 영업중 필터
+var foodSubCat='all';
+var sortBy='none';
+var onlyOpen=false;
 var saved=JSON.parse(localStorage.getItem('tabi_saved')||'[]');
 var _places=[],_tdays=null,_tcity='';
+// 필터 드래프트 (드로어에서 임시 편집 후 적용)
+var _flt={foodSub:'all',sort:'none',open:false};
+// 일정표
+var _itinDays=3;
+var _itinAssign=JSON.parse(localStorage.getItem('tabi_itin')||'{}');
 
 // ── DOM helper
 function mk(tag,cls,txt){
@@ -778,7 +851,8 @@ function on(id,ev,fn){document.getElementById(id).addEventListener(ev,fn);}
 // ── Init
 window.addEventListener('DOMContentLoaded',function(){
   buildCityTabs();buildCatTabs();buildAiSelect();bindAll();
-  var sortRow=document.getElementById('sortRow');if(sortRow)sortRow.style.display='flex';
+  var fb=document.getElementById('filterBar');if(fb)fb.style.display='flex';
+  updateFilterBar();
   load();updateBadge();
 });
 
@@ -802,19 +876,13 @@ function buildCatTabs(){
     btn.addEventListener('click',function(){
       row.querySelectorAll('.cat-btn').forEach(function(b){b.classList.remove('on');});
       btn.classList.add('on');cat=c.key;
-      // 5번: 맛집 세부탭 표시/숨김 + 버튼 상태 초기화
-      foodSubCat='all';
-      var foodRow=document.getElementById('foodSubRow');
-      if(foodRow){
-        foodRow.style.display=(c.key==='restaurant')?'flex':'none';
-        foodRow.querySelectorAll('.food-sub-btn').forEach(function(b){b.classList.remove('on');});
-        var allBtn=foodRow.querySelector('[data-key="all"]');
-        if(allBtn)allBtn.classList.add('on');
-      }
-      // 6번: 정렬바 표시
-      var sortRow=document.getElementById('sortRow');
-      if(sortRow)sortRow.style.display='flex';
-      sortBy='none';onlyOpen=false;
+      // 필터 상태 초기화
+      foodSubCat='all';sortBy='none';onlyOpen=false;
+      _flt={foodSub:'all',sort:'none',open:false};
+      // 필터 바 표시
+      var fb=document.getElementById('filterBar');
+      if(fb)fb.style.display='flex';
+      updateFilterBar();
       load();
     });
     row.appendChild(btn);
@@ -849,37 +917,15 @@ function bindAll(){
   });
   on('btnClearAll','click',clearAll);
   on('btnBack','click',closeDetail);
-  // 5번: 맛집 세부탭 이벤트
-  document.getElementById('foodSubRow').addEventListener('click',function(e){
-    var btn=e.target.closest('.food-sub-btn');if(!btn)return;
-    document.querySelectorAll('.food-sub-btn').forEach(function(b){b.classList.remove('on');});
-    btn.classList.add('on');
-    foodSubCat=btn.dataset.key;
-    load();
-  });
-  // 6번: 정렬/필터 - 하나만 선택, 선택시 초록색+체크
-  function setSortFilter(key){
-    if(key==='open'){
-      onlyOpen=!onlyOpen;
-      sortBy='none';
-    } else {
-      sortBy=(sortBy===key)?'none':key;
-      onlyOpen=false;
-    }
-    document.querySelectorAll('.sort-btn').forEach(function(b){
-      b.classList.remove('on');
-      b.textContent=b.dataset.label||b.textContent.replace(' ✓','');
-    });
-    var activeKey=(key==='open'&&onlyOpen)?'open':(sortBy!=='none'?sortBy:'none');
-    if(activeKey!=='none'){
-      var activeBtn=document.querySelector('.sort-btn[data-key="'+activeKey+'"]');
-      if(activeBtn){activeBtn.classList.add('on');activeBtn.textContent=(activeBtn.dataset.label||'')+' ✓';}
-    }
-    renderList(_places);
-  }
-  on('btnSortRating','click',function(){setSortFilter('rating_desc');});
-  on('btnOnlyOpen','click',function(){setSortFilter('open');});
-  on('btnSortCnt','click',function(){setSortFilter('cnt_desc');});
+  // 필터 드로어
+  on('btnFilterOpen','click',openFilterDrawer);
+  on('fltOv','click',closeFilterDrawer);
+  on('fltReset','click',resetFilters);
+  on('fltApply','click',applyFilters);
+  // 일정표
+  on('btnMakeItin','click',openItin);
+  on('btnItinBack','click',closeItin);
+  on('btnItinCopy','click',copyItinerary);
 }
 
 function switchPage(p){
@@ -1615,7 +1661,255 @@ async function genItinerary(){
   }
   btn.disabled=false;btn.textContent='AI \ub9de\ucda4 \uc77c\uc815 \uc0dd\uc131\ud558\uae30';
 }
+
+// ── Filter drawer ──────────────────────────────
+var FOOD_LABELS=[
+  {key:'all',label:'전체'},{key:'ramen',label:'라멘'},{key:'sushi',label:'스시·회'},
+  {key:'izakaya',label:'이자카야'},{key:'tonkatsu',label:'돈카츠'},{key:'yakitori',label:'야키토리'},
+  {key:'yakiniku',label:'야키니쿠'},{key:'udon',label:'우동·소바'},{key:'nabe',label:'나베'},
+  {key:'shabu',label:'샤부샤부'},{key:'oden',label:'오뎅'},{key:'kushikatsu',label:'꼬치'},{key:'gyoza',label:'교자'}
+];
+function getFoodLabel(k){for(var i=0;i<FOOD_LABELS.length;i++)if(FOOD_LABELS[i].key===k)return FOOD_LABELS[i].label;return k;}
+function openFilterDrawer(){
+  _flt.foodSub=foodSubCat;_flt.sort=sortBy;_flt.open=onlyOpen;
+  buildFilterDrawerContent();
+  document.getElementById('fltDw').classList.add('open');
+  document.getElementById('fltOv').classList.add('open');
+}
+function closeFilterDrawer(){
+  document.getElementById('fltDw').classList.remove('open');
+  document.getElementById('fltOv').classList.remove('open');
+}
+function resetFilters(){
+  _flt={foodSub:'all',sort:'none',open:false};
+  buildFilterDrawerContent();
+}
+function applyFilters(){
+  var needLoad=(cat==='restaurant'&&_flt.foodSub!==foodSubCat);
+  foodSubCat=_flt.foodSub;sortBy=_flt.sort;onlyOpen=_flt.open;
+  closeFilterDrawer();
+  updateFilterBar();
+  if(needLoad)load();else renderList(_places);
+}
+function buildFilterDrawerContent(){
+  var body=document.getElementById('fltBody');body.innerHTML='';
+  // Food section (restaurant only)
+  if(cat==='restaurant'){
+    var foodSec=mk('div','flt-dw-sec');
+    foodSec.appendChild(mk('div','flt-dw-sec-ttl','음식 종류'));
+    var chips=mk('div','flt-dw-chips');
+    FOOD_LABELS.forEach(function(fl){
+      var chip=mk('button','flt-dw-chip'+(_flt.foodSub===fl.key?' on':''),fl.label);
+      (function(k){chip.addEventListener('click',function(){
+        body.querySelectorAll('.flt-dw-chip').forEach(function(c){c.classList.remove('on');});
+        chip.classList.add('on');_flt.foodSub=k;
+      });})(fl.key);
+      chips.appendChild(chip);
+    });
+    foodSec.appendChild(chips);body.appendChild(foodSec);
+  }
+  // Sort section
+  var sortSec=mk('div','flt-dw-sec');
+  sortSec.appendChild(mk('div','flt-dw-sec-ttl','정렬'));
+  var sortBtns=mk('div','flt-dw-sort');
+  [{key:'rating_desc',label:'⭐ 평점 높은순'},{key:'cnt_desc',label:'📊 리뷰수 높은순'}].forEach(function(s){
+    var btn=mk('button','flt-dw-sort-btn'+(_flt.sort===s.key?' on':''));
+    btn.appendChild(mk('span',null,s.label));
+    var chk=mk('span','flt-dw-sort-check',_flt.sort===s.key?'✓':'');
+    btn.appendChild(chk);
+    (function(k){btn.addEventListener('click',function(){
+      _flt.sort=(_flt.sort===k)?'none':k;
+      buildFilterDrawerContent();
+    });})(s.key);
+    sortBtns.appendChild(btn);
+  });
+  sortSec.appendChild(sortBtns);body.appendChild(sortSec);
+  // Open toggle section
+  var togSec=mk('div','flt-dw-sec');
+  var togRow=mk('div','flt-dw-toggle-row');
+  togRow.appendChild(mk('span','flt-dw-toggle-lbl','🟢 영업중만 보기'));
+  var tog=mk('button','flt-dw-toggle'+(_flt.open?' on':''));
+  tog.addEventListener('click',function(){_flt.open=!_flt.open;tog.classList.toggle('on');});
+  togRow.appendChild(tog);togSec.appendChild(togRow);body.appendChild(togSec);
+}
+function updateFilterBar(){
+  var cnt=0;
+  var row=document.getElementById('filterActiveRow');if(row)row.innerHTML='';
+  if(foodSubCat!=='all'){cnt++;if(row){row.appendChild(mkFilterTag(getFoodLabel(foodSubCat),function(){foodSubCat='all';_flt.foodSub='all';updateFilterBar();load();}));}}
+  if(sortBy!=='none'){cnt++;var sl=sortBy==='rating_desc'?'평점순':'리뷰수순';if(row){row.appendChild(mkFilterTag(sl,function(){sortBy='none';_flt.sort='none';updateFilterBar();renderList(_places);}));}}
+  if(onlyOpen){cnt++;if(row){row.appendChild(mkFilterTag('영업중',function(){onlyOpen=false;_flt.open=false;updateFilterBar();renderList(_places);}));}}
+  var badge=document.getElementById('filterCntBadge');
+  if(badge){badge.textContent=cnt;badge.style.display=cnt>0?'flex':'none';}
+  var fbtn=document.getElementById('btnFilterOpen');
+  if(fbtn)fbtn.classList.toggle('active',cnt>0);
+}
+function mkFilterTag(label,removeFn){
+  var tag=mk('span','filter-tag');
+  tag.appendChild(mk('span',null,label));
+  var x=mk('button','filter-tag-x','×');
+  x.addEventListener('click',function(e){e.stopPropagation();removeFn();});
+  tag.appendChild(x);return tag;
+}
+
+// ── Itinerary builder ──────────────────────────
+function openItin(){
+  renderItin();
+  document.getElementById('itinPanel').classList.add('open');
+}
+function closeItin(){
+  document.getElementById('itinPanel').classList.remove('open');
+}
+function renderItin(){
+  var scroll=document.getElementById('itinScroll');scroll.innerHTML='';
+  // Hero
+  var hero=mk('div','itin-hero');
+  hero.appendChild(mk('div','itin-hero-ttl','내 여행 일정표'));
+  hero.appendChild(mk('div','itin-hero-sub',saved.length+'개 장소 · '+_itinDays+'일 여행'));
+  scroll.appendChild(hero);
+  // Day selector
+  var daysRow=mk('div','itin-days-row');
+  for(var d=1;d<=5;d++){
+    (function(day){
+      var btn=mk('button','itin-day-btn'+(day===_itinDays?' on':''),day+'일');
+      btn.addEventListener('click',function(){_itinDays=day;renderItin();});
+      daysRow.appendChild(btn);
+    })(d);
+  }
+  scroll.appendChild(daysRow);
+  // Day sections
+  var byDay={};
+  Object.keys(_itinAssign).forEach(function(nm){
+    var d=_itinAssign[nm];
+    if(d>=1&&d<=_itinDays){if(!byDay[d])byDay[d]=[];byDay[d].push(nm);}
+  });
+  for(var d2=1;d2<=_itinDays;d2++){
+    var places2=byDay[d2]||[];
+    var sec=mk('div','itin-day-section');
+    var hd=mk('div','itin-day-hd');
+    hd.appendChild(mk('span','itin-day-lbl','Day '+d2));
+    hd.appendChild(mk('span','itin-day-cnt',places2.length+'곳'));
+    sec.appendChild(hd);
+    if(places2.length){
+      places2.forEach(function(nm2,i){
+        var row=mk('div','itin-assigned-item');
+        row.appendChild(mk('span','itin-num',String(i+1)));
+        var info=mk('div','itin-item-info');
+        info.appendChild(mk('div','itin-item-nm',nm2));
+        var sv=saved.find(function(s){return s.name===nm2;});
+        info.appendChild(mk('div','itin-item-ct',sv?sv.city||'':''));
+        row.appendChild(info);
+        var rm=mk('button','itin-item-rm','×');
+        (function(n){rm.addEventListener('click',function(e){e.stopPropagation();delete _itinAssign[n];localStorage.setItem('tabi_itin',JSON.stringify(_itinAssign));renderItin();});})(nm2);
+        row.appendChild(rm);
+        sec.appendChild(row);
+      });
+    } else {
+      sec.appendChild(mk('div','itin-day-empty','장소를 아래에서 탭하여 추가하세요'));
+    }
+    scroll.appendChild(sec);
+  }
+  // Saved places list
+  var savedSec=mk('div','itin-saved-sec');
+  var savedHd=mk('div','itin-saved-hd');
+  savedHd.appendChild(mk('div','itin-saved-ttl','저장한 장소 — 탭하면 날짜 지정'));
+  savedSec.appendChild(savedHd);
+  if(!saved.length){
+    var emp=mk('div',null,'저장한 장소가 없어요. 탐색 탭에서 ♡을 눌러 저장하세요!');
+    emp.style.cssText='padding:24px 16px;font-size:13px;color:var(--tx3);text-align:center;';
+    savedSec.appendChild(emp);
+  } else {
+    saved.forEach(function(s){
+      var assigned=_itinAssign[s.name];
+      var row2=mk('div','itin-place-row');
+      var ic=mk('div','itin-place-ic',gpi(s.name).ic);
+      var info2=mk('div','itin-place-info');
+      info2.appendChild(mk('div','itin-place-nm',s.name));
+      info2.appendChild(mk('div','itin-place-ct',s.city||''));
+      row2.appendChild(ic);row2.appendChild(info2);
+      if(assigned){
+        row2.appendChild(mk('span','itin-place-day-badge','Day '+assigned));
+      }
+      (function(nm3){row2.addEventListener('click',function(){
+        var cur=_itinAssign[nm3]||0;
+        var next=(cur>=_itinDays)?0:cur+1;
+        if(next===0)delete _itinAssign[nm3]; else _itinAssign[nm3]=next;
+        localStorage.setItem('tabi_itin',JSON.stringify(_itinAssign));
+        renderItin();
+      });})(s.name);
+      savedSec.appendChild(row2);
+    });
+  }
+  scroll.appendChild(savedSec);
+}
+function copyItinerary(){
+  var lines=['📅 내 일본 여행 일정표 (TABI)',''];
+  var byDay2={};
+  Object.keys(_itinAssign).forEach(function(nm){
+    var d=_itinAssign[nm];
+    if(d>=1&&d<=_itinDays){if(!byDay2[d])byDay2[d]=[];byDay2[d].push(nm);}
+  });
+  for(var d3=1;d3<=_itinDays;d3++){
+    lines.push('[ Day '+d3+' ]');
+    var pl=byDay2[d3]||[];
+    if(pl.length)pl.forEach(function(n,i){lines.push('  '+(i+1)+'. '+n);});
+    else lines.push('  (미정)');
+    lines.push('');
+  }
+  var txt=lines.join('\n');
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(txt).then(function(){showToast('일정표가 클립보드에 복사되었어요!');});
+  } else {
+    var ta=document.createElement('textarea');ta.value=txt;
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');
+    document.body.removeChild(ta);showToast('일정표가 복사되었어요!');
+  }
+}
+function showToast(msg){
+  var t=mk('div','toast',msg);document.body.appendChild(t);
+  setTimeout(function(){t.classList.add('show');},10);
+  setTimeout(function(){t.classList.remove('show');setTimeout(function(){if(t.parentNode)t.remove();},300);},2500);
+}
+
 })();
+</script>
+
+<!-- Filter Drawer -->
+<div class="flt-ov" id="fltOv"></div>
+<div class="flt-dw" id="fltDw">
+  <div class="flt-dw-handle"></div>
+  <div class="flt-dw-hd">
+    <span class="flt-dw-ttl">필터</span>
+    <button class="flt-dw-reset" id="fltReset">초기화</button>
+  </div>
+  <div class="flt-dw-body" id="fltBody"></div>
+  <div class="flt-dw-ft">
+    <button class="flt-dw-apply" id="fltApply">결과 보기</button>
+  </div>
+</div>
+
+<!-- Itinerary Panel -->
+<div class="itin-panel" id="itinPanel">
+  <div class="itin-nav">
+    <button class="d-back" id="btnItinBack"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <span class="d-nav-ttl">내 여행 일정표</span>
+  </div>
+  <div class="itin-scroll" id="itinScroll"></div>
+  <div class="itin-ft">
+    <button class="itin-copy-btn" id="btnItinCopy">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="display:inline;vertical-align:middle;margin-right:5px"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      텍스트 복사
+    </button>
+  </div>
+</div>
+
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('/sw.js').then(function(r){
+      console.log('SW registered');
+    }).catch(function(e){console.log('SW error',e);});
+  });
+}
 </script>
 </body>
 </html>
