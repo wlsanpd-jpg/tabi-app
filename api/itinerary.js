@@ -19,28 +19,65 @@ export default async function handler(req, res) {
     ? interests.join(', ')
     : '전반적 관광';
 
-  const prompt = [
-    '당신은 일본 여행 전문 컨설턴트입니다.',
-    `다음 조건에 맞는 여행 일정을 JSON으로 작성해주세요.`,
+  // 스타일별 구체적 지침
+  const styleGuide = {
+    '가성비': '무료 명소 위주, 저렴한 현지 식당(라멘·우동·편의점), 100엔샵, 대중교통 이용. 1인 하루 8,000엔 이하 목표.',
+    '럭셔리': '미슐랭 레스토랑, 고급 료칸·호텔, 특별 체험(다도·요리 클래스), 택시 이동. 예산 무제한.',
+    '역사문화': '사찰·신사·박물관·성·전통 거리 중심. 역사적 배경 설명 포함.',
+  }[style] || '관광명소와 현지 맛집을 균형있게 포함.';
+
+  // 동행별 구체적 지침
+  const peopleGuide = {
+    '혼자': '혼밥 가능한 식당, 1인 입장 가능한 액티비티, 안전하고 접근성 좋은 장소 우선.',
+    '커플': '로맨틱한 카페·야경 포인트·포토존, 커플 메뉴 있는 식당 포함.',
+    '가족': '어린이 동반 가능한 곳, 이동 거리 짧게, 공원·놀이시설·패밀리 레스토랑 포함.',
+    '단체': '단체 입장 가능, 넓은 공간, 그룹 식사 가능한 식당 우선.',
+  }[people] || '';
+
+  // 예시 2일 구조로 Claude가 형식을 명확히 이해하도록
+  const formatExample = JSON.stringify({
+    days: [
+      {
+        label: "Day 1 테마명",
+        places: [
+          { name: "장소A", time: "09:00", tip: "꿀팁 내용" },
+          { name: "장소B", time: "11:30", tip: "꿀팁 내용" }
+        ]
+      },
+      {
+        label: "Day 2 테마명",
+        places: [
+          { name: "장소C", time: "09:00", tip: "꿀팁 내용" },
+          { name: "장소D", time: "11:30", tip: "꿀팁 내용" }
+        ]
+      }
+    ]
+  });
+
+  const systemPrompt = '당신은 일본 현지 사정을 잘 아는 여행 전문가입니다. 반드시 순수 JSON만 출력하고, 마크다운 코드블록이나 설명 텍스트를 절대 포함하지 마세요.';
+
+  const userPrompt = [
+    `${city} ${days}박 ${total}일 여행 일정을 JSON으로 작성하세요.`,
     '',
-    `조건:`,
+    `[여행 조건]`,
     `- 도시: ${city}`,
-    `- 기간: ${days}박 ${total}일`,
-    `- 여행 스타일: ${style || '자유여행'}`,
-    `- 동행: ${people || '혼자'}`,
+    `- 기간: ${days}박 ${total}일 (day 객체 반드시 ${total}개)`,
+    `- 스타일: ${style || '자유여행'} → ${styleGuide}`,
+    `- 동행: ${people || '혼자'} → ${peopleGuide}`,
     `- 관심사: ${interestStr}`,
     '',
-    `규칙:`,
-    `- days 배열에 ${total}개의 day 객체`,
-    `- 각 day에 4~6개 장소`,
-    `- 장소명은 한국어 (일본 현지명 기준)`,
-    `- time: "HH:MM" 형식`,
-    `- tip: 실용적 꿀팁 1~2문장 (현지인 시각)`,
-    `- label: 하루 테마 (예: "전통과 현대의 조화")`,
-    `- 동선을 고려하여 가까운 장소끼리 묶기`,
+    `[필수 규칙]`,
+    `1. days 배열에 정확히 ${total}개의 day 객체를 포함할 것`,
+    `2. 각 day마다 서로 다른 장소 4~6개 — 절대 같은 장소를 여러 day에 중복 사용 금지`,
+    `3. Day 1은 시내 중심 명소, Day 2는 다른 지역/테마, Day 3 이후는 근교 또는 쇼핑/체험 위주로 구성`,
+    `4. 동선을 고려해 같은 날 방문 장소는 지리적으로 가까운 곳끼리 묶기`,
+    `5. label: 그날의 테마를 한국어로 (예: "전통 사찰과 골목 탐방")`,
+    `6. time: "HH:MM" 24시간 형식`,
+    `7. tip: 그 장소만의 실용적 현지 팁 1~2문장 (입장료·예약·교통·주의사항 등)`,
+    `8. 장소명은 한국어 표기 (일본 현지명 기준)`,
     '',
-    `출력: JSON 오브젝트만, 다른 텍스트 없이`,
-    `형식: {"days":[{"label":"테마","places":[{"name":"장소명","time":"09:00","tip":"꿀팁"}]}]}`
+    `[출력 형식] — 순수 JSON 오브젝트만, 다른 텍스트 없음:`,
+    formatExample
   ].join('\n');
 
   try {
@@ -52,17 +89,17 @@ export default async function handler(req, res) {
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',   // Haiku 4.5
-        max_tokens: 3000,
-        temperature: 0.7,
-        messages: [{ role: 'user', content: prompt }]
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 4000,
+        temperature: 0.8,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }]
       })
     });
 
     if (!response.ok) {
       const errText = await response.text();
       console.error('Claude API error:', response.status, errText);
-      // 사용자에게 의미 있는 메시지 전달
       let userMsg = `Claude API 오류 (${response.status})`;
       if (response.status === 401) userMsg = 'API 키가 유효하지 않습니다. Vercel 환경변수를 확인하세요.';
       if (response.status === 429) userMsg = '요청 한도 초과. 잠시 후 다시 시도하세요.';
@@ -87,6 +124,11 @@ export default async function handler(req, res) {
 
     if (!days_result || !days_result.length) {
       return res.status(422).json({ error: 'Failed to parse itinerary from Claude response', raw: text.slice(0, 300) });
+    }
+
+    // days 수가 맞는지 검증 (로그용)
+    if (days_result.length !== total) {
+      console.warn(`Expected ${total} days, got ${days_result.length}`);
     }
 
     // 캐시 방지 (매번 새 일정)
