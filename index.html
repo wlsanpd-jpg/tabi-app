@@ -1737,8 +1737,8 @@ async function genItinerary(){
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({city:aiCity,days:aiDays,style:aiStyle,people:aiPeople,interests:interests})
     });
-    if(!res.ok)throw new Error('api '+res.status);
     var data=await res.json();
+    if(!res.ok)throw new Error(data.error||'서버 오류 ('+res.status+')');
     if(data.error)throw new Error(data.error);
     var days=data.days;
     if(days&&days.length){buildTriResult(days,aiCity,aiDays,aiStyle,aiPeople);}
