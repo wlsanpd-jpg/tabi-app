@@ -636,35 +636,51 @@ function openDetail(idx){
   ts.appendChild(mk('div','d-name',p.name));
   ts.appendChild(mk('div','d-type',(p.types||[]).join(' \u00b7 ')));
   body.appendChild(ts);
-  // 7번: 세부 설명 (관광명소=Wikipedia, 나머지=editorial_summary)
+  // 세부 설명: editorial_summary 우선, 없으면 한국어 Wikipedia 검색
+  var descSec=mk('div','d-desc-sec');
+  var descTxt=mk('p','d-desc-txt');
+  descSec.appendChild(descTxt);
+  body.appendChild(descSec);
   if(p.editorial_summary){
-    var descSec=mk('div','d-desc-sec');
-    descSec.appendChild(mk('p','d-desc-txt',p.editorial_summary));
-    body.appendChild(descSec);
-  } else if(cat==='tourist_attraction'){
-    // Wikipedia API 비동기 로드
-    var descSec=mk('div','d-desc-sec');
-    var descTxt=mk('p','d-desc-txt','설명을 불러오는 중...');
-    descSec.appendChild(descTxt);
-    body.appendChild(descSec);
-    var wikiLang='ja';
-    fetch('https://ja.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent(p.name))
-      .then(function(r){return r.json();})
-      .then(function(w){
-        if(w.extract){
-          // 일본어 요약을 그대로 표시 (첫 200자)
-          descTxt.textContent=w.extract.slice(0,200)+(w.extract.length>200?'...':'');
-        } else {
-          // 영어로 재시도
-          return fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent(p.name))
+    descTxt.textContent=p.editorial_summary;
+  } else {
+    descTxt.textContent='설명을 불러오는 중...';
+    // 한국어 Wikipedia → 영어 Wikipedia 순으로 fallback
+    function fetchWikiExtract(name){
+      // 1단계: 한국어 직접 검색
+      return fetch('https://ko.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent(name)+'?redirect=true')
+        .then(function(r){return r.ok?r.json():null;})
+        .then(function(w){
+          if(w&&w.extract&&w.extract.length>10)return w.extract;
+          // 2단계: 한국어 키워드 검색 (검색어로 정확한 문서 타이틀 찾기)
+          return fetch('https://ko.wikipedia.org/w/api.php?action=query&list=search&srsearch='+encodeURIComponent(name)+'&srlimit=1&format=json&origin=*')
             .then(function(r){return r.json();})
-            .then(function(w2){
-              if(w2.extract)descTxt.textContent=w2.extract.slice(0,200)+(w2.extract.length>200?'...':'');
-              else descTxt.textContent='';
+            .then(function(d){
+              var hit=d&&d.query&&d.query.search&&d.query.search[0];
+              if(!hit)return null;
+              return fetch('https://ko.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent(hit.title))
+                .then(function(r){return r.ok?r.json():null;})
+                .then(function(w2){return w2&&w2.extract&&w2.extract.length>10?w2.extract:null;});
             });
+        })
+        .then(function(extract){
+          if(extract)return extract;
+          // 3단계: 영어 Wikipedia fallback
+          return fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent(name)+'?redirect=true')
+            .then(function(r){return r.ok?r.json():null;})
+            .then(function(w){return w&&w.extract&&w.extract.length>10?w.extract:null;});
+        });
+    }
+    fetchWikiExtract(p.name)
+      .then(function(extract){
+        if(extract){
+          var maxLen=300;
+          descTxt.textContent=extract.slice(0,maxLen)+(extract.length>maxLen?'…':'');
+        } else {
+          descSec.style.display='none';
         }
       })
-      .catch(function(){descTxt.textContent='';});
+      .catch(function(){descSec.style.display='none';});
   }
   if(p.rating){
     var rs=mk('div','d-rating-sec');
