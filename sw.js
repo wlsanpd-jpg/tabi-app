@@ -1,11 +1,12 @@
-// TABI Service Worker — v3 (파일 분리 대응)
-var CACHE_NAME = 'tabi-v3';
+// TABI Service Worker — v4 (manifest + security)
+var CACHE_NAME = 'tabi-v4';
 var STATIC_ASSETS = [
   '/',
   '/index.html',
   '/styles.css',
   '/data.js',
-  '/app.js'
+  '/app.js',
+  '/manifest.json'
 ];
 
 // 설치: 정적 자산 캐시
