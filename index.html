@@ -85,7 +85,7 @@ button{font-family:var(--f);}
 
 /* ─── Place cards ─── */
 .place-list{display:flex;flex-direction:column;gap:0;}
-.pc{background:var(--w);border-bottom:1px solid var(--bd);cursor:pointer;animation:fadeUp .35s cubic-bezier(.16,1,.3,1) both;}
+.pc{background:var(--w);border-bottom:1px solid var(--bd);cursor:pointer;animation:fadeUp .35s cubic-bezier(.16,1,.3,1) var(--delay,0s) both;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .pc:active{background:var(--sf);}
 .pc-img{width:100%;height:210px;background:var(--sf2);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:56px;}
@@ -303,6 +303,7 @@ button{font-family:var(--f);}
 /* ─── Affiliate logo images ─── */
 .dbr-logo-img{height:24px;border-radius:5px;display:block;flex-shrink:0;}
 .sheet-badge-img{height:32px;border-radius:7px;display:block;}
+.plat-fallback{height:24px;padding:0 8px;border-radius:5px;background:#999;color:#fff;font-size:9px;font-weight:900;display:flex;align-items:center;}
 
 /* ─── Filter bar ─── */
 .filter-bar{display:flex;align-items:center;gap:8px;padding:8px 12px 8px 16px;background:var(--w);border-bottom:1px solid var(--bd);}
@@ -383,6 +384,53 @@ button{font-family:var(--f);}
 /* ─── Toast ─── */
 .toast{position:fixed;bottom:100px;left:50%;transform:translate(-50%,20px);background:rgba(0,0,0,.85);color:#fff;border-radius:22px;padding:11px 24px;font-size:13px;font-weight:700;z-index:1000;opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap;}
 .toast.show{opacity:1;transform:translate(-50%,0);}
+
+/* ─── Skeleton Loading ─── */
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.sk-card{background:var(--w);border-bottom:1px solid var(--bd);overflow:hidden;}
+.sk-img{width:100%;height:210px;background:linear-gradient(90deg,var(--sf2) 25%,var(--sf) 50%,var(--sf2) 75%);background-size:200% 100%;animation:shimmer 1.4s ease-in-out infinite;}
+.sk-body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:9px;}
+.sk-line{border-radius:5px;background:linear-gradient(90deg,var(--sf2) 25%,var(--sf) 50%,var(--sf2) 75%);background-size:200% 100%;animation:shimmer 1.4s ease-in-out infinite;}
+.sk-line.h14{height:14px;}.sk-line.h11{height:11px;}.sk-line.h10{height:10px;}
+.sk-line.w100{width:100%}.sk-line.w75{width:75%}.sk-line.w55{width:55%}.sk-line.w40{width:40%}
+.sk-meta{display:flex;gap:7px;}
+
+/* ─── Empty / Error state ─── */
+.empty-state{padding:60px 20px;text-align:center;display:flex;flex-direction:column;align-items:center;}
+.empty-icon{width:72px;height:72px;border-radius:50%;background:var(--sf);display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:16px;}
+.empty-ttl{font-size:15px;font-weight:800;color:var(--tx);margin-bottom:6px;}
+.empty-sub{font-size:13px;color:var(--tx3);line-height:1.7;max-width:240px;}
+.empty-retry{margin-top:18px;background:var(--ac);color:#fff;border:none;border-radius:12px;padding:11px 24px;font-size:13px;font-weight:800;cursor:pointer;font-family:var(--f);}
+
+/* ─── Share / Extended CTA ─── */
+.tri-share-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;font-size:14px;font-weight:900;cursor:pointer;font-family:var(--f);transition:opacity .15s;margin-bottom:8px;}
+.tri-share-btn:active{opacity:.85;}
+.tri-act-row{display:flex;gap:8px;}
+.tri-act-row .tri-act{flex:1;}
+
+/* ─── Nav animation ─── */
+.nav-it{transition:color .15s,transform .1s;}
+.nav-it:active{transform:scale(.92);}
+
+/* ─── Dark Mode ─── */
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#0e0e0e;--w:#1c1c1e;--sf:#2c2c2e;--sf2:#3a3a3c;
+    --bd:#2c2c2e;--bd2:#3a3a3c;
+    --tx:#f2f2f7;--tx2:#8e8e93;--tx3:#636366;
+    --acbg:rgba(0,200,150,.12);
+    --shadow:0 1px 3px rgba(0,0,0,.4),0 4px 16px rgba(0,0,0,.4);
+    --shadow-lg:0 2px 8px rgba(0,0,0,.5),0 8px 32px rgba(0,0,0,.5);
+  }
+  .hd{background:rgba(28,28,30,.97);}
+  .bot-nav{background:rgba(28,28,30,.98);}
+  .d-nav,.itin-nav,.itin-ft{background:rgba(28,28,30,.97);}
+  .detail,.itin-panel{background:var(--bg);}
+  .sheet,.flt-dw{background:var(--w);}
+  .ai-sel{color:var(--tx);background:var(--sf);}
+  .d-hero-fade{background:linear-gradient(transparent,var(--w));}
+  .srch-bar{background:var(--w);}
+}
 </style>
 </head>
 <body>
@@ -560,6 +608,31 @@ function track(event,data){
   }catch(e){}
 }
 
+// ── 햅틱 피드백 (모바일 촉각 UX)
+// buzz(8) → 단일 8ms  |  buzz([12,60,12]) → 패턴 진동
+function buzz(ms){
+  try{if(navigator.vibrate)navigator.vibrate(ms||8);}catch(e){}
+}
+
+// ── 일정 공유 (Web Share API → 클립보드 폴백)
+function shareTri(){
+  if(!_tdays||!_tdays.length)return;
+  var lines=_tdays.map(function(d,i){
+    var rows=d.places.map(function(p){return '  '+(p.time?p.time+' ':'')+p.name+(p.tip?' — '+p.tip:'');});
+    return '[Day '+(i+1)+' · '+d.label+']\n'+rows.join('\n');
+  });
+  var text='\u2708\ufe0f TABI \u00b7 '+_tcity+' \uc5ec\ud589\uc77c\uc815\n\n'+lines.join('\n\n')+'\n\n\ubb34\ub8cc AI \uc77c\uc815\ud45c \ub9cc\ub4e4\uae30 \u2192 tabi-app-wheat.vercel.app';
+  if(navigator.share){
+    buzz(10);
+    navigator.share({title:'TABI \u2014 '+_tcity+' \uc5ec\ud589\uc77c\uc815',text:text}).catch(function(){});
+    track('share_itinerary',{city:_tcity});
+  } else {
+    navigator.clipboard.writeText(text)
+      .then(function(){showToast('\uc77c\uc815\uc774 \ubcf5\uc0ac\ub418\uc5c8\uc5b4\uc694! \ud83c\udf8a');buzz(8);}  )
+      .catch(function(){});
+  }
+}
+
 var PLAT_LABELS={kl:'KLOOK',mr:'마이리얼트립',eat:'Eatery',bk:'Booking.com',ag:'Agoda'};
 var LOGO_SVG={
   kl:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 28"><rect width="72" height="28" rx="6" fill="#FF6000"/><text x="36" y="19.5" font-family="Arial Black,Arial,sans-serif" font-size="14" font-weight="900" fill="white" text-anchor="middle" letter-spacing="-0.3">klook</text></svg>',
@@ -570,7 +643,7 @@ var LOGO_SVG={
 };
 function mkLogoImg(cls,h){
   var svg=LOGO_SVG[cls];
-  if(!svg){var d=document.createElement('div');d.style.cssText='height:'+(h||24)+'px;padding:0 8px;border-radius:5px;background:#999;color:#fff;font-size:9px;font-weight:900;display:flex;align-items:center;';d.textContent=PLAT_LABELS[cls]||cls;return d;}
+  if(!svg){var d=mk('div','plat-fallback');d.textContent=PLAT_LABELS[cls]||cls;return d;}
   var img=document.createElement('img');
   img.src='data:image/svg+xml,'+encodeURIComponent(svg);
   img.className=h&&h>24?'sheet-badge-img':'dbr-logo-img';
@@ -940,20 +1013,26 @@ AI_DB['\ubcb3\ud478']=[{label:'\uc628\uccad \uccad\uad6d',places:[
   {name:'\ubcb3\ud478 \ub85c\ud504\uc6e8\uc774',time:'17:00',tip:'\uc628\uccad \ub3c4\uc2dc \uc804\uacbd\uacfc \uc11d\uc591'}
 ]}];
 
-// ── State
+// ════════════════════════════════════════════════════
+// STATE — 앱 전역 상태 (단일 진실 소스)
+// ════════════════════════════════════════════════════
 var city=CITIES[0].kr,cityEn=CITIES[0].en,cat=CATS[0].key;
 var foodSubCat='all';
 var sortBy='none';
 var onlyOpen=false;
 var saved=JSON.parse(localStorage.getItem('tabi_saved')||'[]');
 var _places=[],_tdays=null,_tcity='';
-// 필터 드래프트 (드로어에서 임시 편집 후 적용)
-var _flt={foodSub:'all',sort:'none',open:false};
-// 일정표
+var _flt={foodSub:'all',sort:'none',open:false};  // 필터 드로어 드래프트
 var _itinDays=3;
 var _itinAssign=JSON.parse(localStorage.getItem('tabi_itin')||'{}');
 
-// ── DOM helper
+// ── 엘리먼트 캐시 (반복 getElementById 최소화)
+var _el={};
+function $e(id){return _el[id]||(_el[id]=document.getElementById(id));}
+
+// ════════════════════════════════════════════════════
+// DOM HELPERS
+// ════════════════════════════════════════════════════
 function mk(tag,cls,txt){
   var e=document.createElement(tag);
   if(cls)e.className=cls;
@@ -965,7 +1044,7 @@ function on(id,ev,fn){document.getElementById(id).addEventListener(ev,fn);}
 // ── Init
 window.addEventListener('DOMContentLoaded',function(){
   buildCityTabs();buildCatTabs();buildAiSelect();bindAll();
-  var fb=document.getElementById('filterBar');if(fb)fb.style.display='flex';
+  var fb=$e('filterBar');if(fb)fb.style.display='flex';
   updateFilterBar();
   load();updateBadge();
 });
@@ -1127,17 +1206,37 @@ function photoUrl(ref,size){
   return ref?PROXY+'/api/photo?photo_reference='+ref+'&maxwidth='+(size||400):null;
 }
 function showMsg(type){
-  var mc=document.getElementById('mainContent');mc.innerHTML='';
-  var w=mk('div',type==='loading'?'loading':'empty');
+  var mc=$e('mainContent');mc.innerHTML='';
   if(type==='loading'){
-    w.appendChild(mk('div','spinner'));
-    w.appendChild(mk('div','ltxt',city+' \uc815\ubcf4\ub97c \ubd88\ub7ec\uc624\ub294 \uc911...'));
-  } else {
-    var ic=mk('div');
-    ic.textContent=type==='error'?'\u26a0\ufe0f':'\ud83d\udd0d';
-    ic.style.cssText='font-size:48px;margin-bottom:12px';
+    // 스켈레톤 카드 4장 — 스피너보다 체감 속도 훨씬 빠름
+    var list=mk('div','place-list');
+    for(var i=0;i<4;i++){
+      var skc=mk('div','sk-card');
+      skc.appendChild(mk('div','sk-img'));
+      var skb=mk('div','sk-body');
+      skb.appendChild(mk('div','sk sk-line h14 w100'));
+      skb.appendChild(mk('div','sk sk-line h11 w75'));
+      var skm=mk('div','sk-meta');
+      skm.appendChild(mk('div','sk sk-line h10 w40'));
+      skm.appendChild(mk('div','sk sk-line h10 w55'));
+      skb.appendChild(skm);
+      skc.appendChild(skb);list.appendChild(skc);
+    }
+    mc.appendChild(list);return;
+  }
+  var w=mk('div','empty-state');
+  if(type==='error'){
+    var ic=mk('div','empty-icon','\u26a0\ufe0f');
     w.appendChild(ic);
-    w.appendChild(mk('div','etxt',type==='error'?'\ub370\uc774\ud130\ub97c \ubd88\ub7ec\uc624\uc9c0 \ubabb\ud588\uc5b4\uc694.\n\uc7a0\uc2dc \ud6c4 \ub2e4\uc2dc \uc2dc\ub3c4\ud574 \uc8fc\uc138\uc694.':'\uac80\uc0c9 \uacb0\uacfc\uac00 \uc5c6\uc2b5\ub2c8\ub2e4.'));
+    w.appendChild(mk('div','empty-ttl','\ub370\uc774\ud130\ub97c \ubd88\ub7ec\uc624\uc9c0 \ubabb\ud588\uc5b4\uc694'));
+    w.appendChild(mk('div','empty-sub','\ub124\ud2b8\uc6cc\ud06c\ub97c \ud655\uc778\ud558\uace0\n\ub2e4\uc2dc \uc2dc\ub3c4\ud574 \uc8fc\uc138\uc694.'));
+    var rb=mk('button','empty-retry','\ub2e4\uc2dc \uc2dc\ub3c4');
+    rb.addEventListener('click',load);
+    w.appendChild(rb);
+  } else {
+    w.appendChild(mk('div','empty-icon','\ud83d\udd0d'));
+    w.appendChild(mk('div','empty-ttl',city+' '+catLbl[cat]+' \uacb0\uacfc\uac00 \uc5c6\uc5b4\uc694'));
+    w.appendChild(mk('div','empty-sub','\ub2e4\ub978 \uce74\ud14c\uace0\ub9ac\ub97c\n\uc120\ud0dd\ud574\ubcf4\uc138\uc694.'));
   }
   mc.appendChild(w);
 }
@@ -1145,18 +1244,14 @@ function showMsg(type){
 // ── Stars
 function mkStars(r,cls){
   var w=mk('div',cls||'pc-stars');
-  if(!r){
-    var s=mk('span');s.style.cssText='font-size:10px;color:var(--tx3)';s.textContent='\ud3c9\uc810\uc5c6\uc74c';
-    w.appendChild(s);return w;
-  }
-  for(var i=0;i<5;i++){
-    var s=mk('span','pc-star'+(r>=i+1?' on':''),'\u2605');
-    w.appendChild(s);
-  }
+  if(!r){w.appendChild(mk('span','pc-rcnt','\ud3c9\uc810\uc5c6\uc74c'));return w;}
+  for(var i=0;i<5;i++)w.appendChild(mk('span','pc-star'+(r>=i+1?' on':''),'\u2605'));
   return w;
 }
 
-// ── Booking strip
+// ════════════════════════════════════════════════════
+// BOOKING & CTA — 제휴 예약 스트립 · 버튼
+// ════════════════════════════════════════════════════
 function mkBkStrip(data){
   if(!data||!data.length)return null;
   var strip=mk('div','bk-strip'),hd=mk('div','bk-hd');
@@ -1225,7 +1320,7 @@ function mkCTA(p){
 function mkCard(p,idx){
   var isSaved=saved.some(function(s){return s.name===p.name;});
   var card=mk('div','pc');
-  card.style.animationDelay=((idx%8)*0.05)+'s';
+  card.style.setProperty('--delay',((idx%8)*0.05)+'s');
   var imgW=mk('div','pc-img');
   var pUrl=photoUrl(p.photo_ref,idx===0?600:400);
   if(pUrl){
@@ -1239,7 +1334,7 @@ function mkCard(p,idx){
   imgW.appendChild(mk('div','pc-rank','#'+(idx+1)));
   imgW.appendChild(mk('div','pc-badge',(p.types||[catLbl[cat]])[0]||''));
   var heart=mk('button','pc-heart'+(isSaved?' on':''),isSaved?'\u2665':'\u2661');
-  heart.addEventListener('click',function(e){e.stopPropagation();toggleSC(p.name,heart,idx);});
+  heart.addEventListener('click',function(e){e.stopPropagation();buzz(10);toggleSC(p.name,heart,idx);});
   imgW.appendChild(heart);
   var info=mk('div','pc-info');
   info.appendChild(mk('div','pc-name',p.name));
@@ -1258,9 +1353,11 @@ function mkCard(p,idx){
   return card;
 }
 
-// ── Render list
+// ════════════════════════════════════════════════════
+// RENDER — 리스트 · 카드 · 상세 화면
+// ════════════════════════════════════════════════════
 function renderList(places){
-  var mc=document.getElementById('mainContent');mc.innerHTML='';
+  var mc=$e('mainContent');mc.innerHTML='';
   if(!places.length){showMsg('empty');return;}
   // 6번: 영업중 필터
   var shown=onlyOpen?places.filter(function(p){return p.open===true;}):places.slice();
@@ -1283,8 +1380,8 @@ function renderList(places){
 function toggleSC(name,btn,idx){
   var place=_places[idx]||{name:name};
   var i=saved.findIndex(function(s){return s.name===name;});
-  if(i===-1){saved.push({name:name,city:city,cat:cat,data:place});btn.textContent='\u2665';btn.classList.add('on');track('place_save',{name:name,city:city,cat:cat});}
-  else{saved.splice(i,1);btn.textContent='\u2661';btn.classList.remove('on');}
+  if(i===-1){saved.push({name:name,city:city,cat:cat,data:place});btn.textContent='\u2665';btn.classList.add('on');track('place_save',{name:name,city:city,cat:cat});showToast('\u2665 '+name+' \uc800\uc7a5\ub428');}
+  else{saved.splice(i,1);btn.textContent='\u2661';btn.classList.remove('on');showToast(name+' \uc800\uc7a5 \ucde8\uc18c');}
   localStorage.setItem('tabi_saved',JSON.stringify(saved));updateBadge();
 }
 function toggleSD(name){
@@ -1369,7 +1466,9 @@ function removeSaved(name){
   updateBadge();renderSaved();
 }
 
-// ── Detail
+// ════════════════════════════════════════════════════
+// DETAIL PANEL — 장소 상세 화면
+// ════════════════════════════════════════════════════
 function openDetail(idx){
   var p=_places[idx];if(!p)return;
   track('detail_open',{name:p.name,cat:cat,city:city});
@@ -1701,8 +1800,12 @@ function buildTriResult(days,aiCity,aiDays,aiStyle,aiPeople){
   bud.appendChild(mk('span','tri-bud-l','\uc608\uc0c1 \ud558\ub8e8 \uc608\uc0b0 (\uc219\ubc15 \ubcc4\ub3c4)'));
   bud.appendChild(mk('span','tri-bud-r','\uc57d '+budVal+'/\uc778'));
   footer.appendChild(bud);
-  var acts=mk('div','tri-acts');
-  var copyBtn=mk('button','tri-act s','\ud83d\udccb \uc77c\uc815 \ubcf5\uc0ac');
+  // 공유 버튼 (Web Share API → 클립보드 폴백)
+  var shareBtn=mk('button','tri-share-btn','\ud83d\udce4 \uc77c\uc815 \uacf5\uc720\ud558\uae30');
+  shareBtn.addEventListener('click',shareTri);
+  footer.appendChild(shareBtn);
+  var acts=mk('div','tri-acts tri-act-row');
+  var copyBtn=mk('button','tri-act s','\ud83d\udccb \ud14d\uc2a4\ud2b8 \ubcf5\uc0ac');
   copyBtn.addEventListener('click',copyTri);
   var explBtn=mk('button','tri-act p','\ud83d\uddfa \uc7a5\uc18c \ud0d0\uc0c9');
   explBtn.addEventListener('click',function(){switchPage('explore');});
@@ -1711,7 +1814,9 @@ function buildTriResult(days,aiCity,aiDays,aiStyle,aiPeople){
   card.appendChild(footer);wrap.appendChild(card);result.appendChild(wrap);
 }
 
-// ── AI generate
+// ════════════════════════════════════════════════════
+// AI ITINERARY — Claude API 일정 생성
+// ════════════════════════════════════════════════════
 async function genItinerary(){
   var btn=document.getElementById('btnGen');
   var aiCity=document.getElementById('aiCity').value;
@@ -1721,7 +1826,7 @@ async function genItinerary(){
   var interests=[];
   document.querySelectorAll('.ai-chip.on').forEach(function(c){interests.push(c.textContent.trim());});
   var total=parseInt(aiDays)+1;
-  btn.disabled=true;btn.textContent='\uc0dd\uc131 \uc911...';
+  btn.disabled=true;btn.textContent='\uc0dd\uc131 \uc911...';buzz(12);
   var result=document.getElementById('aiResult');result.innerHTML='';
   var wrap=mk('div','tri-wrap'),card=mk('div','tri-card'),loading=mk('div','tri-loading');
   var dots=mk('div','tri-dots');
@@ -1741,7 +1846,7 @@ async function genItinerary(){
     if(!res.ok)throw new Error(data.error||'서버 오류 ('+res.status+')');
     if(data.error)throw new Error(data.error);
     var days=data.days;
-    if(days&&days.length){buildTriResult(days,aiCity,aiDays,aiStyle,aiPeople);}
+    if(days&&days.length){buildTriResult(days,aiCity,aiDays,aiStyle,aiPeople);buzz([12,60,12]);}
     else throw new Error('empty days');
   }catch(e){
     console.error('AI error:',e.message);
