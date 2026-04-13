@@ -341,10 +341,9 @@ function mkBkStrip(data){
 // ── CTA
 function mkCTA(p){
   var cta=mk('div','pc-cta');
-  // 2번: place_id 있으면 정확한 장소로, 없으면 검색어로
   var gurl=p.place_id
-    ?('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(p.name)+'&query_place_id='+p.place_id)
-    :('https://maps.google.com/?q='+encodeURIComponent(p.name+' '+city));
+    ?('https://www.google.com/maps/place/?q=place_id:'+p.place_id)
+    :('https://maps.google.com/?q='+encodeURIComponent(p.name+' '+city+' Japan'));
   var nurl='https://map.naver.com/v5/search/'+encodeURIComponent(p.name+' '+city);
   var bk=BKP[p.name];
   if(bk&&bk.length){
@@ -795,10 +794,11 @@ function openDetail(idx){
   var hb=mk('button','d-btn h'+(isSaved?' on':''),isSaved?'\u2665 \uc800\uc7a5\ub428':'\u2661 \uc800\uc7a5\ud558\uae30');
   hb.id='dHeartBtn';
   hb.addEventListener('click',function(){toggleSD(p.name);});
-  // 2번: place_id 있으면 정확한 장소로, 없으면 검색어로
+  // 외부 링크: place_id 있으면 Google Places 딥링크, 없으면 검색
+  // ※ place_id: 접두사는 embed q= 파라미터에서 작동 안 함 — 절대 사용 금지
   var gurl=p.place_id
-    ?('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(p.name)+'&query_place_id='+p.place_id)
-    :('https://maps.google.com/?q='+encodeURIComponent(p.name+' '+city));
+    ?('https://www.google.com/maps/place/?q=place_id:'+p.place_id)
+    :('https://maps.google.com/?q='+encodeURIComponent(p.name+' '+city+' Japan'));
   var nurl='https://map.naver.com/v5/search/'+encodeURIComponent(p.name+' '+city);
   var gb=mk('button','d-btn p','\ud83d\uddfa Google \uc9c0\ub3c4\uc5d0\uc11c \ubcf4\uae30');
   gb.addEventListener('click',function(){window.open(gurl,'_blank');});
@@ -806,6 +806,7 @@ function openDetail(idx){
   nb.addEventListener('click',function(){window.open(nurl,'_blank');});
   acts.appendChild(hb);acts.appendChild(gb);acts.appendChild(nb);
   // ── 지도 섹션 (Google Maps embed — API 키 불필요)
+  // embed q= 은 반드시 텍스트 검색어만 사용. place_id: 형식 사용 시 세계지도 표시됨.
   var mapSec=mk('div','d-map-sec');
   var mapHd=mk('div','d-map-hd');
   mapHd.appendChild(mk('span','d-map-ttl','📍 위치 지도'));
@@ -813,10 +814,8 @@ function openDetail(idx){
   mapLink.href=gurl;mapLink.target='_blank';
   mapHd.appendChild(mapLink);
   mapSec.appendChild(mapHd);
-  var mapQ=p.place_id
-    ?('place_id:'+p.place_id)
-    :(p.name+' '+city+' Japan');
-  var mapSrc='https://maps.google.com/maps?q='+encodeURIComponent(mapQ)+'&output=embed&hl=ko&z=16';
+  var embedQ=p.name+' '+city+' Japan';
+  var mapSrc='https://maps.google.com/maps?q='+encodeURIComponent(embedQ)+'&output=embed&hl=ko&z=16';
   var mapFrame=document.createElement('iframe');
   mapFrame.className='d-map-frame';
   mapFrame.title='장소 지도';
