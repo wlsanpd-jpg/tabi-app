@@ -1,8 +1,11 @@
-// TABI Service Worker — v1
-var CACHE_NAME = 'tabi-v1';
+// TABI Service Worker — v3 (파일 분리 대응)
+var CACHE_NAME = 'tabi-v3';
 var STATIC_ASSETS = [
   '/',
-  '/index.html'
+  '/index.html',
+  '/styles.css',
+  '/data.js',
+  '/app.js'
 ];
 
 // 설치: 정적 자산 캐시
@@ -58,8 +61,8 @@ self.addEventListener('fetch', function(e) {
     return;
   }
 
-  // HTML / static → Cache-first, fallback network
-  if (e.request.mode === 'navigate' || url.pathname === '/' || url.pathname.endsWith('.html')) {
+  // HTML / CSS / JS → Cache-first, fallback network
+  if (e.request.mode === 'navigate' || url.pathname === '/' || url.pathname.endsWith('.html') || url.pathname.endsWith('.css') || url.pathname.endsWith('.js')) {
     e.respondWith(
       caches.match(e.request).then(function(cached) {
         var fetchPromise = fetch(e.request).then(function(resp) {
