@@ -644,30 +644,27 @@ function openDetail(idx){
     descTxt.textContent=p.editorial_summary;
   } else {
     descTxt.textContent='설명을 불러오는 중...';
-    // 한국어 Wikipedia → 영어 Wikipedia 순으로 fallback
+    // 위키 타이틀이 장소명과 실제 관련 있는지 확인 (오매칭 방지)
+    function wikiRelevant(title,name){
+      var t=(title||'').replace(/\s/g,'').toLowerCase();
+      var n=name.replace(/\s/g,'').toLowerCase();
+      if(!t||!n)return false;
+      if(t.indexOf(n)>=0||n.indexOf(t)>=0)return true;
+      var words=name.split(/\s+/).filter(function(w){return w.length>=2;});
+      return words.some(function(w){return t.indexOf(w.toLowerCase())>=0;});
+    }
+    // 직접 타이틀 조회만 사용 (검색 API는 관련 없는 문서 오매칭 위험)
     function fetchWikiExtract(name){
-      // 1단계: 한국어 직접 검색
       return fetch('https://ko.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent(name)+'?redirect=true')
         .then(function(r){return r.ok?r.json():null;})
         .then(function(w){
-          if(w&&w.extract&&w.extract.length>10)return w.extract;
-          // 2단계: 한국어 키워드 검색 (검색어로 정확한 문서 타이틀 찾기)
-          return fetch('https://ko.wikipedia.org/w/api.php?action=query&list=search&srsearch='+encodeURIComponent(name)+'&srlimit=1&format=json&origin=*')
-            .then(function(r){return r.json();})
-            .then(function(d){
-              var hit=d&&d.query&&d.query.search&&d.query.search[0];
-              if(!hit)return null;
-              return fetch('https://ko.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent(hit.title))
-                .then(function(r){return r.ok?r.json():null;})
-                .then(function(w2){return w2&&w2.extract&&w2.extract.length>10?w2.extract:null;});
-            });
-        })
-        .then(function(extract){
-          if(extract)return extract;
-          // 3단계: 영어 Wikipedia fallback
+          if(w&&w.extract&&w.extract.length>10&&wikiRelevant(w.title,name))return w.extract;
           return fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent(name)+'?redirect=true')
             .then(function(r){return r.ok?r.json():null;})
-            .then(function(w){return w&&w.extract&&w.extract.length>10?w.extract:null;});
+            .then(function(w2){
+              if(w2&&w2.extract&&w2.extract.length>10&&wikiRelevant(w2.title,name))return w2.extract;
+              return null;
+            });
         });
     }
     fetchWikiExtract(p.name)
