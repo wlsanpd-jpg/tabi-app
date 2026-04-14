@@ -1,5 +1,5 @@
-// TABI Service Worker — v5 (동행 탭 추가)
-var CACHE_NAME = 'tabi-v5';
+// TABI Service Worker — v6 (동행 캘린더)
+var CACHE_NAME = 'tabi-v6';
 var STATIC_ASSETS = [
   '/',
   '/index.html',
