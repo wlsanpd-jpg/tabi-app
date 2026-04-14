@@ -1307,13 +1307,15 @@ function openCompDetail(c){
   body.appendChild(mk('div','comp-detail-intro',c.intro));
   body.appendChild(mk('div','comp-detail-sec','연락하기'));
   var kb=mk('button','comp-detail-kakao');
-  kb.innerHTML='💬 카카오톡으로 연락하기<span>ID 복사: '+c.kakao+'</span>';
+  var isUrl=c.kakao&&(c.kakao.startsWith('http')||c.kakao.indexOf('open.kakao')>=0);
+  kb.innerHTML='💬 카카오톡으로 연락하기<span>'+(isUrl?'오픈채팅 링크 열기':'ID 복사: '+c.kakao)+'</span>';
   kb.addEventListener('click',function(){
     buzz(10);
+    track('companion_contact',{city:c.city});
+    if(isUrl){window.open(c.kakao,'_blank');return;}
     navigator.clipboard.writeText(c.kakao)
       .then(function(){showToast('카카오톡 ID가 복사됐어요! 💛');})
       .catch(function(){showToast('카카오톡 ID: '+c.kakao);});
-    track('companion_contact',{city:c.city});
   });
   body.appendChild(kb);
   $e('compDetail').classList.add('open');
