@@ -103,7 +103,7 @@ function on(id,ev,fn){document.getElementById(id).addEventListener(ev,fn);}
 
 // ── Init
 window.addEventListener('DOMContentLoaded',function(){
-  buildCityTabs();buildCatTabs();buildAiSelect();bindAll();
+  buildCityTabs();buildCatTabs();buildAiSelect();bindAll();initCompPage();
   var fb=$e('filterBar');if(fb)fb.style.display='flex';
   updateFilterBar();
   load();updateBadge();
@@ -164,6 +164,7 @@ function bindAll(){
   on('nav-explore','click',function(){switchPage('explore');});
   on('nav-ai','click',function(){switchPage('ai');});
   on('nav-saved','click',function(){switchPage('saved');});
+  on('nav-companion','click',function(){switchPage('companion');});
   on('btnGen','click',genItinerary);
   document.getElementById('chips').addEventListener('click',function(e){
     var c=e.target.closest('.ai-chip');if(c)c.classList.toggle('on');
@@ -192,6 +193,7 @@ function switchPage(p){
   document.getElementById('page-'+p).classList.add('active');
   document.getElementById('nav-'+p).classList.add('on');
   if(p==='saved')renderSaved();
+  if(p==='companion')renderCompList();
 }
 
 // ── Fetch
@@ -1191,5 +1193,194 @@ function showToast(msg){
   setTimeout(function(){t.classList.remove('show');setTimeout(function(){if(t.parentNode)t.remove();},300);},2500);
 }
 
+// ════════════════════════════════════════════════════
+// 동행 구하기 (게시판형)
+// ════════════════════════════════════════════════════
+var _compCityFilter='all';
+var _compStyleSel='';
+var _compPeopleSel='';
+var _compGenderSel='공개안함';
+
+var COMP_SEEDS=[
+  {id:'s1',city:'도쿄',from:'2026-04-22',to:'2026-04-26',style:'미식',people:'1명',gender:'여성',intro:'라멘 투어 다 같이 가실 분! 이치란·후쿠류안 예약해뒀어요. 혼자 먹기 너무 아쉬워서요 🍜 첫 도쿄라 아는 분 있으면 더 좋아요',kakao:'ramen_j',ts:Date.now()-3600000*2},
+  {id:'s2',city:'오사카',from:'2026-05-01',to:'2026-05-05',style:'가성비',people:'2명',gender:'공개안함',intro:'도톤보리·구로몬 시장 같이 먹으러 다닐 분 구해요. 하루 예산 1만엔 이하로 최대한 많이 먹는 게 목표 😂 오사카 3번째라 웬만한 곳은 알아요',kakao:'osaka_foodie',ts:Date.now()-3600000*5},
+  {id:'s3',city:'교토',from:'2026-04-28',to:'2026-05-02',style:'역사문화',people:'1명',gender:'여성',intro:'기온·아라시야마 천천히 걸으면서 사진 찍고 싶은 분~ 너무 빡빡한 일정보단 여유롭게 돌아다니는 스타일이에요 📸',kakao:'kyoto_slow',ts:Date.now()-3600000*10},
+  {id:'s4',city:'도쿄',from:'2026-05-10',to:'2026-05-14',style:'쇼핑',people:'2명',gender:'여성',intro:'하라주쿠·시부야 쇼핑 같이 다닐 분 구해요! 빈티지 셀렉샵 좋아하고 카페도 자주 들릴 예정이에요. 20대 여성분 환영 💛',kakao:'haraju_lover',ts:Date.now()-3600000*18},
+  {id:'s5',city:'후쿠오카',from:'2026-04-30',to:'2026-05-03',style:'가성비',people:'1명',gender:'남성',intro:'야키토리·모츠나베 같이 먹을 분. 텐진·나카스 위주로 돌아볼 예정입니다. 혼자 술집 들어가기 어색해서요 ㅋㅋ',kakao:'fuk_nabe',ts:Date.now()-3600000*24},
+  {id:'s6',city:'삿포로',from:'2026-05-15',to:'2026-05-19',style:'힐링',people:'2명',gender:'공개안함',intro:'오타루·후라노 렌터카 여행 같이 가실 분 구해요! 라벤더 시즌 맞춰서 가는 거라 풍경 기대중 🌸 운전 가능하신 분 우선',kakao:'sapporo_drive',ts:Date.now()-3600000*30},
+];
+
+function loadComps(){
+  var stored=JSON.parse(localStorage.getItem('tabi_comps')||'null');
+  return stored&&stored.length?stored:COMP_SEEDS.slice();
+}
+function saveComps(arr){localStorage.setItem('tabi_comps',JSON.stringify(arr));}
+
+function compDday(from){
+  var diff=Math.ceil((new Date(from)-new Date())/(1000*60*60*24));
+  if(diff<0)return '여행중';
+  if(diff===0)return 'D-Day';
+  return 'D-'+diff;
+}
+function compTimeAgo(ts){
+  var m=Math.floor((Date.now()-ts)/60000);
+  if(m<1)return '방금';if(m<60)return m+'분 전';
+  var h=Math.floor(m/60);if(h<24)return h+'시간 전';
+  return Math.floor(h/24)+'일 전';
+}
+function fmtDate(from,to){
+  var f=new Date(from),t=new Date(to);
+  var mo=function(d){return (d.getMonth()+1)+'월 '+d.getDate()+'일';};
+  var nights=Math.round((t-f)/(1000*60*60*24));
+  return mo(f)+' ~ '+mo(t)+' ('+nights+'박'+(nights+1)+'일)';
+}
+
+function renderCompList(){
+  var list=$e('compList');list.innerHTML='';
+  var comps=loadComps();
+  if(_compCityFilter!=='all')comps=comps.filter(function(c){return c.city===_compCityFilter;});
+  if(!comps.length){
+    var emp=mk('div','comp-empty');
+    emp.innerHTML='<div class="comp-empty-ic">✈️</div><div class="comp-empty-ttl">동행 글이 없어요</div><div style="font-size:13px;color:var(--tx3)">첫 번째 동행 글을 올려보세요!</div>';
+    list.appendChild(emp);return;
+  }
+  comps.sort(function(a,b){return b.ts-a.ts;});
+  comps.forEach(function(c){
+    var card=mk('div','comp-card');
+    var top=mk('div','comp-card-top');
+    top.appendChild(mk('span','comp-city-badge',c.city));
+    top.appendChild(mk('span','comp-dday',compDday(c.from)));
+    card.appendChild(top);
+    card.appendChild(mk('div','comp-date',fmtDate(c.from,c.to)));
+    var tags=mk('div','comp-card-info');
+    tags.appendChild(mk('span','comp-tag style',c.style));
+    tags.appendChild(mk('span','comp-tag',c.people+' 모집'));
+    if(c.gender&&c.gender!=='공개안함'){
+      tags.appendChild(mk('span','comp-tag '+(c.gender==='여성'?'gender-f':'gender-m'),c.gender));
+    }
+    card.appendChild(tags);
+    card.appendChild(mk('p','comp-intro',c.intro));
+    var ft=mk('div','comp-card-ft');
+    var kb=mk('button','comp-kakao-btn');
+    kb.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="margin-right:4px"><path d="M12 3C6.477 3 2 6.477 2 10.5c0 2.5 1.5 4.7 3.8 6.1L4.5 21l4.8-2.6c.9.2 1.8.3 2.7.3 5.523 0 10-3.477 10-7.5S17.523 3 12 3z"/></svg>연락하기';
+    (function(comp){
+      kb.addEventListener('click',function(e){e.stopPropagation();buzz(8);openCompDetail(comp);});
+      card.addEventListener('click',function(){openCompDetail(comp);});
+    })(c);
+    ft.appendChild(kb);
+    ft.appendChild(mk('span','comp-time',compTimeAgo(c.ts)));
+    card.appendChild(ft);
+    list.appendChild(card);
+  });
+}
+
+function renderCompCityFilter(){
+  var row=$e('compCityRow');row.innerHTML='';
+  var cities=['전체'].concat(CITIES.slice(0,8).map(function(c){return c.kr;}));
+  cities.forEach(function(ci){
+    var btn=mk('div','comp-city-chip'+((_compCityFilter==='all'&&ci==='전체')||_compCityFilter===ci?' on':''),ci);
+    btn.addEventListener('click',function(){
+      _compCityFilter=ci==='전체'?'all':ci;
+      buzz(6);renderCompCityFilter();renderCompList();
+    });
+    row.appendChild(btn);
+  });
+}
+
+function openCompDetail(c){
+  var body=$e('compDetailBody');body.innerHTML='';
+  body.appendChild(mk('div','comp-detail-city',c.city));
+  body.appendChild(mk('div','comp-detail-date',fmtDate(c.from,c.to)));
+  var tags=mk('div','comp-detail-tags');
+  [c.style,c.people+' 모집',c.gender!=='공개안함'?c.gender:null].forEach(function(t){
+    if(t)tags.appendChild(mk('span','comp-tag',t));
+  });
+  body.appendChild(tags);
+  body.appendChild(mk('div','comp-detail-sec','자기소개'));
+  body.appendChild(mk('div','comp-detail-intro',c.intro));
+  body.appendChild(mk('div','comp-detail-sec','연락하기'));
+  var kb=mk('button','comp-detail-kakao');
+  kb.innerHTML='💬 카카오톡으로 연락하기<span>ID 복사: '+c.kakao+'</span>';
+  kb.addEventListener('click',function(){
+    buzz(10);
+    navigator.clipboard.writeText(c.kakao)
+      .then(function(){showToast('카카오톡 ID가 복사됐어요! 💛');})
+      .catch(function(){showToast('카카오톡 ID: '+c.kakao);});
+    track('companion_contact',{city:c.city});
+  });
+  body.appendChild(kb);
+  $e('compDetail').classList.add('open');
+}
+
+function openCompWrite(){
+  var sel=$e('compCity');sel.innerHTML='';
+  CITIES.forEach(function(c){
+    var opt=document.createElement('option');opt.value=c.kr;opt.textContent=c.kr;sel.appendChild(opt);
+  });
+  var today=new Date().toISOString().slice(0,10);
+  var nextWeek=new Date(Date.now()+7*86400000).toISOString().slice(0,10);
+  $e('compFrom').value=today;$e('compTo').value=nextWeek;
+  _compStyleSel='';_compPeopleSel='';_compGenderSel='공개안함';
+  $e('compIntro').value='';$e('compKakao').value='';
+  $e('compStyleChips').querySelectorAll('.comp-chip').forEach(function(c){c.classList.remove('on');});
+  $e('compPeopleChips').querySelectorAll('.comp-chip').forEach(function(c){c.classList.remove('on');});
+  $e('compGenderChips').querySelectorAll('.comp-chip').forEach(function(c){c.classList.toggle('on',c.dataset.v==='공개안함');});
+  $e('compWritePanel').classList.add('open');
+  $e('compWriteOv').classList.add('open');
+}
+function closeCompWrite(){
+  $e('compWritePanel').classList.remove('open');
+  $e('compWriteOv').classList.remove('open');
+}
+
+function submitComp(){
+  var city=$e('compCity').value;
+  var from=$e('compFrom').value;
+  var to=$e('compTo').value;
+  var kakao=$e('compKakao').value.trim();
+  var intro=$e('compIntro').value.trim();
+  if(!from||!to){showToast('날짜를 선택해주세요');return;}
+  if(new Date(from)>new Date(to)){showToast('종료일이 시작일보다 앞서요');return;}
+  if(!_compStyleSel){showToast('여행 스타일을 선택해주세요');return;}
+  if(!_compPeopleSel){showToast('모집 인원을 선택해주세요');return;}
+  if(!intro){showToast('자기소개를 입력해주세요');return;}
+  if(!kakao){showToast('카카오톡 ID를 입력해주세요');return;}
+  var comps=loadComps();
+  comps.unshift({id:'u'+Date.now(),city:city,from:from,to:to,style:_compStyleSel,people:_compPeopleSel,gender:_compGenderSel,intro:intro,kakao:kakao,ts:Date.now()});
+  saveComps(comps);
+  closeCompWrite();
+  _compCityFilter='all';
+  renderCompCityFilter();renderCompList();
+  buzz([10,50,10]);
+  showToast('동행 글이 올라갔어요! 🎉');
+  track('companion_post',{city:city,style:_compStyleSel});
+}
+
+function initCompPage(){
+  renderCompCityFilter();renderCompList();
+  $e('compStyleChips').querySelectorAll('.comp-chip').forEach(function(ch){
+    ch.addEventListener('click',function(){
+      $e('compStyleChips').querySelectorAll('.comp-chip').forEach(function(c){c.classList.remove('on');});
+      ch.classList.add('on');_compStyleSel=ch.dataset.v;buzz(6);
+    });
+  });
+  $e('compPeopleChips').querySelectorAll('.comp-chip').forEach(function(ch){
+    ch.addEventListener('click',function(){
+      $e('compPeopleChips').querySelectorAll('.comp-chip').forEach(function(c){c.classList.remove('on');});
+      ch.classList.add('on');_compPeopleSel=ch.dataset.v;buzz(6);
+    });
+  });
+  $e('compGenderChips').querySelectorAll('.comp-chip').forEach(function(ch){
+    ch.addEventListener('click',function(){
+      $e('compGenderChips').querySelectorAll('.comp-chip').forEach(function(c){c.classList.remove('on');});
+      ch.classList.add('on');_compGenderSel=ch.dataset.v;buzz(6);
+    });
+  });
+  $e('btnCompWrite').addEventListener('click',function(){buzz(8);openCompWrite();});
+  $e('compWriteX').addEventListener('click',closeCompWrite);
+  $e('compWriteOv').addEventListener('click',closeCompWrite);
+  $e('btnCompSubmit').addEventListener('click',function(){buzz(8);submitComp();});
+  $e('btnCompBack').addEventListener('click',function(){$e('compDetail').classList.remove('open');});
+}
 
 })();

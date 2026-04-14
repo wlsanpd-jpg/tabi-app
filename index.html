@@ -100,6 +100,22 @@
     <div id="aiResult"></div>
   </div>
 </div>
+<div class="page" id="page-companion">
+  <div class="comp-hd">
+    <div class="comp-hd-top">
+      <div>
+        <div class="comp-hd-ttl">동행 구하기</div>
+        <div class="comp-hd-sub">같이 여행할 친구를 찾아보세요</div>
+      </div>
+      <button class="comp-write-btn" id="btnCompWrite">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        글쓰기
+      </button>
+    </div>
+    <div class="comp-city-row" id="compCityRow"></div>
+  </div>
+  <div class="scroll" id="compList" style="padding-bottom:calc(var(--nav) + var(--safe) + 16px)"></div>
+</div>
 <div class="page" id="page-saved">
   <div class="scroll" style="padding-bottom:calc(var(--nav) + var(--safe) + 16px)">
     <div class="saved-hd">
@@ -136,6 +152,13 @@
     </span>
     <span>저장</span>
   </button>
+  <button class="nav-it" id="nav-companion">
+    <span class="nav-ic">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span class="nav-badge" id="compBadge"></span>
+    </span>
+    <span>동행</span>
+  </button>
 </nav>
 <div class="detail" id="detailPanel">
   <div class="d-nav">
@@ -144,6 +167,58 @@
   </div>
   <div class="d-hero" id="dHero"><div class="d-hero-fade"></div></div>
   <div class="d-body" id="dBody"></div>
+</div>
+<!-- Companion Detail Panel -->
+<div class="detail" id="compDetail">
+  <div class="d-nav">
+    <button class="d-back" id="btnCompBack"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <span class="d-nav-ttl">동행 정보</span>
+  </div>
+  <div class="comp-detail-body" id="compDetailBody"></div>
+</div>
+<!-- Companion Write Panel -->
+<div class="flt-ov" id="compWriteOv"></div>
+<div class="comp-write-panel" id="compWritePanel">
+  <div class="flt-dw-handle"></div>
+  <div class="flt-dw-hd">
+    <span class="flt-dw-ttl">동행 글쓰기</span>
+    <button class="flt-dw-reset" id="compWriteX">닫기</button>
+  </div>
+  <div class="comp-form" id="compForm">
+    <label class="comp-lbl">여행 도시</label>
+    <select class="ai-sel" id="compCity" style="width:100%;margin-bottom:12px"></select>
+    <label class="comp-lbl">여행 날짜</label>
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <input class="comp-input" type="date" id="compFrom" style="flex:1">
+      <span style="line-height:42px;color:var(--tx3)">~</span>
+      <input class="comp-input" type="date" id="compTo" style="flex:1">
+    </div>
+    <label class="comp-lbl">여행 스타일</label>
+    <div class="comp-chips" id="compStyleChips">
+      <div class="comp-chip" data-v="가성비">가성비</div>
+      <div class="comp-chip" data-v="럭셔리">럭셔리</div>
+      <div class="comp-chip" data-v="힐링">힐링</div>
+      <div class="comp-chip" data-v="미식">미식</div>
+      <div class="comp-chip" data-v="역사문화">역사문화</div>
+    </div>
+    <label class="comp-lbl">모집 인원</label>
+    <div class="comp-chips" id="compPeopleChips">
+      <div class="comp-chip" data-v="1명">1명</div>
+      <div class="comp-chip" data-v="2명">2명</div>
+      <div class="comp-chip" data-v="3명 이상">3명 이상</div>
+    </div>
+    <label class="comp-lbl">성별 (선택)</label>
+    <div class="comp-chips" id="compGenderChips">
+      <div class="comp-chip on" data-v="공개안함">공개안함</div>
+      <div class="comp-chip" data-v="여성">여성</div>
+      <div class="comp-chip" data-v="남성">남성</div>
+    </div>
+    <label class="comp-lbl">자기소개</label>
+    <textarea class="comp-textarea" id="compIntro" placeholder="여행 스타일, 원하는 동행 유형 등을 자유롭게 적어주세요 (최대 150자)" maxlength="150"></textarea>
+    <label class="comp-lbl">카카오톡 ID <span style="color:var(--red)">*</span></label>
+    <input class="comp-input" id="compKakao" placeholder="카카오톡 ID 입력" style="width:100%;margin-bottom:20px">
+    <button class="ai-gen" id="btnCompSubmit">동행 글 올리기</button>
+  </div>
 </div>
 <!-- Bottom Sheet -->
 <div class="sheet-overlay" id="sheetOverlay"></div>
