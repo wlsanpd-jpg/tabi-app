@@ -1,5 +1,5 @@
-// TABI Service Worker — v4 (manifest + security)
-var CACHE_NAME = 'tabi-v4';
+// TABI Service Worker — v5 (동행 탭 추가)
+var CACHE_NAME = 'tabi-v5';
 var STATIC_ASSETS = [
   '/',
   '/index.html',
