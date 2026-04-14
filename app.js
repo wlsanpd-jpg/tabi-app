@@ -1197,17 +1197,21 @@ function showToast(msg){
 // 동행 구하기 (게시판형)
 // ════════════════════════════════════════════════════
 var _compCityFilter='all';
+var _compDateFilter=null; // 'YYYY-MM-DD'
 var _compStyleSel='';
 var _compPeopleSel='';
 var _compGenderSel='공개안함';
+var _calYear=new Date().getFullYear();
+var _calMonth=new Date().getMonth();
+var _calOpen=false;
 
 var COMP_SEEDS=[
-  {id:'s1',city:'도쿄',from:'2026-04-22',to:'2026-04-26',style:'미식',people:'1명',gender:'여성',intro:'라멘 투어 다 같이 가실 분! 이치란·후쿠류안 예약해뒀어요. 혼자 먹기 너무 아쉬워서요 🍜 첫 도쿄라 아는 분 있으면 더 좋아요',kakao:'ramen_j',ts:Date.now()-3600000*2},
-  {id:'s2',city:'오사카',from:'2026-05-01',to:'2026-05-05',style:'가성비',people:'2명',gender:'공개안함',intro:'도톤보리·구로몬 시장 같이 먹으러 다닐 분 구해요. 하루 예산 1만엔 이하로 최대한 많이 먹는 게 목표 😂 오사카 3번째라 웬만한 곳은 알아요',kakao:'osaka_foodie',ts:Date.now()-3600000*5},
-  {id:'s3',city:'교토',from:'2026-04-28',to:'2026-05-02',style:'역사문화',people:'1명',gender:'여성',intro:'기온·아라시야마 천천히 걸으면서 사진 찍고 싶은 분~ 너무 빡빡한 일정보단 여유롭게 돌아다니는 스타일이에요 📸',kakao:'kyoto_slow',ts:Date.now()-3600000*10},
-  {id:'s4',city:'도쿄',from:'2026-05-10',to:'2026-05-14',style:'쇼핑',people:'2명',gender:'여성',intro:'하라주쿠·시부야 쇼핑 같이 다닐 분 구해요! 빈티지 셀렉샵 좋아하고 카페도 자주 들릴 예정이에요. 20대 여성분 환영 💛',kakao:'haraju_lover',ts:Date.now()-3600000*18},
-  {id:'s5',city:'후쿠오카',from:'2026-04-30',to:'2026-05-03',style:'가성비',people:'1명',gender:'남성',intro:'야키토리·모츠나베 같이 먹을 분. 텐진·나카스 위주로 돌아볼 예정입니다. 혼자 술집 들어가기 어색해서요 ㅋㅋ',kakao:'fuk_nabe',ts:Date.now()-3600000*24},
-  {id:'s6',city:'삿포로',from:'2026-05-15',to:'2026-05-19',style:'힐링',people:'2명',gender:'공개안함',intro:'오타루·후라노 렌터카 여행 같이 가실 분 구해요! 라벤더 시즌 맞춰서 가는 거라 풍경 기대중 🌸 운전 가능하신 분 우선',kakao:'sapporo_drive',ts:Date.now()-3600000*30},
+  {id:'s1',city:'도쿄',from:'2026-04-22',fromTime:'09:00',to:'2026-04-26',toTime:'21:00',style:'미식',people:'1명',gender:'여성',intro:'라멘 투어 다 같이 가실 분! 이치란·후쿠류안 예약해뒀어요. 혼자 먹기 너무 아쉬워서요 🍜 첫 도쿄라 아는 분 있으면 더 좋아요',kakao:'ramen_j',ts:Date.now()-3600000*2},
+  {id:'s2',city:'오사카',from:'2026-05-01',fromTime:'10:00',to:'2026-05-05',toTime:'20:00',style:'가성비',people:'2명',gender:'공개안함',intro:'도톤보리·구로몬 시장 같이 먹으러 다닐 분 구해요. 하루 예산 1만엔 이하로 최대한 많이 먹는 게 목표 😂 오사카 3번째라 웬만한 곳은 알아요',kakao:'osaka_foodie',ts:Date.now()-3600000*5},
+  {id:'s3',city:'교토',from:'2026-04-28',fromTime:'08:30',to:'2026-05-02',toTime:'18:00',style:'역사문화',people:'1명',gender:'여성',intro:'기온·아라시야마 천천히 걸으면서 사진 찍고 싶은 분~ 너무 빡빡한 일정보단 여유롭게 돌아다니는 스타일이에요 📸',kakao:'kyoto_slow',ts:Date.now()-3600000*10},
+  {id:'s4',city:'도쿄',from:'2026-05-10',fromTime:'11:00',to:'2026-05-14',toTime:'22:00',style:'쇼핑',people:'2명',gender:'여성',intro:'하라주쿠·시부야 쇼핑 같이 다닐 분 구해요! 빈티지 셀렉샵 좋아하고 카페도 자주 들릴 예정이에요. 20대 여성분 환영 💛',kakao:'haraju_lover',ts:Date.now()-3600000*18},
+  {id:'s5',city:'후쿠오카',from:'2026-04-30',fromTime:'13:00',to:'2026-05-03',toTime:'19:00',style:'가성비',people:'1명',gender:'남성',intro:'야키토리·모츠나베 같이 먹을 분. 텐진·나카스 위주로 돌아볼 예정입니다. 혼자 술집 들어가기 어색해서요 ㅋㅋ',kakao:'fuk_nabe',ts:Date.now()-3600000*24},
+  {id:'s6',city:'삿포로',from:'2026-05-15',fromTime:'09:00',to:'2026-05-19',toTime:'20:00',style:'힐링',people:'2명',gender:'공개안함',intro:'오타루·후라노 렌터카 여행 같이 가실 분 구해요! 라벤더 시즌 맞춰서 가는 거라 풍경 기대중 🌸 운전 가능하신 분 우선',kakao:'sapporo_drive',ts:Date.now()-3600000*30},
 ];
 
 function loadComps(){
@@ -1228,17 +1232,20 @@ function compTimeAgo(ts){
   var h=Math.floor(m/60);if(h<24)return h+'시간 전';
   return Math.floor(h/24)+'일 전';
 }
-function fmtDate(from,to){
+function fmtDate(from,to,fromTime,toTime){
   var f=new Date(from),t=new Date(to);
   var mo=function(d){return (d.getMonth()+1)+'월 '+d.getDate()+'일';};
   var nights=Math.round((t-f)/(1000*60*60*24));
-  return mo(f)+' ~ '+mo(t)+' ('+nights+'박'+(nights+1)+'일)';
+  var ft=fromTime?' '+fromTime:'';
+  var tt=toTime?' '+toTime:'';
+  return mo(f)+ft+' ~ '+mo(t)+tt+' ('+nights+'박'+(nights+1)+'일)';
 }
 
 function renderCompList(){
   var list=$e('compList');list.innerHTML='';
   var comps=loadComps();
   if(_compCityFilter!=='all')comps=comps.filter(function(c){return c.city===_compCityFilter;});
+  if(_compDateFilter)comps=comps.filter(function(c){return c.from<=_compDateFilter&&c.to>=_compDateFilter;});
   if(!comps.length){
     var emp=mk('div','comp-empty');
     emp.innerHTML='<div class="comp-empty-ic">✈️</div><div class="comp-empty-ttl">동행 글이 없어요</div><div style="font-size:13px;color:var(--tx3)">첫 번째 동행 글을 올려보세요!</div>';
@@ -1251,7 +1258,7 @@ function renderCompList(){
     top.appendChild(mk('span','comp-city-badge',c.city));
     top.appendChild(mk('span','comp-dday',compDday(c.from)));
     card.appendChild(top);
-    card.appendChild(mk('div','comp-date',fmtDate(c.from,c.to)));
+    card.appendChild(mk('div','comp-date',fmtDate(c.from,c.to,c.fromTime,c.toTime)));
     var tags=mk('div','comp-card-info');
     tags.appendChild(mk('span','comp-tag style',c.style));
     tags.appendChild(mk('span','comp-tag',c.people+' 모집'));
@@ -1290,7 +1297,7 @@ function renderCompCityFilter(){
 function openCompDetail(c){
   var body=$e('compDetailBody');body.innerHTML='';
   body.appendChild(mk('div','comp-detail-city',c.city));
-  body.appendChild(mk('div','comp-detail-date',fmtDate(c.from,c.to)));
+  body.appendChild(mk('div','comp-detail-date',fmtDate(c.from,c.to,c.fromTime,c.toTime)));
   var tags=mk('div','comp-detail-tags');
   [c.style,c.people+' 모집',c.gender!=='공개안함'?c.gender:null].forEach(function(t){
     if(t)tags.appendChild(mk('span','comp-tag',t));
@@ -1346,7 +1353,9 @@ function submitComp(){
   if(!intro){showToast('자기소개를 입력해주세요');return;}
   if(!kakao){showToast('카카오톡 ID를 입력해주세요');return;}
   var comps=loadComps();
-  comps.unshift({id:'u'+Date.now(),city:city,from:from,to:to,style:_compStyleSel,people:_compPeopleSel,gender:_compGenderSel,intro:intro,kakao:kakao,ts:Date.now()});
+  var fromTime=$e('compFromTime').value||'09:00';
+  var toTime=$e('compToTime').value||'21:00';
+  comps.unshift({id:'u'+Date.now(),city:city,from:from,fromTime:fromTime,to:to,toTime:toTime,style:_compStyleSel,people:_compPeopleSel,gender:_compGenderSel,intro:intro,kakao:kakao,ts:Date.now()});
   saveComps(comps);
   closeCompWrite();
   _compCityFilter='all';
@@ -1354,6 +1363,66 @@ function submitComp(){
   buzz([10,50,10]);
   showToast('동행 글이 올라갔어요! 🎉');
   track('companion_post',{city:city,style:_compStyleSel});
+}
+
+function renderCalendar(){
+  var comps=loadComps();
+  // 해당 월에 동행 있는 날짜 수집
+  var activeDates={};
+  comps.forEach(function(c){
+    var d=new Date(c.from),end=new Date(c.to);
+    while(d<=end){
+      activeDates[d.toISOString().slice(0,10)]=true;
+      d.setDate(d.getDate()+1);
+    }
+  });
+  var title=$e('calTitle');
+  title.textContent=_calYear+'년 '+(_calMonth+1)+'월';
+  var grid=$e('calGrid');grid.innerHTML='';
+  var first=new Date(_calYear,_calMonth,1);
+  var startDow=first.getDay(); // 0=일
+  var daysInMonth=new Date(_calYear,_calMonth+1,0).getDate();
+  var today=new Date().toISOString().slice(0,10);
+  // 빈 칸 (이전 달)
+  for(var i=0;i<startDow;i++){
+    var empty=mk('div','cal-day other-month');empty.appendChild(mk('span','cal-num',''));
+    grid.appendChild(empty);
+  }
+  for(var d2=1;d2<=daysInMonth;d2++){
+    var dateStr=_calYear+'-'+String(_calMonth+1).padStart(2,'0')+'-'+String(d2).padStart(2,'0');
+    var dow=(startDow+d2-1)%7;
+    var cls='cal-day';
+    if(dow===0)cls+=' sun';
+    if(dow===6)cls+=' sat';
+    if(dateStr===today)cls+=' today';
+    if(dateStr===_compDateFilter)cls+=' selected';
+    if(activeDates[dateStr])cls+=' has-post';
+    var cell=mk('div',cls);
+    cell.appendChild(mk('span','cal-num',String(d2)));
+    if(activeDates[dateStr]){var dot=mk('span','cal-dot');cell.appendChild(dot);}
+    (function(ds){
+      cell.addEventListener('click',function(){
+        buzz(6);
+        _compDateFilter=(_compDateFilter===ds)?null:ds;
+        renderCalendar();
+        renderCompList();
+        updateDateFilterChip();
+      });
+    })(dateStr);
+    grid.appendChild(cell);
+  }
+}
+
+function updateDateFilterChip(){
+  var row=$e('compDateFilterRow');
+  var chip=$e('compDateFilterChip');
+  if(_compDateFilter){
+    var d=new Date(_compDateFilter);
+    chip.textContent=(d.getMonth()+1)+'월 '+d.getDate()+'일 여행 중인 동행';
+    row.style.display='flex';
+  } else {
+    row.style.display='none';
+  }
 }
 
 function initCompPage(){
@@ -1381,6 +1450,26 @@ function initCompPage(){
   $e('compWriteOv').addEventListener('click',closeCompWrite);
   $e('btnCompSubmit').addEventListener('click',function(){buzz(8);submitComp();});
   $e('btnCompBack').addEventListener('click',function(){$e('compDetail').classList.remove('open');});
+  // 캘린더 토글
+  $e('btnCompCal').addEventListener('click',function(){
+    _calOpen=!_calOpen;
+    var cal=$e('compCal');
+    cal.style.display=_calOpen?'block':'none';
+    $e('btnCompCal').classList.toggle('on',_calOpen);
+    if(_calOpen){_calYear=new Date().getFullYear();_calMonth=new Date().getMonth();renderCalendar();}
+  });
+  $e('btnCalPrev').addEventListener('click',function(){
+    _calMonth--;if(_calMonth<0){_calMonth=11;_calYear--;}
+    buzz(6);renderCalendar();
+  });
+  $e('btnCalNext').addEventListener('click',function(){
+    _calMonth++;if(_calMonth>11){_calMonth=0;_calYear++;}
+    buzz(6);renderCalendar();
+  });
+  $e('btnCompDateClear').addEventListener('click',function(){
+    _compDateFilter=null;buzz(6);
+    renderCalendar();renderCompList();updateDateFilterChip();
+  });
 }
 
 })();

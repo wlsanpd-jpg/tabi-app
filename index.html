@@ -112,7 +112,30 @@
         글쓰기
       </button>
     </div>
-    <div class="comp-city-row" id="compCityRow"></div>
+    <div class="comp-filter-row">
+      <div class="comp-city-row" id="compCityRow"></div>
+      <button class="comp-cal-toggle" id="btnCompCal">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        날짜
+      </button>
+    </div>
+    <!-- 날짜 필터 칩 -->
+    <div class="comp-date-filter-row" id="compDateFilterRow" style="display:none">
+      <span class="comp-date-filter-chip" id="compDateFilterChip"></span>
+      <button class="comp-date-clear" id="btnCompDateClear">✕ 초기화</button>
+    </div>
+    <!-- 캘린더 -->
+    <div class="comp-cal" id="compCal" style="display:none">
+      <div class="comp-cal-nav">
+        <button class="comp-cal-arr" id="btnCalPrev">‹</button>
+        <span class="comp-cal-title" id="calTitle"></span>
+        <button class="comp-cal-arr" id="btnCalNext">›</button>
+      </div>
+      <div class="comp-cal-dow">
+        <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+      </div>
+      <div class="comp-cal-grid" id="calGrid"></div>
+    </div>
   </div>
   <div class="scroll" id="compList" style="padding-bottom:calc(var(--nav) + var(--safe) + 16px)"></div>
 </div>
@@ -187,11 +210,14 @@
   <div class="comp-form" id="compForm">
     <label class="comp-lbl">여행 도시</label>
     <select class="ai-sel" id="compCity" style="width:100%;margin-bottom:12px"></select>
-    <label class="comp-lbl">여행 날짜</label>
-    <div style="display:flex;gap:8px;margin-bottom:12px">
-      <input class="comp-input" type="date" id="compFrom" style="flex:1">
-      <span style="line-height:42px;color:var(--tx3)">~</span>
-      <input class="comp-input" type="date" id="compTo" style="flex:1">
+    <label class="comp-lbl">여행 날짜 &amp; 시간</label>
+    <div class="comp-datetime-row">
+      <input class="comp-input" type="date" id="compFrom">
+      <input class="comp-input comp-time-input" type="time" id="compFromTime" value="09:00">
+    </div>
+    <div class="comp-datetime-row" style="margin-bottom:12px">
+      <input class="comp-input" type="date" id="compTo">
+      <input class="comp-input comp-time-input" type="time" id="compToTime" value="21:00">
     </div>
     <label class="comp-lbl">여행 스타일</label>
     <div class="comp-chips" id="compStyleChips">

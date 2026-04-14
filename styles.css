@@ -406,7 +406,40 @@ button{font-family:var(--f);}
 .comp-hd-ttl{font-family:var(--fd);font-size:22px;font-weight:900;color:var(--tx);}
 .comp-hd-sub{font-size:11px;color:var(--tx3);margin-top:2px;}
 .comp-write-btn{display:flex;align-items:center;gap:5px;background:var(--ac);color:#fff;border:none;border-radius:20px;padding:8px 14px;font-size:12px;font-weight:800;cursor:pointer;font-family:var(--f);}
-.comp-city-row{display:flex;overflow-x:auto;padding:0 12px 10px;gap:6px;}
+.comp-filter-row{display:flex;align-items:center;gap:0;}
+.comp-city-row{display:flex;overflow-x:auto;padding:0 8px 10px 12px;gap:6px;flex:1;}
+.comp-cal-toggle{flex-shrink:0;display:flex;align-items:center;gap:5px;background:var(--sf);border:1.5px solid var(--bd);border-radius:20px;padding:6px 12px;font-size:12px;font-weight:700;color:var(--tx2);cursor:pointer;font-family:var(--f);margin:0 12px 10px 0;white-space:nowrap;}
+.comp-cal-toggle.on{background:var(--acbg);border-color:var(--ac);color:var(--ac);}
+.comp-date-filter-row{display:flex;align-items:center;gap:8px;padding:0 14px 10px;border-top:1px solid var(--bd);}
+.comp-date-filter-chip{background:var(--acbg);color:var(--ac2);font-size:12px;font-weight:700;border-radius:20px;padding:4px 12px;}
+.comp-date-clear{background:none;border:none;color:var(--tx3);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--f);}
+
+/* 캘린더 */
+.comp-cal{border-top:1px solid var(--bd);padding:12px 14px 14px;}
+.comp-cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.comp-cal-title{font-size:14px;font-weight:800;color:var(--tx);}
+.comp-cal-arr{background:none;border:none;font-size:20px;color:var(--tx2);cursor:pointer;padding:0 8px;line-height:1;}
+.comp-cal-dow{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;margin-bottom:4px;}
+.comp-cal-dow span{font-size:11px;font-weight:700;color:var(--tx3);padding:4px 0;}
+.comp-cal-dow span:first-child{color:#ff3b4e;}
+.comp-cal-dow span:last-child{color:#1967d2;}
+.comp-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.cal-day{display:flex;flex-direction:column;align-items:center;padding:6px 2px;cursor:pointer;border-radius:8px;transition:background .15s;position:relative;min-height:40px;}
+.cal-day:hover{background:var(--sf);}
+.cal-day.today .cal-num{border:2px solid var(--ac);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;}
+.cal-day.selected .cal-num{background:var(--ac);color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;}
+.cal-day.has-post .cal-dot{width:4px;height:4px;background:var(--ac);border-radius:50%;margin-top:2px;}
+.cal-day.other-month{opacity:.3;pointer-events:none;}
+.cal-num{font-size:13px;font-weight:700;color:var(--tx);}
+.cal-day.sun .cal-num{color:#ff3b4e;}
+.cal-day.sat .cal-num{color:#1967d2;}
+.cal-day.selected .cal-num{color:#fff !important;}
+.cal-dot{width:4px;height:4px;border-radius:50%;margin-top:2px;}
+
+/* 날짜+시간 입력 */
+.comp-datetime-row{display:flex;gap:8px;margin-bottom:6px;}
+.comp-datetime-row .comp-input{flex:2;}
+.comp-time-input{flex:1 !important;min-width:0;}
 .comp-city-chip{flex-shrink:0;background:var(--sf);border:1.5px solid var(--bd);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;color:var(--tx2);cursor:pointer;white-space:nowrap;transition:all .15s;}
 .comp-city-chip.on{background:var(--acbg);border-color:var(--ac);color:var(--ac);}
 
